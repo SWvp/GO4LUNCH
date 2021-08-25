@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_listview">
+
+    <fragment
+        android:id="@+id/navigation_mapview"
+        android:name="com.kardabel.go4lunch.ui.mapview.MapViewFragment"
+        android:label="@string/title_mapview"
+        tools:layout="@layout/fragment_mapview" />
+
+    <fragment
+        android:id="@+id/navigation_listview"
+        android:name="com.kardabel.go4lunch.ui.listview.ListViewFragment"
+        android:label="@string/title_listview"
+        tools:layout="@layout/fragment_listview" />
+
+    <fragment
+        android:id="@+id/navigation_workmates"
+        android:name="com.kardabel.go4lunch.ui.workmates.WorkMatesFragment"
+        android:label="@string/title_workmates"
+        tools:layout="@layout/fragment_workmates" />
+</navigation>

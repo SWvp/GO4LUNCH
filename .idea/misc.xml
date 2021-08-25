@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.346875" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable/ic_launcher_background.xml" value="0.346875" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable/listview.xml" value="0.346875" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable/mapview.xml" value="0.346875" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable/tab_color.xml" value="0.346875" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/fragment_dashboard.xml" value="0.490036231884058" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/fragment_listview.xml" value="0.3307291666666667" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/fragment_mapview.xml" value="0.490036231884058" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/fragment_workmates.xml" value="0.490036231884058" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/menu/bottom_nav_menu.xml" value="0.5541666666666667" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
