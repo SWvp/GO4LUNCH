@@ -3,4 +3,12 @@
     <string name="title_mapview">Map View</string>
     <string name="title_listview">List View</string>
     <string name="title_workmates">Workmates</string>
+    <string name="title_1">YOUR LUNCH</string>
+    <string name="title_2">SETTINGS</string>
+    <string name="title_3">LOGOUT</string>
+
+    <!-- Used in NavigationDrawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
 </resources>

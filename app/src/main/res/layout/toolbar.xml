@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.MaterialToolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?attr/actionBarSize"
+    android:background="@color/orange"
+    app:titleTextColor="@color/white"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    >
+
+    <EditText
+        android:id="@+id/toolbar_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="48dp"
+        android:autofillHints="TEXT"
+        android:labelFor="@id/toolbar"
+        android:inputType="textNoSuggestions" />
+
+</com.google.android.material.appbar.MaterialToolbar>
