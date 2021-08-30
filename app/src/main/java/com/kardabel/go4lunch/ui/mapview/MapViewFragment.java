@@ -1,46 +1,41 @@
 package com.kardabel.go4lunch.ui.mapview;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.kardabel.go4lunch.databinding.FragmentMapviewBinding;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class MapViewFragment extends Fragment {
+
+public class MapViewFragment extends SupportMapFragment implements OnMapReadyCallback {
 
     private MapViewViewModel mMapViewViewModel;
-    private FragmentMapviewBinding binding;
+    private GoogleMap googleMap;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        mMapViewViewModel =
-                new ViewModelProvider(this).get(MapViewViewModel.class);
-
-        binding = FragmentMapviewBinding .inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        final TextView textView = binding.textMapview;
-        mMapViewViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
-        return root;
+    public MapViewFragment()  {
+        getMapAsync(this);
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        this.googleMap = googleMap;
+
+        mMapViewViewModel = new ViewModelProvider(this).get(MapViewViewModel.class);
+
+        mMapViewViewModel.getMapViewStatePoiMutableLiveData().observe(this, new Observer<MapViewViewState>() {
+            @Override
+            public void onChanged(MapViewViewState mapViewViewState) {
+                for (Poi poi : mapViewViewState.getPoiList()) {
+                    googleMap.addMarker(new MarkerOptions().position(new LatLng(poi.getLatitude(), poi.getLongitude())).title(poi.getPoiName()));
+                }
+            }
+        });
     }
+
+
 }
