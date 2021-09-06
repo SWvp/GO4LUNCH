@@ -19,4 +19,22 @@
     <style name="Theme.Trash.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="Theme.Trash.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <!-- STYLE SIGN-IN ACTIVITY -->
+    <style name="LoginTheme" parent="Theme.GO4LUNCH">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/red</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="colorButtonNormal">@color/teal_200</item>
+        <item name="colorControlNormal">@android:color/darker_gray</item>
+        <item name="colorControlActivated">@android:color/darker_gray</item>
+        <item name="colorControlHighlight">@android:color/darker_gray</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/darker_gray</item>
+        <item name="android:textColorSecondary">@android:color/darker_gray</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:textColorHint">@android:color/darker_gray</item>
+    </style>
+
 </resources>

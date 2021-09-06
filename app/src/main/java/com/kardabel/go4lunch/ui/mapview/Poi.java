@@ -1,29 +1,35 @@
 package com.kardabel.go4lunch.ui.mapview;
 
-/**
- * Created by stéphane Warin OCR on 26/08/2021.
- */
+import com.google.android.gms.maps.model.LatLng;
+
 public class Poi {
 
-    private double latitude;
-    private double longitude;
+
     private final String poiName;
+    private final String poiPlaceId;
+    private final String poiAddress;
+    private final LatLng poiLatLng;
 
-    public Poi(double latitude, double longitude, String poiName) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public Poi(String poiName, String poiPlaceId, String poiAddress, LatLng poiLatLng) {
         this.poiName = poiName;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
+        this.poiPlaceId = poiPlaceId;
+        this.poiAddress = poiAddress;
+        this.poiLatLng = poiLatLng;
     }
 
     public String getPoiName() {
         return poiName;
+    }
+
+    public String getPoiPlaceId() {
+        return poiPlaceId;
+    }
+
+    public String getPoiAddress() {
+        return poiAddress;
+    }
+
+    public LatLng getPoiLatLng() {
+        return poiLatLng;
     }
 }

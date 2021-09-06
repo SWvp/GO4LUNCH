@@ -4,9 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.346875" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable/connexion_button_radius.xml" value="0.3287037037037037" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable/ic_launcher_background.xml" value="0.346875" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable/interested_workmate_icon.xml" value="0.13240740740740742" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable/listview.xml" value="0.346875" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable/logout_icon.xml" value="0.1787037037037037" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable/logout_icons.xml" value="0.3712962962962963" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable/mapview.xml" value="0.346875" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/drawable/tab_color.xml" value="0.346875" />
@@ -19,6 +21,7 @@
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/fragment_mapview.xml" value="0.490036231884058" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/fragment_workmates.xml" value="0.490036231884058" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_listview.xml" value="0.27152988855116517" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_workmate.xml" value="0.16236068895643363" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_workmates.xml" value="0.25" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/navigation_header_main.xml" value="0.2692502532928065" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/toolbar.xml" value="0.2692502532928065" />
