@@ -1,10 +1,13 @@
 package com.kardabel.go4lunch;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -13,23 +16,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
-import com.kardabel.go4lunch.databinding.ActivityMainBinding;
-import com.kardabel.go4lunch.ui.mapview.MapViewFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.kardabel.go4lunch.databinding.UserInterfaceBinding;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
-    private MapViewFragment mapViewFragment;
+public class UserActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private AppBarConfiguration mAppBarConfiguration;
-    private ActivityMainBinding binding;
+    private UserInterfaceBinding binding;
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = UserInterfaceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         // 6 - Configure all views
@@ -48,6 +48,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.configureNavigationView();
 
         DrawerLayout drawer = binding.drawerLayout;
+
+        //GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
+        //if (signInAccount != null){
+        //}
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -73,24 +77,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.settings:
                 break;
             case R.id.logout:
+                FirebaseAuth.getInstance().signOut();
+                final Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
                 break;
             default:
                 break;
         }
 
         this.drawerLayout.closeDrawer(GravityCompat.START);
-
         return true;
     }
 
     // 1 - Configure Toolbar
-
     private void configureToolBar(){
         this.toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
     // 2 - Configure Drawer Layout
-
     private void configureDrawerLayout(){
         this.drawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

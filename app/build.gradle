@@ -1,6 +1,5 @@
-plugins {
-    id 'com.android.application'
-}
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdk 30
@@ -11,6 +10,7 @@ android {
         targetSdk 30
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -43,10 +43,25 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
 
+    // FIREBASE
+    implementation platform('com.google.firebase:firebase-bom:28.4.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.firebaseui:firebase-ui-auth:8.0.0'
+
+    // PERMISSIONS
+    implementation 'pub.devrel:easypermissions:3.0.0'
+
     // GOOGLE MAP SERVICES
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
-
+        // TO GET CURRENT LOCATION
     implementation 'com.google.android.gms:play-services-location:18.0.0'
+
+    // RETROFIT
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+    // CONVERTER FOR RETROFIT (GSON)
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
 
     // TESTS
     testImplementation 'junit:junit:4.+'
