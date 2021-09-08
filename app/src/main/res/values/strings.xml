@@ -11,4 +11,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <!-- Used in permission pop up -->
+    <string name="popup_title_permission_files_access">Cette application a besoin de permission pour fonctionner.</string>
+
 </resources>

@@ -6,7 +6,7 @@ import java.util.List;
 
 public class RestaurantList {
 
-    // ADD EACH RESTAURANTDETAILS IN A LIST
+    // ADD EACH RESTAURANTS DETAILS IN A LIST
 
     @SerializedName("results")
     private final List<RestaurantDetails> results;

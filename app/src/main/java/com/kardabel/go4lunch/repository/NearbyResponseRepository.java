@@ -30,15 +30,16 @@ public class NearbyResponseRepository {
             @Override
             public void onResponse(Call<RestaurantList> call, Response<RestaurantList> response) {
                 restaurantListMutableLiveData.setValue(response.body());
+
             }
 
             @Override
             public void onFailure(Call<RestaurantList> call, Throwable t) {
+                t.printStackTrace();
 
             }
         });
         return restaurantListMutableLiveData;
 
     }
-
 }

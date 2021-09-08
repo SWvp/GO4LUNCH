@@ -1,13 +1,12 @@
 package com.kardabel.go4lunch;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +24,9 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kardabel.go4lunch.databinding.UserInterfaceBinding;
 
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
+
 
 public class UserActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -34,6 +36,9 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+
+    private static final String PERMS = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final int RC_LOCATION_PERMS = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +69,24 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
+        // CHECK FOR PERMISSIONS
+        locationPermission();
+
+    }
+
+    @AfterPermissionGranted(RC_LOCATION_PERMS)
+    private void locationPermission(){
+        if (!EasyPermissions.hasPermissions(this, PERMS)) {
+            EasyPermissions.requestPermissions(this, getString(R.string.popup_title_permission_files_access), RC_LOCATION_PERMS, PERMS);
+            return;
+        }
+        Toast.makeText(this, "Permission was already granted", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     @Override

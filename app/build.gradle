@@ -47,6 +47,8 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.4.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.firebaseui:firebase-ui-auth:8.0.0'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-firestore:23.0.3'
 
     // PERMISSIONS
     implementation 'pub.devrel:easypermissions:3.0.0'
@@ -61,7 +63,6 @@ dependencies {
 
     // CONVERTER FOR RETROFIT (GSON)
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.google.firebase:firebase-auth:19.2.0'
 
     // TESTS
     testImplementation 'junit:junit:4.+'
