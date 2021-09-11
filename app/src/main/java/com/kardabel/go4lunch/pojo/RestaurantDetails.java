@@ -39,7 +39,6 @@ public class RestaurantDetails {
     private final int totalRatings;
 
 
-
     public RestaurantDetails(String placeId, String restaurantName, String restaurantNumber, String restaurantAddress, List<Photo> restaurantPhotos, Geometry restaurantGeometry, OpeningHours openingHours, String website, double rating, int totalRatings) {
         this.placeId = placeId;
         this.restaurantName = restaurantName;
@@ -51,11 +50,11 @@ public class RestaurantDetails {
         this.website = website;
         this.rating = rating;
         this.totalRatings = totalRatings;
+
     }
 
+
     // GETTERS
-
-
     public String getPlaceId() { return placeId; }
 
     public String getRestaurantName() { return restaurantName; }

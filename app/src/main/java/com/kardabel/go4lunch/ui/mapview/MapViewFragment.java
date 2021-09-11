@@ -16,13 +16,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.kardabel.go4lunch.repository.LocationRepository;
+import com.kardabel.go4lunch.di.ListViewViewModelFactory;
+
 
 
 public class MapViewFragment extends SupportMapFragment implements OnMapReadyCallback {
 
     private MapViewViewModel mMapViewViewModel;
-    private LocationRepository locationRepository = new LocationRepository();
     private GoogleMap googleMap;
 
     public MapViewFragment()  {
@@ -38,7 +38,12 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
                 ActivityCompat.checkSelfPermission(requireContext(),
                         Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-            mMapViewViewModel = new ViewModelProvider(this).get(MapViewViewModel.class);
+            //mMapViewViewModel = new ViewModelProvider(this).get(MapViewViewModel.class);
+
+            ListViewViewModelFactory listViewModelFactory = ListViewViewModelFactory.getInstance();
+
+            mMapViewViewModel =
+                    new ViewModelProvider(this, listViewModelFactory).get(MapViewViewModel.class);
 
             mMapViewViewModel.getMapViewStatePoiMutableLiveData().observe(this, new Observer<MapViewViewState>() {
                 @Override
