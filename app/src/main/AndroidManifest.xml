@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kardabel.go4lunch">
 
-    // PERMISSIONS
+    <!--PERMISSIONS-->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -17,7 +17,7 @@
         android:name=".MainApplication"
         android:theme="@style/Theme.GO4LUNCH">
 
-        // GOOGLE MAP API
+    <!--GOOGLE MAP API-->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8"/>

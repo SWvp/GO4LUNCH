@@ -2,6 +2,7 @@ package com.kardabel.go4lunch;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,8 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -23,29 +27,38 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kardabel.go4lunch.databinding.UserInterfaceBinding;
-
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
+import com.kardabel.go4lunch.di.ListViewViewModelFactory;
 
 
-public class UserActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class UserActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
     private UserInterfaceBinding binding;
+
+    private UserActivityViewModel userActivityViewModel;
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
-    private static final String PERMS = Manifest.permission.ACCESS_FINE_LOCATION;
-    private static final int RC_LOCATION_PERMS = 100;
+    //private static final String PERMS = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final int LOCATION_PERMISSION_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSION_CODE);
+
+        //userActivityViewModel = new ViewModelProvider(this).get(UserActivityViewModel.class);
+
 
         binding = UserInterfaceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        ListViewViewModelFactory listViewModelFactory = ListViewViewModelFactory.getInstance();
+
+        userActivityViewModel =
+                new ViewModelProvider(this, listViewModelFactory).get(UserActivityViewModel.class);
 
         // 6 - Configure all views
         this.configureToolBar();
@@ -69,24 +82,26 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        // CHECK FOR PERMISSIONS
-        locationPermission();
+
+
 
     }
 
-    @AfterPermissionGranted(RC_LOCATION_PERMS)
-    private void locationPermission(){
-        if (!EasyPermissions.hasPermissions(this, PERMS)) {
-            EasyPermissions.requestPermissions(this, getString(R.string.popup_title_permission_files_access), RC_LOCATION_PERMS, PERMS);
-            return;
+    public void checkPermission(String permission, int requestCode) {
+        if (ContextCompat.checkSelfPermission(UserActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
+
+            // Requesting the permission
+            ActivityCompat.requestPermissions(UserActivity.this, new String[]{permission}, requestCode);
+        } else {
+            Toast.makeText(UserActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
         }
-        Toast.makeText(this, "Permission was already granted", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+        userActivityViewModel.CheckPermission(permissions, requestCode, grantResults);
+
     }
 
     @Override
@@ -94,7 +109,7 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
         // 4 - Handle Navigation Item Click
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.your_lunch:
                 break;
             case R.id.settings:
@@ -114,12 +129,13 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // 1 - Configure Toolbar
-    private void configureToolBar(){
+    private void configureToolBar() {
         this.toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
+
     // 2 - Configure Drawer Layout
-    private void configureDrawerLayout(){
+    private void configureDrawerLayout() {
         this.drawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
@@ -127,7 +143,7 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
     }
     // 3 - Configure NavigationView
 
-    private void configureNavigationView(){
+    private void configureNavigationView() {
         this.navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -144,5 +160,10 @@ public class UserActivity extends AppCompatActivity implements NavigationView.On
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }
