@@ -22,18 +22,16 @@ import java.util.List;
 public class MapViewViewModel extends ViewModel {
 
     private LiveData<MapViewViewState> mapViewStatePoiLiveData;
-    //private LocationRepository locationRepository;
-    //private NearbyResponseRepository nearbyResponseRepository;
     private Location userLocation;
 
     public MapViewViewModel(@NonNull Application application, @Nullable LocationRepository locationRepository, @Nullable NearbyResponseRepository nearbyResponseRepository) {
-
         super();
 
-        // Transform a location in a request on web via nearby places
+        // TRANSFORM A LOCATION IN A REQUEST ON WEB WITH NEARBY PLACES
         LiveData<NearbyResults> nearbyResultsLiveData = Transformations.switchMap(locationRepository.getLocationLiveData(), new Function<Location, LiveData<NearbyResults>>() {
                     @Override
                     public LiveData<NearbyResults> apply(Location input) {
+                        // CREATE NEARBY READABLE LOCATION
                         userLocation = input;
                         String locationAsText = input.getLatitude() + "," + input.getLongitude();
                         return nearbyResponseRepository.getRestaurantListLiveData("AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8", "restaurant", locationAsText, "1000");
@@ -41,7 +39,7 @@ public class MapViewViewModel extends ViewModel {
                 }
         );
 
-        // Transform the restaurant list in a mapViewState (it will expose the mapViewState to the view)
+        // UPDATE LIVEDATA WITH MAP FUNCTION
         mapViewStatePoiLiveData = Transformations.map(nearbyResultsLiveData, new Function<NearbyResults, MapViewViewState>() {
             @Override
             public MapViewViewState apply(NearbyResults input) {
@@ -50,11 +48,10 @@ public class MapViewViewModel extends ViewModel {
             }
         });
     }
-
+    // MAKE A LIST OF POI INFORMATION WITH EACH RESULT
     public MapViewViewState map(@NonNull NearbyResults nearbyResults){
         List<Poi> poiList = new ArrayList<>();
 
-        // MAKE A LIST WITH EACH RESULT
         for (int i = 0; i < nearbyResults.getResults().size(); i++){
                 String poiName = nearbyResults.getResults().get(i).getRestaurantName();
                 String poiPlaceId = nearbyResults.getResults().get(i).getPlaceId();
@@ -63,17 +60,15 @@ public class MapViewViewModel extends ViewModel {
                                             nearbyResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
 
                 poiList.add(new Poi(poiName, poiPlaceId, poiAddress, latLng));
+
         }
-
-
-
         return new MapViewViewState(poiList, userLocation);
 
     }
 
+    // LIVEDATA OBSERVED BY MAPVIEWFRAGMENT
     public LiveData<MapViewViewState> getMapViewStatePoiMutableLiveData() {
         return mapViewStatePoiLiveData;
 
     }
-
 }

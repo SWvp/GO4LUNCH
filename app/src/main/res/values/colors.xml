@@ -10,4 +10,5 @@
     <color name="red">#C41C00</color>
     <color name="orange">#FFFF8800</color>
     <color name="orange_variant">#FF5100</color>
+    <color name="rating_star_gold">#FFDD00</color>
 </resources>

@@ -1,6 +1,7 @@
 package com.kardabel.go4lunch.ui.listview;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,22 +16,18 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.kardabel.go4lunch.UserActivityViewModel;
 import com.kardabel.go4lunch.databinding.FragmentListviewBinding;
 import com.kardabel.go4lunch.di.ListViewViewModelFactory;
-
-import java.util.List;
+import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 
 public class ListViewFragment extends Fragment {
 
-    private ListViewViewModel mListViewViewModel;
+    private ListViewViewModel listViewViewModel;
     private FragmentListviewBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         binding = FragmentListviewBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
         return view;
     }
 
@@ -38,28 +35,34 @@ public class ListViewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Context context = view.getContext();
-        ListViewRecyclerViewAdapter adapter = new ListViewRecyclerViewAdapter();
+
+        RestaurantItemRecyclerViewAdapter adapter = new RestaurantItemRecyclerViewAdapter();
+
         binding.restaurantListRecyclerView.setAdapter(adapter);
         binding.restaurantListRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         binding.restaurantListRecyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL,false));
 
-
-
-        //mListViewViewModel = new ViewModelProvider(this, ListViewViewModelFactory.getInstance()).get(com.kardabel.go4lunch.ui.listview.ListViewViewModel.class);
-
-      //  mListViewViewModel =
-       //         new ViewModelProvider(this).get(ListViewViewModel.class);
-
+        // INJECTION OF LISTVIEWMODEL
         ListViewViewModelFactory listViewModelFactory = ListViewViewModelFactory.getInstance();
-
-        mListViewViewModel =
+        listViewViewModel =
                 new ViewModelProvider(this, listViewModelFactory).get(ListViewViewModel.class);
 
-
-        mListViewViewModel.getListViewViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<ListViewViewState>() {
+        // CONFIGURE RECYCLERVIEW
+        listViewViewModel.getListViewViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<RestaurantsWrapperViewState>() {
             @Override
-            public void onChanged(ListViewViewState listViewViewState) {
-                adapter.setRestaurantListData(listViewViewState.getItemRestaurant());
+            public void onChanged(RestaurantsWrapperViewState restaurantsWrapperViewState) {
+                adapter.setRestaurantListData(restaurantsWrapperViewState.getItemRestaurant());
+
+            }
+        });
+
+        // ON ITEM CLICK, GO TO DETAILS
+        adapter.setOnItemClickListener(new RestaurantItemRecyclerViewAdapter.OnRestaurantItemClickListener() {
+            @Override
+            public void onRestaurantItemClick(RestaurantItemViewState restaurantItemViewState) {
+                Intent intent = new Intent(requireActivity(), RestaurantDetailsActivity.class);
+                intent.putExtra(RestaurantDetailsActivity.RESTAURANT_ID, restaurantItemViewState.getPlaceId());
+                startActivity(intent);
 
             }
         });
@@ -69,5 +72,6 @@ public class ListViewFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+
     }
 }

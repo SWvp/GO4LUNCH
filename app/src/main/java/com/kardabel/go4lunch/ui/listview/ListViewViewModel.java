@@ -6,9 +6,7 @@ import android.location.Location;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.arch.core.util.Function;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -22,82 +20,52 @@ import java.util.List;
 
 public class ListViewViewModel extends ViewModel {
 
-    private final MediatorLiveData<List<ListViewRestaurantViewState>> listViewViewStateMediatorLiveData = new MediatorLiveData<>();
-
-    private LiveData<ListViewViewState> listViewViewStateLiveData;
-
-    //private LocationRepository locationRepository = new LocationRepository();
-    //private NearbyResponseRepository mNearbyResponseRepository ;
+    private LiveData<RestaurantsWrapperViewState> listViewViewStateLiveData;
     private Location userLocation;
 
     public ListViewViewModel(@NonNull Application application, @Nullable LocationRepository locationRepository, @Nullable NearbyResponseRepository nearbyResponseRepository) {
-
         super();
 
-
-        // Transform a location in a request on web via nearby places
+        // TRANSFORM A LOCATION IN A REQUEST ON WEB WITH NEARBY PLACES
+        assert locationRepository != null;
         LiveData<NearbyResults> nearbyResultsLiveData = Transformations.switchMap(locationRepository.getLocationLiveData(), new Function<Location, LiveData<NearbyResults>>() {
                     @Override
                     public LiveData<NearbyResults> apply(Location input) {
                         userLocation = input;
                         String locationAsText = input.getLatitude() + "," + input.getLongitude();
+                        assert nearbyResponseRepository != null;
                         return nearbyResponseRepository.getRestaurantListLiveData("AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8", "restaurant", locationAsText, "1000");
 
                     }
                 }
         );
 
-        listViewViewStateLiveData = Transformations.map(nearbyResultsLiveData, new Function<NearbyResults, ListViewViewState>() {
+        // UPDATE LIVEDATA WITH MAP FUNCTION
+        listViewViewStateLiveData = Transformations.map(nearbyResultsLiveData, new Function<NearbyResults, RestaurantsWrapperViewState>() {
             @Override
-            public ListViewViewState apply(NearbyResults input) {
+            public RestaurantsWrapperViewState apply(NearbyResults input) {
                 return map(input);
             }
         });
     }
 
-    private void combine(){ }
-
-
-
-    private ListViewViewState map(NearbyResults nearbyResults){
-        List<ListViewRestaurantViewState> restaurantList = new ArrayList<>();
+    // CREATE A LIST OF RESTAURANTS ITEMS WITH NEARBY RESULTS
+    private RestaurantsWrapperViewState map(NearbyResults nearbyResults){
+        List<RestaurantItemViewState> restaurantList = new ArrayList<>();
 
         for (int i = 0; i < nearbyResults.getResults().size(); i++){
             String restaurantName = nearbyResults.getResults().get(i).getRestaurantName();
             String addressRestaurant = nearbyResults.getResults().get(i).getRestaurantAddress();
             String photoRestaurant = photoReference(nearbyResults.getResults().get(i).getRestaurantPhotos());
-            String distanceRestaurant = distance();
+            String distanceRestaurant = distance(nearbyResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(), nearbyResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
             String openingHoursRestaurant = convertOpeningHours();
             Double ratingRestaurant = convertRatingStars(nearbyResults.getResults().get(i).getRating());
             String placeIdRestaurant = nearbyResults.getResults().get(i).getPlaceId();
 
-            restaurantList.add(new ListViewRestaurantViewState(restaurantName, addressRestaurant, photoRestaurant, distanceRestaurant, openingHoursRestaurant, ratingRestaurant, placeIdRestaurant));
+            restaurantList.add(new RestaurantItemViewState(restaurantName, addressRestaurant, photoRestaurant, distanceRestaurant, openingHoursRestaurant, ratingRestaurant, placeIdRestaurant));
 
         }
-
-        return new ListViewViewState(restaurantList);
-
-
-//     for (RestaurantDetails restaurantDetails : restaurantDetailsList)
-//         result.add(new ListViewViewState(
-//                 restaurantDetails.getRestaurantName(),
-//                 restaurantDetails.getRestaurantAddress(),
-//                 photoReference(restaurantDetails.getRestaurantPhotos()),
-//                 distance(),
-//                 convertOpeningHours(),
-//                 convertRatingStars(restaurantDetails.getRating()),
-//                 restaurantDetails.getPlaceId()
-
-//         ));
-//     return result;
-
-    }
-
-
-
-    // CONVERT RATING STARS (5 -> 3)
-    private double convertRatingStars(double rating){
-        return 0;
+        return new RestaurantsWrapperViewState(restaurantList);
 
     }
 
@@ -118,18 +86,40 @@ public class ListViewViewModel extends ViewModel {
     // CONVERT OPENING HOURS
     private String convertOpeningHours(){
         String noHoursDetails = "Opening hours unavailable !";
-
         return noHoursDetails;
+
     }
 
     // GET LOCATION DISTANCE FROM USER TO RESTAURANT
-    private String distance(){
-        int distance = 0;
+    private String distance(double lat, double lng){
+        Location restaurantLocation = new Location("restaurant location");
+        restaurantLocation.setLatitude(lat);
+        restaurantLocation.setLongitude(lng);
+        float distance =userLocation.distanceTo(restaurantLocation);
+        return (int) distance + "m";
 
-        return distance + "m";
     }
 
-    public LiveData<ListViewViewState> getListViewViewStateLiveData() {
+    // CONVERT RATING STARS (5 -> 3)
+    private double convertRatingStars(double rating) {
+
+        long convertedRating = Math.round(rating * 3 / 5);
+
+        if (convertedRating <= 0) {
+            return 0;
+        } else if (convertedRating < 1.5) {
+            return 1;
+        } else if (convertedRating >= 1.5 && convertedRating <= 2.5) {
+            return 2;
+        } else {
+            return 3;
+        }
+
+    }
+
+    // LIVEDATA OBSERVED BY LISTVIEWFRAGMENT
+    public LiveData<RestaurantsWrapperViewState> getListViewViewStateLiveData() {
         return listViewViewStateLiveData;
+
     }
 }

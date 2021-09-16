@@ -73,36 +73,20 @@
             app:layout_constraintTop_toBottomOf="@id/item_listview_distance"
             app:layout_constraintEnd_toStartOf="@id/item_listview_restaurant_picture"/>
 
-        <ImageView
-            android:id="@+id/item_listview_star_1"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="4dp"
-            android:src="@drawable/listview_star"
-            app:layout_constraintEnd_toEndOf="@id/item_listview_interested_workmates"
+        <RatingBar
+            android:id="@+id/rating_bar"
+            style = "?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:numStars="3"
+            android:stepSize="1"
+            android:progressTint="@color/rating_star_gold"
+            android:progressBackgroundTint="@color/fui_transparent"
+            android:isIndicator="true"
+            app:layout_constraintEnd_toStartOf="@id/item_listview_restaurant_picture"
             app:layout_constraintTop_toBottomOf="@id/item_listview_interested_workmates"
-            app:layout_constraintBottom_toBottomOf="@id/item_listview_restaurant_picture"/>
-
-        <ImageView
-            android:id="@+id/item_listview_star_2"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="4dp"
-            android:src="@drawable/listview_star"
-            app:layout_constraintEnd_toStartOf="@id/item_listview_star_1"
-            app:layout_constraintTop_toBottomOf="@id/item_listview_interested_workmates"
-            app:layout_constraintBottom_toBottomOf="@id/item_listview_restaurant_picture"/>
-
-        <ImageView
-            android:id="@+id/item_listview_star_3"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginHorizontal="4dp"
-            android:src="@drawable/listview_star"
-            app:layout_constraintEnd_toStartOf="@id/item_listview_star_2"
-            app:layout_constraintTop_toBottomOf="@id/item_listview_interested_workmates"
-            app:layout_constraintBottom_toBottomOf="@id/item_listview_restaurant_picture"/>
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <ImageView
             android:id="@+id/item_listview_restaurant_picture"

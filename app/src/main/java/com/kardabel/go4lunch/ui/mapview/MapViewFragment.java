@@ -25,9 +25,7 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
     private MapViewViewModel mMapViewViewModel;
     private GoogleMap googleMap;
 
-    public MapViewFragment()  {
-        getMapAsync(this);
-    }
+    public MapViewFragment()  { getMapAsync(this); }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -38,12 +36,11 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
                 ActivityCompat.checkSelfPermission(requireContext(),
                         Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-            //mMapViewViewModel = new ViewModelProvider(this).get(MapViewViewModel.class);
-
+            // CONFIGURE MAPVIEWMODEL
             ListViewViewModelFactory listViewModelFactory = ListViewViewModelFactory.getInstance();
-
             mMapViewViewModel =
                     new ViewModelProvider(this, listViewModelFactory).get(MapViewViewModel.class);
+
 
             mMapViewViewModel.getMapViewStatePoiMutableLiveData().observe(this, new Observer<MapViewViewState>() {
                 @Override
