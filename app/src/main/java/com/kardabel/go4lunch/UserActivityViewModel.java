@@ -34,6 +34,11 @@ public class UserActivityViewModel extends ViewModel {
 
             }
         }
+    }
+
+    public void PermissionAlreadyGranted(){
+
+        locationRepository.StartLocationRequest();
 
     }
 }

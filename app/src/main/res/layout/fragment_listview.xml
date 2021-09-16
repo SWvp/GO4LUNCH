@@ -10,4 +10,4 @@
     android:fitsSystemWindows="true"
     android:clipToPadding="false"
     tools:context=".ui.listview.ListViewFragment"
-    tools:listitem="@layout/item_listview" />
+    tools:listitem="@layout/item_restaurant" />

@@ -24,14 +24,18 @@
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/fragment_mapview.xml" value="0.490036231884058" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/fragment_workmates.xml" value="0.490036231884058" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_listview.xml" value="0.27152988855116517" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_restaurant.xml" value="0.5" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_workmate.xml" value="0.16236068895643363" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_workmates.xml" value="0.25" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/main_activity.xml" value="0.2341485507246377" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/map_fragment.xml" value="0.4578125" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/navigation_header_main.xml" value="0.2692502532928065" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/restaurant_details.xml" value="0.5" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/toolbar.xml" value="0.2692502532928065" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/user_interface.xml" value="0.26296296296296295" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/menu/bottom_nav_menu.xml" value="0.5541666666666667" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/menu/nav_drawer_menu.xml" value="0.33" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/menu/search_menu.xml" value="0.13043478260869565" />
       </map>
     </option>
   </component>

@@ -4,9 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-/**
- * Created by stéphane Warin OCR on 02/09/2021.
- */
 public class Photo {
 
     @SerializedName("width")

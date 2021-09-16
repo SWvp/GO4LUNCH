@@ -7,11 +7,15 @@
     <string name="title_2">SETTINGS</string>
     <string name="title_3">LOGOUT</string>
 
-    <!-- Used in NavigationDrawer -->
+    <!-- USED IN NAVIGATIONDRAWER -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <!-- Used in permission pop up -->
+    <!-- USED IN PERMISSION POP UP -->
     <string name="popup_title_permission_files_access">Cette application a besoin de permission pour fonctionner.</string>
+
+    <!-- USED IN SEARCH MENU -->
+    <string name="search_hint">Search restaurants</string>
+    <string name="search_field">Search</string>
 
 </resources>

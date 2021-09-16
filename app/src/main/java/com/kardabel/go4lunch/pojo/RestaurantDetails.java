@@ -4,7 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class RestaurantDetails {
+public class
+RestaurantDetails {
 
     // TEMPLATE CLASS FOR RESTAURANT DETAILS DATA WE ARE GOING TO PARSE
 
@@ -74,4 +75,5 @@ public class RestaurantDetails {
     public double getRating() { return rating; }
 
     public int getTotalRatings() { return totalRatings; }
+
 }
