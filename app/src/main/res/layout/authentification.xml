@@ -13,13 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:background="@drawable/connexion_button_radius"
         android:padding="20dp"
-        android:text="Connexion"
+        android:text="Sign up with Google"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:theme="@style/Theme.GO4LUNCH"/>
+        android:theme="@style/LoginTheme"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

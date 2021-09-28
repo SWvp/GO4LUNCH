@@ -10,12 +10,12 @@ public class OpeningHours {
     private final Boolean openNow;
 
     @SerializedName("periods")
-    private final List<OpeningHoursPeriod> periods;
+    private final List<Periods> periods;
 
     @SerializedName("weekday_text")
     private final List<String> weekdayText;
 
-    public OpeningHours(Boolean openNow, List<OpeningHoursPeriod> periods, List<String> weekdayText) {
+    public OpeningHours(Boolean openNow, List<Periods> periods, List<String> weekdayText) {
         this.openNow = openNow;
         this.periods = periods;
         this.weekdayText = weekdayText;
@@ -23,7 +23,7 @@ public class OpeningHours {
 
     public Boolean getOpenNow() { return openNow; }
 
-    public List<OpeningHoursPeriod> getPeriods() { return periods; }
+    public List<Periods> getPeriods() { return periods; }
 
     public List<String> getWeekdayText() { return weekdayText; }
 

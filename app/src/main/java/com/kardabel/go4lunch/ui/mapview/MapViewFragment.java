@@ -1,6 +1,8 @@
 package com.kardabel.go4lunch.ui.mapview;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
@@ -13,14 +15,19 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.di.ListViewViewModelFactory;
+import com.kardabel.go4lunch.pojo.RestaurantSearch;
+import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
+import com.kardabel.go4lunch.util.SvgToBitmapConverter;
 
 
-
-public class MapViewFragment extends SupportMapFragment implements OnMapReadyCallback {
+public class MapViewFragment extends SupportMapFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private MapViewViewModel mMapViewViewModel;
     private GoogleMap googleMap;
@@ -30,6 +37,9 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         this.googleMap = googleMap;
+
+        // CUSTOM MAP WITHOUT POI WE DON'T NEED
+        googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
         if (ActivityCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
@@ -41,8 +51,8 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
             mMapViewViewModel =
                     new ViewModelProvider(this, listViewModelFactory).get(MapViewViewModel.class);
 
-
             mMapViewViewModel.getMapViewStatePoiMutableLiveData().observe(this, new Observer<MapViewViewState>() {
+                @SuppressLint("MissingPermission")
                 @Override
                 public void onChanged(MapViewViewState mapViewViewState) {
 
@@ -56,7 +66,7 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
                     // ZOOM IN, ANIMATE CAMERA
                     googleMap.animateCamera(CameraUpdateFactory.zoomIn());
 
-                    // Construct a CameraPosition focusing on Mountain View and animate the camera to that position.
+                    // CAMERA POSITION
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(userLocation)      // Sets the center of the map to Mountain View
                             .zoom(17)                   // Sets the zoom
@@ -67,11 +77,33 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
 
                     // SET EVERY POI ON THE MAP
                     for (Poi poi : mapViewViewState.getPoiList()) {
-                        googleMap.addMarker(new MarkerOptions().position(new LatLng(poi.getPoiLatLng().latitude, poi.getPoiLatLng().longitude)).title(poi.getPoiName()));
+                        Marker marker = googleMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(poi.getPoiLatLng().latitude, poi.getPoiLatLng().longitude))
+                                .title(poi.getPoiName())
+                                .icon(BitmapDescriptorFactory.fromBitmap(SvgToBitmapConverter.getBitmapFromVectorDrawable(requireContext(), R.drawable.restaurant_poi_icon_red))));
+
+                        // SET TAG TO RETRIEVE THE MARKER IN onMarkerClick METHOD
+                        marker.setTag(poi.getPoiPlaceId());
+
                     }
                     Log.d("pipo", "onChanged() called with: mapViewViewState = [" + mapViewViewState + "]");
                 }
             });
+
+            // SET A LISTENER FOR MARKER CLICK
+            googleMap.setOnMarkerClickListener(this);
+
         }
+    }
+
+    @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        String place_id = (String) marker.getTag();
+
+        Intent intent = new Intent(requireActivity(), RestaurantDetailsActivity.class);
+        intent.putExtra(RestaurantDetailsActivity.RESTAURANT_ID, place_id);
+        startActivity(intent);
+        return false;
+
     }
 }
