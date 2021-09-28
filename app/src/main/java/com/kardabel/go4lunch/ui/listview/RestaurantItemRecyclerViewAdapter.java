@@ -1,10 +1,8 @@
 package com.kardabel.go4lunch.ui.listview;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Filter;
 import android.widget.Filterable;
 
@@ -12,10 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.kardabel.go4lunch.databinding.ItemRestaurantBinding;
-import com.kardabel.go4lunch.pojo.RestaurantDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;

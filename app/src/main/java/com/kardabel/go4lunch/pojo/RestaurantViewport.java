@@ -18,7 +18,7 @@ public class RestaurantViewport {
         this.mRestaurantLatLngLiteralSouthwest = restaurantLatLngLiteralSouthwest;
     }
 
-    public RestaurantLatLngLiteral getRestaurantLatngLiteralNortheast() { return mRestaurantLatLngLiteralNortheast; }
+    public RestaurantLatLngLiteral getRestaurantLatLngLiteralNortheast() { return mRestaurantLatLngLiteralNortheast; }
 
-    public RestaurantLatLngLiteral getRestaurantLatngLiteralSouthwest() { return mRestaurantLatLngLiteralSouthwest; }
+    public RestaurantLatLngLiteral getRestaurantLatLngLiteralSouthwest() { return mRestaurantLatLngLiteralSouthwest; }
 }

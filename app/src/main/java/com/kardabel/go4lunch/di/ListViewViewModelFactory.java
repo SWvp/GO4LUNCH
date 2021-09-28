@@ -7,18 +7,19 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.kardabel.go4lunch.MainApplication;
-import com.kardabel.go4lunch.UserActivityViewModel;
-import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.repository.NearbyResponseRepository;
+import com.kardabel.go4lunch.MainActivityViewModel;
+import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
 import com.kardabel.go4lunch.ui.listview.ListViewViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewViewModel;
+import com.kardabel.go4lunch.usecase.NearbyResultsUseCase;
 
 public class ListViewViewModelFactory implements ViewModelProvider.Factory {
 
         private static ListViewViewModelFactory factory;
         private final Application application;
-        private final LocationRepository locationRepository;
-        private final NearbyResponseRepository nearbyResponseRepository;
+        //private final LocationRepository locationRepository;
+        //private final NearbyResponseRepository nearbyResponseRepository;
+        private final NearbyResultsUseCase nearbyResultsUseCase;
 
         public static ListViewViewModelFactory getInstance() {
             if (factory == null) {
@@ -35,8 +36,9 @@ public class ListViewViewModelFactory implements ViewModelProvider.Factory {
 
         public ListViewViewModelFactory() {
             this.application = MainApplication.getApplication();
-            this.locationRepository = new LocationRepository();
-            this.nearbyResponseRepository = new NearbyResponseRepository();
+            //this.locationRepository = new LocationRepository();
+            //this.nearbyResponseRepository = new NearbyResponseRepository();
+            this.nearbyResultsUseCase = new NearbyResultsUseCase();
 
         }
 
@@ -46,12 +48,14 @@ public class ListViewViewModelFactory implements ViewModelProvider.Factory {
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(ListViewViewModel.class)) {
-                return (T) new ListViewViewModel(application, locationRepository, nearbyResponseRepository);
+                return (T) new ListViewViewModel(nearbyResultsUseCase);
 
             } else if (modelClass.isAssignableFrom(MapViewViewModel.class)) {
-                return (T) new MapViewViewModel(application, locationRepository, nearbyResponseRepository);
-            } else if (modelClass.isAssignableFrom(UserActivityViewModel.class)) {
-                return (T) new UserActivityViewModel(application, locationRepository);
+                return (T) new MapViewViewModel(nearbyResultsUseCase);
+            } else if (modelClass.isAssignableFrom(MainActivityViewModel.class)) {
+                return (T) new MainActivityViewModel(application,nearbyResultsUseCase);
+            } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
+                return (T) new RestaurantDetailsViewModel(nearbyResultsUseCase);
             }
 
             throw new IllegalArgumentException("Unknown ViewModel class");

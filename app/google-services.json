@@ -1,5 +1,4 @@
-{
-  "project_info": {
+{ "project_info": {
     "project_number": "66904785880",
     "project_id": "go4lunch-324108",
     "storage_bucket": "go4lunch-324108.appspot.com"
@@ -45,3 +44,6 @@
   ],
   "configuration_version": "1"
 }
+
+
+

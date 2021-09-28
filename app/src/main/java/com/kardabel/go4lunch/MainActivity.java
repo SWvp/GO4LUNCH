@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+
 import android.Manifest;
 import android.app.SearchManager;
 import android.content.Context;
@@ -24,6 +26,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -36,12 +39,13 @@ import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.di.ListViewViewModelFactory;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView
+        .OnNavigationItemSelectedListener {
 
-    private AppBarConfiguration mAppBarConfiguration;
+    private AppBarConfiguration appBarConfiguration;
     private MainActivityBinding binding;
 
-    private UserActivityViewModel userActivityViewModel;
+    private MainActivityViewModel mainActivityViewModel;
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -53,18 +57,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // BIND THE LAYOUT
         binding = MainActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
+        // CONFIGURE VIEWMODEL
         ListViewViewModelFactory listViewModelFactory = ListViewViewModelFactory.getInstance();
+        mainActivityViewModel =
+                new ViewModelProvider(this, listViewModelFactory)
+                        .get(MainActivityViewModel.class);
 
-        userActivityViewModel =
-                new ViewModelProvider(this, listViewModelFactory).get(UserActivityViewModel.class);
-
-        checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSION_CODE);
-
-        // 6 - Configure all views
+        // CONFIGURE ALL VIEWS
         this.configureToolBar();
         this.configureDrawerLayout();
         this.configureNavigationView();
@@ -74,34 +77,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
+        appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_mapview, R.id.navigation_listview, R.id.navigation_workmates)
                 .setOpenableLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavController navController = Navigation.findNavController(this,
+                R.id.nav_host_fragment_activity_main);
+        NavigationUI.setupActionBarWithNavController(this, navController,
+                appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-    }
+        // RECEIVE SINGLE LIVEDATA EVENT FROM VM TO KNOW WHICH ACTION IS REQUIRED
+        mainActivityViewModel.getActionSingleLiveEvent().observe(this, action -> {
+            switch (action){
+                case PERMISSION_GRANTED:
+                    Toast.makeText(MainActivity.this, "Permission already granted",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                case PERMISSION_ASKED:
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+                    break;
 
-    public void checkPermission(String permission, int requestCode) {
-        if (ContextCompat.checkSelfPermission(MainActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
-
-            // Requesting the permission
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
-
-        } else {
-            userActivityViewModel.PermissionAlreadyGranted();
-            Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
-
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        userActivityViewModel.CheckPermission(permissions, requestCode, grantResults);
-
+            }
+        });
     }
 
     @Override
@@ -126,26 +125,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         this.drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+
     }
 
     // 1 - Configure Toolbar
     private void configureToolBar() {
         this.toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
     }
 
     // 2 - Configure Drawer Layout
     private void configureDrawerLayout() {
         this.drawerLayout = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout,
+                toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-    }
-    // 3 - Configure NavigationView
 
+    }
+
+    // 3 - Configure NavigationView
     private void configureNavigationView() {
         this.navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     @Override
@@ -171,13 +175,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+        NavController navController = Navigation.findNavController(this,
+                R.id.nav_host_fragment_activity_main);
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mainActivityViewModel.checkPermission();
     }
+
 }

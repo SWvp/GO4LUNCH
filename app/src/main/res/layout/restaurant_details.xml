@@ -15,7 +15,6 @@
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
-            app:title="restaurant_avatar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
@@ -46,7 +45,7 @@
         android:baselineAlignBottom="false"
         android:clickable="true"
         android:background="@color/white"
-        android:src="@drawable/detail_fab"
+        android:src="@drawable/fab_detail"
         app:fabSize="normal"
         android:layout_marginRight="16dp"
         android:layout_gravity="end|bottom"/>

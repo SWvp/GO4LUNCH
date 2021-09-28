@@ -10,7 +10,7 @@ public class RetrofitBuilder {
 
     private RetrofitBuilder(){
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://maps.googleapis.com/maps/api/place/nearbysearch/")
+                .baseUrl("https://maps.googleapis.com")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         // INSTANCE FOR INTERFACE
