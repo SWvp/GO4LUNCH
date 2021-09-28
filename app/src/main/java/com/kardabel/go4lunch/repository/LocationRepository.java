@@ -21,8 +21,8 @@ import com.kardabel.go4lunch.MainApplication;
 
 public class LocationRepository {
 
-    public static final int DEFAULT_UPDATE_INTERVAL = 30_000;
-    public static final int FASTEST_UPDATE_INTERVAL = 10_000;
+    public static final int DEFAULT_UPDATE_INTERVAL = 50000;
+    public static final int FASTEST_UPDATE_INTERVAL = 20000;
     private MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
     private LocationCallback callback;
 
@@ -36,20 +36,28 @@ public class LocationRepository {
                     Location location = locationResult.getLastLocation();
                     if (location != null) {
                         locationMutableLiveData.setValue(location);
+
                     }
                 }
             };
+            LocationServices.getFusedLocationProviderClient(MainApplication.getApplication()).requestLocationUpdates(
+                    LocationRequest.create()
+                            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                            .setInterval(DEFAULT_UPDATE_INTERVAL)
+                            .setFastestInterval(FASTEST_UPDATE_INTERVAL)
+                            .setSmallestDisplacement(50),
+                    callback,
+                    Looper.getMainLooper()
+            );
         }
-        LocationServices.getFusedLocationProviderClient(MainApplication.getApplication()).requestLocationUpdates(
-                LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setInterval(DEFAULT_UPDATE_INTERVAL).setFastestInterval(FASTEST_UPDATE_INTERVAL),
-                callback,
-                Looper.getMainLooper()
-        );
     }
 
     public void StopLocationRequest(){
+        if(callback != null) {
+            LocationServices.getFusedLocationProviderClient(MainApplication.getApplication()).removeLocationUpdates(callback);
+            callback = null;
+        }
 
-        LocationServices.getFusedLocationProviderClient(MainApplication.getApplication()).removeLocationUpdates(callback);
     }
 
 
