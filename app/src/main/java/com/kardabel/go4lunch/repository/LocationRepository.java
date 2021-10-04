@@ -24,8 +24,8 @@ public class LocationRepository {
     public static final int DEFAULT_UPDATE_INTERVAL = 50000;
     public static final int FASTEST_UPDATE_INTERVAL = 20000;
     private MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<Location> locationMutableLiveDatabis = new MutableLiveData<>();
     private LocationCallback callback;
-
 
     @SuppressLint("MissingPermission")
     public void StartLocationRequest() {
@@ -48,6 +48,7 @@ public class LocationRepository {
                             .setSmallestDisplacement(50),
                     callback,
                     Looper.getMainLooper()
+
             );
         }
     }
@@ -56,12 +57,14 @@ public class LocationRepository {
         if(callback != null) {
             LocationServices.getFusedLocationProviderClient(MainApplication.getApplication()).removeLocationUpdates(callback);
             callback = null;
+
         }
-
     }
-
-
     public LiveData<Location> getLocationLiveData() {
         return locationMutableLiveData;
     }
+    public LiveData<Location> getLocationMutableLiveDatabis() {
+        return locationMutableLiveData;
+    }
+
 }

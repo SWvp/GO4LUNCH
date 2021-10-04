@@ -2,11 +2,9 @@ package com.kardabel.go4lunch;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-import android.Manifest;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,10 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -36,17 +32,16 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
-import com.kardabel.go4lunch.di.ListViewViewModelFactory;
+import com.kardabel.go4lunch.di.ViewModelFactory;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView
         .OnNavigationItemSelectedListener {
 
-    private AppBarConfiguration appBarConfiguration;
-    private MainActivityBinding binding;
-
     private MainActivityViewModel mainActivityViewModel;
 
+    private AppBarConfiguration appBarConfiguration;
+    private MainActivityBinding binding;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -62,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         setContentView(binding.getRoot());
 
         // CONFIGURE VIEWMODEL
-        ListViewViewModelFactory listViewModelFactory = ListViewViewModelFactory.getInstance();
+        ViewModelFactory listViewModelFactory = ViewModelFactory.getInstance();
         mainActivityViewModel =
                 new ViewModelProvider(this, listViewModelFactory)
                         .get(MainActivityViewModel.class);
@@ -182,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 
     }
 
+    // WHEN VIEW IS ON RESUME? CHECK THE PERMISSION STATE IN VIEWMODEL
     @Override
     protected void onResume() {
         super.onResume();
