@@ -12,14 +12,13 @@ public class MapViewViewState {
     private final Location userLocation;
 
     public MapViewViewState(List<Poi> poiList, Location userLocation) {
-
         this.poiList = poiList;
         this.userLocation = userLocation;
+
     }
-
-
 
     public List<Poi> getPoiList() { return poiList; }
 
     public Location getUserLocation() { return userLocation; }
+
 }

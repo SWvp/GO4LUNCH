@@ -21,8 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.kardabel.go4lunch.R;
-import com.kardabel.go4lunch.di.ListViewViewModelFactory;
-import com.kardabel.go4lunch.pojo.RestaurantSearch;
+import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 import com.kardabel.go4lunch.util.SvgToBitmapConverter;
 
@@ -31,6 +30,7 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
 
     private MapViewViewModel mMapViewViewModel;
     private GoogleMap googleMap;
+    private int zoomFocus = 15;
 
     public MapViewFragment()  { getMapAsync(this); }
 
@@ -47,7 +47,7 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
                         Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
             // CONFIGURE MAPVIEWMODEL
-            ListViewViewModelFactory listViewModelFactory = ListViewViewModelFactory.getInstance();
+            ViewModelFactory listViewModelFactory = ViewModelFactory.getInstance();
             mMapViewViewModel =
                     new ViewModelProvider(this, listViewModelFactory).get(MapViewViewModel.class);
 
@@ -57,8 +57,10 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
                 public void onChanged(MapViewViewState mapViewViewState) {
 
                     // MOVE THE CAMERA TO THE USER LOCATION
-                    LatLng userLocation = new LatLng(mapViewViewState.getUserLocation().getLatitude(), mapViewViewState.getUserLocation().getLongitude());
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
+                    LatLng userLocation = new LatLng(mapViewViewState.getUserLocation().getLatitude(),
+                            mapViewViewState.getUserLocation().getLongitude());
+
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, zoomFocus));
 
                     // DISPLAY BLUE DOT FOR USER LOCATION
                     googleMap.setMyLocationEnabled(true);
@@ -80,7 +82,11 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
                         Marker marker = googleMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(poi.getPoiLatLng().latitude, poi.getPoiLatLng().longitude))
                                 .title(poi.getPoiName())
-                                .icon(BitmapDescriptorFactory.fromBitmap(SvgToBitmapConverter.getBitmapFromVectorDrawable(requireContext(), R.drawable.restaurant_poi_icon_red))));
+                                .snippet(poi.getPoiAddress())
+                                .icon(BitmapDescriptorFactory
+                                        .fromBitmap(SvgToBitmapConverter
+                                                .getBitmapFromVectorDrawable(requireContext(),
+                                        R.drawable.restaurant_poi_icon_red))));
 
                         // SET TAG TO RETRIEVE THE MARKER IN onMarkerClick METHOD
                         marker.setTag(poi.getPoiPlaceId());
@@ -98,11 +104,8 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
-        String place_id = (String) marker.getTag();
-
-        Intent intent = new Intent(requireActivity(), RestaurantDetailsActivity.class);
-        intent.putExtra(RestaurantDetailsActivity.RESTAURANT_ID, place_id);
-        startActivity(intent);
+        String placeId = (String) marker.getTag();
+        startActivity(RestaurantDetailsActivity.navigate(requireContext(), placeId));
         return false;
 
     }
