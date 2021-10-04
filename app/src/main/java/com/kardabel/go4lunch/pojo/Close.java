@@ -6,9 +6,11 @@ import com.google.gson.annotations.SerializedName;
 public class Close {
 
     @SerializedName("day")
+    @Expose
     private Integer day;
 
     @SerializedName("time")
+    @Expose
     private String time;
 
     public Close(Integer day, String time) {

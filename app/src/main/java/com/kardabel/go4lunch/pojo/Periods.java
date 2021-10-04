@@ -1,13 +1,16 @@
 package com.kardabel.go4lunch.pojo;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Periods {
 
     @SerializedName("close")
+    @Expose
     private Close close;
 
     @SerializedName("open")
+    @Expose
     private Open open;
 
     public Periods(Close close, Open open) {

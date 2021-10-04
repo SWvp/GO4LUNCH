@@ -1,24 +1,20 @@
 package com.kardabel.go4lunch.pojo;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class PlaceDetailsResult {
 
-    @SerializedName("place_id")
-    private final String detailsPlaceId;
+    @SerializedName("result")
+       private final RestaurantDetails result;
 
-    @SerializedName("opening_hours")
-    private final OpeningHours detailsOpeningHours;
 
-    public PlaceDetailsResult(String detailsPlaceId, OpeningHours detailsOpeningHours) {
-        this.detailsPlaceId = detailsPlaceId;
-        this.detailsOpeningHours = detailsOpeningHours;
-    }
+    public PlaceDetailsResult(RestaurantDetails result) { this.result = result; }
 
-    public String getDetailsPlaceId() { return detailsPlaceId; }
+    public RestaurantDetails getDetailsResult() { return result; }
 
-    public OpeningHours getDetailsOpeningHours() { return detailsOpeningHours; }
+
 
 }

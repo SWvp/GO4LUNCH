@@ -1,5 +1,6 @@
 package com.kardabel.go4lunch.pojo;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -8,9 +9,11 @@ import com.google.gson.annotations.SerializedName;
 public class RestaurantViewport {
 
     @SerializedName("northeast")
+    @Expose
     private final RestaurantLatLngLiteral mRestaurantLatLngLiteralNortheast;
 
     @SerializedName("southwest")
+    @Expose
     private final RestaurantLatLngLiteral mRestaurantLatLngLiteralSouthwest;
 
     public RestaurantViewport(RestaurantLatLngLiteral restaurantLatLngLiteralNortheast, RestaurantLatLngLiteral restaurantLatLngLiteralSouthwest) {

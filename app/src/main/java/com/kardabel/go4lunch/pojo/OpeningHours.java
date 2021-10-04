@@ -1,5 +1,6 @@
 package com.kardabel.go4lunch.pojo;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -7,12 +8,15 @@ import java.util.List;
 public class OpeningHours {
 
     @SerializedName("open_now")
+    @Expose
     private final Boolean openNow;
 
     @SerializedName("periods")
+    @Expose
     private final List<Periods> periods;
 
     @SerializedName("weekday_text")
+    @Expose
     private final List<String> weekdayText;
 
     public OpeningHours(Boolean openNow, List<Periods> periods, List<String> weekdayText) {
