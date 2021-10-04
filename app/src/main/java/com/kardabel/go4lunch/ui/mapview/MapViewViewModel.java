@@ -4,15 +4,14 @@ import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.kardabel.go4lunch.pojo.PlaceSearchResults;
+import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.usecase.PlaceSearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,24 +21,24 @@ public class MapViewViewModel extends ViewModel {
     private LiveData<MapViewViewState> mapViewStatePoiLiveData;
     private Location userLocation;
 
-    public MapViewViewModel(@Nullable LocationRepository locationRepository, @Nullable PlaceSearchResultsUseCase placeSearchResultsUseCase){
+    public MapViewViewModel(@Nullable LocationRepository locationRepository, @Nullable NearbySearchResultsUseCase nearbySearchResultsUseCase){
 
-        mapViewStatePoiLiveData = Transformations.map(placeSearchResultsUseCase.getPlaceSearchResultsLiveData(), input -> {
+        mapViewStatePoiLiveData = Transformations.map(nearbySearchResultsUseCase.getNearbySearchResultsLiveData(), input -> {
             userLocation = locationRepository.getLocationLiveData().getValue();
             return map(input);
 
         });
     }
     // MAKE A LIST OF POI INFORMATION WITH EACH RESULT
-    public MapViewViewState map(@NonNull PlaceSearchResults placeSearchResults){
+    public MapViewViewState map(@NonNull NearbySearchResults nearbySearchResults){
         List<Poi> poiList = new ArrayList<>();
 
-        for (int i = 0; i < placeSearchResults.getResults().size(); i++){
-                String poiName = placeSearchResults.getResults().get(i).getRestaurantName();
-                String poiPlaceId = placeSearchResults.getResults().get(i).getPlaceId();
-                String poiAddress = placeSearchResults.getResults().get(i).getRestaurantAddress();
-                LatLng latLng = new LatLng(placeSearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
-                                            placeSearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
+        for (int i = 0; i < nearbySearchResults.getResults().size(); i++){
+                String poiName = nearbySearchResults.getResults().get(i).getRestaurantName();
+                String poiPlaceId = nearbySearchResults.getResults().get(i).getPlaceId();
+                String poiAddress = nearbySearchResults.getResults().get(i).getRestaurantAddress();
+                LatLng latLng = new LatLng(nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
+                                            nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
 
                 poiList.add(new Poi(
                         poiName,

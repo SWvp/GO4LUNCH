@@ -6,12 +6,10 @@ import android.app.Application;
 import android.content.pm.PackageManager;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.usecase.PlaceSearchResultsUseCase;
 import com.kardabel.go4lunch.util.SingleLiveEvent;
 
 public class MainActivityViewModel extends ViewModel {

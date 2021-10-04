@@ -10,13 +10,13 @@ import com.kardabel.go4lunch.MainApplication;
 import com.kardabel.go4lunch.MainActivityViewModel;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.PlaceDetailsResponseRepository;
-import com.kardabel.go4lunch.repository.PlaceSearchResponseRepository;
+import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
 import com.kardabel.go4lunch.ui.listview.ListViewViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewViewModel;
 import com.kardabel.go4lunch.usecase.PlaceDetailsResultsUseCase;
-import com.kardabel.go4lunch.usecase.PlaceSearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -26,9 +26,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private static ViewModelFactory factory;
     private final Application application;
     private final LocationRepository locationRepository;
-    private final PlaceSearchResponseRepository placeSearchResponseRepository;
+    private final NearbySearchResponseRepository mNearbySearchResponseRepository;
     private final PlaceDetailsResponseRepository placeDetailsResponseRepository;
-    private final PlaceSearchResultsUseCase placeSearchResultsUseCase;
+    private final NearbySearchResultsUseCase mNearbySearchResultsUseCase;
     private final PlaceDetailsResultsUseCase placeDetailsResultsUseCase;
 
     public static ViewModelFactory getInstance() {
@@ -52,10 +52,10 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         GoogleMapsApi googleMapsApi = retrofit.create(GoogleMapsApi.class);
         this.application = MainApplication.getApplication();
         this.locationRepository = new LocationRepository();
-        this.placeSearchResponseRepository = new PlaceSearchResponseRepository(googleMapsApi);
+        this.mNearbySearchResponseRepository = new NearbySearchResponseRepository(googleMapsApi);
         this.placeDetailsResponseRepository = new PlaceDetailsResponseRepository(googleMapsApi);
-        this.placeSearchResultsUseCase = new PlaceSearchResultsUseCase(locationRepository, placeSearchResponseRepository);
-        this.placeDetailsResultsUseCase = new PlaceDetailsResultsUseCase(locationRepository, placeSearchResponseRepository, placeDetailsResponseRepository);
+        this.mNearbySearchResultsUseCase = new NearbySearchResultsUseCase(locationRepository, mNearbySearchResponseRepository);
+        this.placeDetailsResultsUseCase = new PlaceDetailsResultsUseCase(locationRepository, mNearbySearchResponseRepository, placeDetailsResponseRepository);
 
     }
 
@@ -65,13 +65,13 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(ListViewViewModel.class)) {
-            return (T) new ListViewViewModel(locationRepository, placeSearchResultsUseCase, placeDetailsResultsUseCase);
+            return (T) new ListViewViewModel(locationRepository, mNearbySearchResultsUseCase, placeDetailsResultsUseCase);
         } else if (modelClass.isAssignableFrom(MapViewViewModel.class)) {
-            return (T) new MapViewViewModel(locationRepository, placeSearchResultsUseCase);
+            return (T) new MapViewViewModel(locationRepository, mNearbySearchResultsUseCase);
         } else if (modelClass.isAssignableFrom(MainActivityViewModel.class)) {
             return (T) new MainActivityViewModel(application, locationRepository);
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
-            return (T) new RestaurantDetailsViewModel(placeSearchResultsUseCase);
+            return (T) new RestaurantDetailsViewModel(mNearbySearchResultsUseCase);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
 

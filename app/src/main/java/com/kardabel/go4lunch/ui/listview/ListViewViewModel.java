@@ -4,62 +4,45 @@ import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.PlaceDetailsResult;
-import com.kardabel.go4lunch.pojo.PlaceSearchResults;
-import com.kardabel.go4lunch.pojo.RestaurantDetails;
+import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.usecase.PlaceDetailsResultsUseCase;
-import com.kardabel.go4lunch.usecase.PlaceSearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListViewViewModel extends ViewModel {
 
-    private LiveData<RestaurantsWrapperViewState> listViewViewStateLiveData;
     private MediatorLiveData<RestaurantsWrapperViewState> restaurantsWrapperViewStateMutableLiveData = new MediatorLiveData<>();
     private Location userLocation;
-    private PlaceSearchResultsUseCase mPlaceSearchResultsUseCase;
+    private NearbySearchResultsUseCase mNearbySearchResultsUseCase;
     private PlaceDetailsResultsUseCase mPlaceDetailsResultsUseCase;
 
-    public ListViewViewModel(@NonNull LocationRepository locationRepository, @NonNull PlaceSearchResultsUseCase placeSearchResultsUseCase, @NonNull PlaceDetailsResultsUseCase placeDetailsResultsUseCase){
+    public ListViewViewModel(@NonNull LocationRepository locationRepository, @NonNull NearbySearchResultsUseCase nearbySearchResultsUseCase, @NonNull PlaceDetailsResultsUseCase placeDetailsResultsUseCase){
 
-        this.mPlaceSearchResultsUseCase = placeSearchResultsUseCase;
+        this.mNearbySearchResultsUseCase = nearbySearchResultsUseCase;
         this.mPlaceDetailsResultsUseCase = placeDetailsResultsUseCase;
 
-
-
-
- //     // UPDATE LIVEDATA WITH MAP FUNCTION
- //     listViewViewStateLiveData = Transformations.map(placeSearchResultsUseCase.getPlaceSearchResultsLiveData(), new Function<PlaceSearchResults, RestaurantsWrapperViewState>() {
- //         @Override
- //         public RestaurantsWrapperViewState apply(PlaceSearchResults input) {
- //             userLocation = locationRepository.getLocationLiveData().getValue();
-
- //             return map(input);
-
- //         }
- //     });
-
         LiveData<List<PlaceDetailsResult>> placeDetailsResult = mPlaceDetailsResultsUseCase.getPlaceDetailsResultLiveData();
-        LiveData<PlaceSearchResults> placeSearchResultsLiveData = mPlaceSearchResultsUseCase.getPlaceSearchResultsLiveData();
+        LiveData<NearbySearchResults> placeSearchResultsLiveData = mNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
 
+        // OBSERVE USE CASES
 
+        // TODO: observe Location repo to retrieve position needed for distance calculation
 
-        restaurantsWrapperViewStateMutableLiveData.addSource(placeSearchResultsLiveData, new Observer<PlaceSearchResults>() {
+        restaurantsWrapperViewStateMutableLiveData.addSource(placeSearchResultsLiveData, new Observer<NearbySearchResults>() {
             @Override
-            public void onChanged(PlaceSearchResults placeSearchResults) {
-                combine(placeSearchResults, placeDetailsResult.getValue());
+            public void onChanged(NearbySearchResults nearbySearchResults) {
+                combine(nearbySearchResults, placeDetailsResult.getValue());
 
             }
         });
@@ -71,33 +54,51 @@ public class ListViewViewModel extends ViewModel {
 
             }
         });
-
-
-
-
-
-
     }
 
-    private void combine(@Nullable PlaceSearchResults placeSearchResults,
+    private void combine(@Nullable NearbySearchResults nearbySearchResults,
                          @Nullable List<PlaceDetailsResult> placeDetailsResults) {
 
-        if(placeDetailsResults == null && placeSearchResults != null){
-              restaurantsWrapperViewStateMutableLiveData.setValue(map(placeSearchResults));
+        // NEED TO RESOLVE REPO ISSUES
+        placeDetailsResults = null;
 
-        }else if (placeDetailsResults != null && placeSearchResults != null){
-            restaurantsWrapperViewStateMutableLiveData.setValue(mapWithDetails(placeSearchResults, placeDetailsResults));
+        if(placeDetailsResults == null && nearbySearchResults != null){
+              restaurantsWrapperViewStateMutableLiveData.setValue(map(nearbySearchResults));
 
+        }else if (placeDetailsResults != null && nearbySearchResults != null){
+            restaurantsWrapperViewStateMutableLiveData.setValue(mapWithDetails(nearbySearchResults, placeDetailsResults));
 
         }
+    }
 
+
+    // CREATE A LIST OF RESTAURANTS ITEMS WITH NEARBY RESULTS //
+
+    // 1.NEARBY SEARCH DATA
+    private RestaurantsWrapperViewState map(NearbySearchResults nearbySearchResults){
+        List<RestaurantItemViewState> restaurantList = new ArrayList<>();
+
+        for (int i = 0; i < nearbySearchResults.getResults().size(); i++){
+            String restaurantName = nearbySearchResults.getResults().get(i).getRestaurantName();
+            String addressRestaurant = nearbySearchResults.getResults().get(i).getRestaurantAddress();
+            String photoRestaurant = photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos());
+            String distanceRestaurant = distance(nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(), nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
+            String openingHoursRestaurant = OpeningHoursUnavailable();
+            Double ratingRestaurant = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
+            String placeIdRestaurant = nearbySearchResults.getResults().get(i).getPlaceId();
+
+            restaurantList.add(new RestaurantItemViewState(restaurantName, addressRestaurant, photoRestaurant, distanceRestaurant, openingHoursRestaurant, ratingRestaurant, placeIdRestaurant));
+
+        }
+        return new RestaurantsWrapperViewState(restaurantList);
 
     }
 
-    private RestaurantsWrapperViewState mapWithDetails(PlaceSearchResults placeSearchResults, List<PlaceDetailsResult> placeDetailsResults) {
+    // 2.PLACE DETAILS DATA
+    private RestaurantsWrapperViewState mapWithDetails(NearbySearchResults nearbySearchResults, List<PlaceDetailsResult> placeDetailsResults) {
         List<RestaurantItemViewState> restaurantList = new ArrayList<>();
 
-        for (RestaurantSearch place : placeSearchResults.getResults()) {
+        for (RestaurantSearch place : nearbySearchResults.getResults()) {
             for (int i = 0; i < placeDetailsResults.size(); i++) {
                 if (placeDetailsResults.get(i).getDetailsResult().getPlaceId().equals(place.getPlaceId())) {
                     String restaurantName = place.getRestaurantName();
@@ -110,28 +111,9 @@ public class ListViewViewModel extends ViewModel {
 
                     restaurantList.add(new RestaurantItemViewState(restaurantName, addressRestaurant, photoRestaurant, distanceRestaurant, openingHoursRestaurant, ratingRestaurant, placeIdRestaurant));
                     break;
+
                 }
             }
-        }
-        return new RestaurantsWrapperViewState(restaurantList);
-    }
-
-
-    // CREATE A LIST OF RESTAURANTS ITEMS WITH NEARBY RESULTS
-    private RestaurantsWrapperViewState map(PlaceSearchResults placeSearchResults){
-        List<RestaurantItemViewState> restaurantList = new ArrayList<>();
-
-        for (int i = 0; i < placeSearchResults.getResults().size(); i++){
-            String restaurantName = placeSearchResults.getResults().get(i).getRestaurantName();
-            String addressRestaurant = placeSearchResults.getResults().get(i).getRestaurantAddress();
-            String photoRestaurant = photoReference(placeSearchResults.getResults().get(i).getRestaurantPhotos());
-            String distanceRestaurant = distance(placeSearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(), placeSearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
-            String openingHoursRestaurant = OpeningHoursUnavailable();
-            Double ratingRestaurant = convertRatingStars(placeSearchResults.getResults().get(i).getRating());
-            String placeIdRestaurant = placeSearchResults.getResults().get(i).getPlaceId();
-
-            restaurantList.add(new RestaurantItemViewState(restaurantName, addressRestaurant, photoRestaurant, distanceRestaurant, openingHoursRestaurant, ratingRestaurant, placeIdRestaurant));
-
         }
         return new RestaurantsWrapperViewState(restaurantList);
 
@@ -153,7 +135,7 @@ public class ListViewViewModel extends ViewModel {
 
     // CONVERT OPENING HOURS
     private String OpeningHoursUnavailable(){
-        String noHoursDetails = "Opening hours unavailable !";
+        String noHoursDetails = "Opening hours unavailable";
         return noHoursDetails;
 
     }
@@ -171,10 +153,10 @@ public class ListViewViewModel extends ViewModel {
         Location restaurantLocation = new Location("restaurant location");
         restaurantLocation.setLatitude(lat);
         restaurantLocation.setLongitude(lng);
-        float distance =userLocation.distanceTo(restaurantLocation);
+        float distance = userLocation.distanceTo(restaurantLocation);
         return (int) distance + "m";
         } else {
-            return "";
+            return "distance unavailable";
 
         }
     }

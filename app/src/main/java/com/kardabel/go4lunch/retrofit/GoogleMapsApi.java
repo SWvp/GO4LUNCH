@@ -1,8 +1,7 @@
 package com.kardabel.go4lunch.retrofit;
 
 import com.kardabel.go4lunch.pojo.PlaceDetailsResult;
-import com.kardabel.go4lunch.pojo.PlaceSearchResults;
-import com.kardabel.go4lunch.pojo.RestaurantDetails;
+import com.kardabel.go4lunch.pojo.NearbySearchResults;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -11,7 +10,7 @@ import retrofit2.http.Query;
 public interface GoogleMapsApi {
 
     @GET("maps/api/place/nearbysearch/json")
-    Call<PlaceSearchResults> searchRestaurant(
+    Call<NearbySearchResults> searchRestaurant(
             @Query("key") String key,
             @Query("type") String type,
             @Query("location") String location,
