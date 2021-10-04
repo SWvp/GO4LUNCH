@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kardabel.go4lunch.databinding.FragmentListviewBinding;
-import com.kardabel.go4lunch.di.ListViewViewModelFactory;
+import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 
 public class ListViewFragment extends Fragment {
@@ -43,7 +43,7 @@ public class ListViewFragment extends Fragment {
         binding.restaurantListRecyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL,false));
 
         // INJECTION OF LISTVIEWMODEL
-        ListViewViewModelFactory listViewModelFactory = ListViewViewModelFactory.getInstance();
+        ViewModelFactory listViewModelFactory = ViewModelFactory.getInstance();
         listViewViewModel =
                 new ViewModelProvider(this, listViewModelFactory).get(ListViewViewModel.class);
 
@@ -60,9 +60,8 @@ public class ListViewFragment extends Fragment {
         adapter.setOnItemClickListener(new RestaurantItemRecyclerViewAdapter.OnRestaurantItemClickListener() {
             @Override
             public void onRestaurantItemClick(RestaurantItemViewState restaurantItemViewState) {
-                Intent intent = new Intent(requireActivity(), RestaurantDetailsActivity.class);
-                intent.putExtra(RestaurantDetailsActivity.RESTAURANT_ID, restaurantItemViewState.getPlaceId());
-                startActivity(intent);
+
+                startActivity(RestaurantDetailsActivity.navigate(requireContext(), restaurantItemViewState.getPlaceId()));
 
             }
         });
