@@ -1,5 +1,6 @@
 package com.kardabel.go4lunch.ui.detailsview;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -9,19 +10,24 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
-import com.kardabel.go4lunch.R;
-import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.databinding.RestaurantDetailsBinding;
-import com.kardabel.go4lunch.di.ListViewViewModelFactory;
-import com.kardabel.go4lunch.ui.listview.RestaurantItemViewState;
-import com.kardabel.go4lunch.ui.mapview.MapViewViewModel;
+import com.kardabel.go4lunch.di.ViewModelFactory;
 
 public class RestaurantDetailsActivity extends AppCompatActivity {
 
-    public static final String RESTAURANT_ID = "RESTAURANT_ID";
+    private static final String RESTAURANT_ID = "RESTAURANT_ID";
+
 
     private RestaurantDetailsBinding binding;
     private RestaurantDetailsViewModel restaurantDetailsViewModel;
+
+    public static Intent navigate(Context context, String placeId){
+        Intent intent = new Intent(context, RestaurantDetailsActivity.class);
+        intent.putExtra(RestaurantDetailsActivity.RESTAURANT_ID, placeId);
+        return intent;
+    }
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,7 +36,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // CONFIGURE MAPVIEWMODEL
-        ListViewViewModelFactory listViewModelFactory = ListViewViewModelFactory.getInstance();
+        ViewModelFactory listViewModelFactory = ViewModelFactory.getInstance();
         restaurantDetailsViewModel =
                 new ViewModelProvider(this, listViewModelFactory).get(RestaurantDetailsViewModel.class);
 

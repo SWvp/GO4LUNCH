@@ -1,6 +1,5 @@
 package com.kardabel.go4lunch.ui.detailsview;
 
-import android.location.Location;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.arch.core.util.Function;
@@ -10,7 +9,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.pojo.PlaceSearchResults;
 import com.kardabel.go4lunch.pojo.Photo;
-import com.kardabel.go4lunch.usecase.NearbyResultsUseCase;
+import com.kardabel.go4lunch.usecase.PlaceSearchResultsUseCase;
 
 import java.util.List;
 
@@ -21,11 +20,16 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private LiveData<RestaurantDetailsViewState> restaurantDetailsViewStateLiveData;
     private RestaurantDetailsViewState result;
 
-    public RestaurantDetailsViewModel(@Nullable NearbyResultsUseCase nearbyResultsUseCase){
+    public RestaurantDetailsViewModel(@Nullable PlaceSearchResultsUseCase placeSearchResultsUseCase){
 
         // UPDATE LIVEDATA WITH MAP FUNCTION
         //listViewViewStateLiveData = Transformations.map(nearbyResultsLiveData, input -> map(input));
-        restaurantDetailsViewStateLiveData = Transformations.map(nearbyResultsUseCase.getPlaceSearchResultsLiveData(), input -> map(input));
+        restaurantDetailsViewStateLiveData = Transformations.map(placeSearchResultsUseCase.getPlaceSearchResultsLiveData(), new Function<PlaceSearchResults, RestaurantDetailsViewState>() {
+            @Override
+            public RestaurantDetailsViewState apply(PlaceSearchResults input) {
+                return RestaurantDetailsViewModel.this.map(input);
+            }
+        });
 
 
     }
@@ -39,8 +43,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
                         placeSearchResults.getResults().get(i).getRestaurantName(),
                         placeSearchResults.getResults().get(i).getRestaurantAddress(),
                         photoReference(placeSearchResults.getResults().get(i).getRestaurantPhotos()),
-                        placeSearchResults.getResults().get(i).getRestaurantNumber(),
-                        placeSearchResults.getResults().get(i).getWebsite()
+                        "23 48 23 48",
+                        "www.ouioui.com"
 
                 );
             }
