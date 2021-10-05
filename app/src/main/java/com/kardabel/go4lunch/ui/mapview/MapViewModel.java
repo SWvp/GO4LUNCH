@@ -16,12 +16,12 @@ import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapViewViewModel extends ViewModel {
+public class MapViewModel extends ViewModel {
 
-    private LiveData<MapViewViewState> mapViewStatePoiLiveData;
+    private final LiveData<MapViewState> mapViewStatePoiLiveData;
     private Location userLocation;
 
-    public MapViewViewModel(@Nullable LocationRepository locationRepository, @Nullable NearbySearchResultsUseCase nearbySearchResultsUseCase){
+    public MapViewModel(@Nullable LocationRepository locationRepository, @Nullable NearbySearchResultsUseCase nearbySearchResultsUseCase){
 
         mapViewStatePoiLiveData = Transformations.map(nearbySearchResultsUseCase.getNearbySearchResultsLiveData(), input -> {
             userLocation = locationRepository.getLocationLiveData().getValue();
@@ -30,7 +30,7 @@ public class MapViewViewModel extends ViewModel {
         });
     }
     // MAKE A LIST OF POI INFORMATION WITH EACH RESULT
-    public MapViewViewState map(@NonNull NearbySearchResults nearbySearchResults){
+    public MapViewState map(@NonNull NearbySearchResults nearbySearchResults){
         List<Poi> poiList = new ArrayList<>();
 
         for (int i = 0; i < nearbySearchResults.getResults().size(); i++){
@@ -47,12 +47,12 @@ public class MapViewViewModel extends ViewModel {
                         latLng));
 
         }
-        return new MapViewViewState(poiList, userLocation);
+        return new MapViewState(poiList, userLocation);
 
     }
 
-    // LIVEDATA OBSERVED BY MAPVIEWFRAGMENT
-    public LiveData<MapViewViewState> getMapViewStatePoiMutableLiveData() {
+    // LIVEDATA OBSERVED BY MAP FRAGMENT
+    public LiveData<MapViewState> getMapViewStateLiveData() {
         return mapViewStatePoiLiveData;
 
     }

@@ -2,7 +2,6 @@ package com.kardabel.go4lunch.ui.mapview;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
@@ -26,13 +25,13 @@ import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 import com.kardabel.go4lunch.util.SvgToBitmapConverter;
 
 
-public class MapViewFragment extends SupportMapFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class MapFragment extends SupportMapFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
-    private MapViewViewModel mMapViewViewModel;
+    private MapViewModel mMapViewModel;
     private GoogleMap googleMap;
     private int zoomFocus = 15;
 
-    public MapViewFragment()  { getMapAsync(this); }
+    public MapFragment()  { getMapAsync(this); }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -48,17 +47,17 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
 
             // CONFIGURE MAPVIEWMODEL
             ViewModelFactory listViewModelFactory = ViewModelFactory.getInstance();
-            mMapViewViewModel =
-                    new ViewModelProvider(this, listViewModelFactory).get(MapViewViewModel.class);
+            mMapViewModel =
+                    new ViewModelProvider(this, listViewModelFactory).get(MapViewModel.class);
 
-            mMapViewViewModel.getMapViewStatePoiMutableLiveData().observe(this, new Observer<MapViewViewState>() {
+            mMapViewModel.getMapViewStateLiveData().observe(this, new Observer<MapViewState>() {
                 @SuppressLint("MissingPermission")
                 @Override
-                public void onChanged(MapViewViewState mapViewViewState) {
+                public void onChanged(MapViewState mapViewState) {
 
                     // MOVE THE CAMERA TO THE USER LOCATION
-                    LatLng userLocation = new LatLng(mapViewViewState.getUserLocation().getLatitude(),
-                            mapViewViewState.getUserLocation().getLongitude());
+                    LatLng userLocation = new LatLng(mapViewState.getUserLocation().getLatitude(),
+                            mapViewState.getUserLocation().getLongitude());
 
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, zoomFocus));
 
@@ -78,7 +77,7 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
                     // SET EVERY POI ON THE MAP
-                    for (Poi poi : mapViewViewState.getPoiList()) {
+                    for (Poi poi : mapViewState.getPoiList()) {
                         Marker marker = googleMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(poi.getPoiLatLng().latitude, poi.getPoiLatLng().longitude))
                                 .title(poi.getPoiName())
@@ -92,7 +91,7 @@ public class MapViewFragment extends SupportMapFragment implements OnMapReadyCal
                         marker.setTag(poi.getPoiPlaceId());
 
                     }
-                    Log.d("pipo", "onChanged() called with: mapViewViewState = [" + mapViewViewState + "]");
+                    Log.d("pipo", "onChanged() called with: mapViewViewState = [" + mapViewState + "]");
                 }
             });
 
