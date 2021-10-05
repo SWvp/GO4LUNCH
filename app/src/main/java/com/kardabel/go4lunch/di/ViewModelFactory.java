@@ -14,7 +14,7 @@ import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
 import com.kardabel.go4lunch.ui.listview.ListViewViewModel;
-import com.kardabel.go4lunch.ui.mapview.MapViewViewModel;
+import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.usecase.PlaceDetailsResultsUseCase;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 
@@ -66,8 +66,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(ListViewViewModel.class)) {
             return (T) new ListViewViewModel(locationRepository, mNearbySearchResultsUseCase, placeDetailsResultsUseCase);
-        } else if (modelClass.isAssignableFrom(MapViewViewModel.class)) {
-            return (T) new MapViewViewModel(locationRepository, mNearbySearchResultsUseCase);
+        } else if (modelClass.isAssignableFrom(MapViewModel.class)) {
+            return (T) new MapViewModel(locationRepository, mNearbySearchResultsUseCase);
         } else if (modelClass.isAssignableFrom(MainActivityViewModel.class)) {
             return (T) new MainActivityViewModel(application, locationRepository);
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
