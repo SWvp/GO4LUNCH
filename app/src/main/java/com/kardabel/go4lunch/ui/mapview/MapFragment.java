@@ -29,7 +29,6 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
 
     private MapViewModel mMapViewModel;
     private GoogleMap googleMap;
-    private int zoomFocus = 15;
 
     public MapFragment()  { getMapAsync(this); }
 
@@ -56,10 +55,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
                 public void onChanged(MapViewState mapViewState) {
 
                     // MOVE THE CAMERA TO THE USER LOCATION
-                    LatLng userLocation = new LatLng(mapViewState.getUserLocation().getLatitude(),
-                            mapViewState.getUserLocation().getLongitude());
-
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, zoomFocus));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapViewState.getLatLng(), mapViewState.getZoom()));
 
                     // DISPLAY BLUE DOT FOR USER LOCATION
                     googleMap.setMyLocationEnabled(true);
@@ -68,18 +64,19 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
                     googleMap.animateCamera(CameraUpdateFactory.zoomIn());
 
                     // CAMERA POSITION
-                    CameraPosition cameraPosition = new CameraPosition.Builder()
-                            .target(userLocation)      // Sets the center of the map to Mountain View
-                            .zoom(17)                   // Sets the zoom
-                            .bearing(90)                // Sets the orientation of the camera to east
-                            .tilt(30)                   // Sets the tilt of the camera to 30 degrees
-                            .build();                   // Creates a CameraPosition from the builder
-                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    // TODO STEPHANE STILL NECESSARY ?
+//                    CameraPosition cameraPosition = new CameraPosition.Builder()
+//                            .target(userLocation)      // Sets the center of the map to Mountain View
+//                            .zoom(17)                   // Sets the zoom
+//                            .bearing(90)                // Sets the orientation of the camera to east
+//                            .tilt(30)                   // Sets the tilt of the camera to 30 degrees
+//                            .build();                   // Creates a CameraPosition from the builder
+//                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
                     // SET EVERY POI ON THE MAP
                     for (Poi poi : mapViewState.getPoiList()) {
                         Marker marker = googleMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(poi.getPoiLatLng().latitude, poi.getPoiLatLng().longitude))
+                                .position(poi.getPoiLatLng())
                                 .title(poi.getPoiName())
                                 .snippet(poi.getPoiAddress())
                                 .icon(BitmapDescriptorFactory

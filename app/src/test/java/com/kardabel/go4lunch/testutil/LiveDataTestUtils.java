@@ -29,4 +29,16 @@ public class LiveDataTestUtils {
         return (T) data[0];
 
     }
+
+    public static<T> void observeForTesting(LiveData<T> liveData, OnObservedListener<T> block) {
+        liveData.observeForever(ignored -> {});
+
+        block.onObserved(liveData.getValue());
+    }
+
+    public interface OnObservedListener<T> {
+
+        void onObserved(T liveData);
+
+    }
 }
