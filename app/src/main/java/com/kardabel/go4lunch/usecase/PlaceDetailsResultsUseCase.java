@@ -5,15 +5,13 @@ import android.location.Location;
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.kardabel.go4lunch.pojo.PlaceDetailsResult;
-import com.kardabel.go4lunch.pojo.PlaceSearchResults;
-import com.kardabel.go4lunch.pojo.RestaurantDetails;
+import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.PlaceDetailsResponseRepository;
-import com.kardabel.go4lunch.repository.PlaceSearchResponseRepository;
+import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +20,14 @@ public class PlaceDetailsResultsUseCase {
 
     private LiveData<List<PlaceDetailsResult>> placeDetails;
     private List<PlaceDetailsResult> mPlaceDetailsResults = new ArrayList<>();
-    private LiveData<PlaceSearchResults> mPlaceSearchResultsLiveData;
-    public LiveData<PlaceSearchResults> placeSearchResultsLiveData;
+    private LiveData<NearbySearchResults> mPlaceSearchResultsLiveData;
+    public LiveData<NearbySearchResults> placeSearchResultsLiveData;
     private LiveData<String> mStringMediatorLiveData = new MediatorLiveData<>();
     private String locationString;
-    private PlaceSearchResponseRepository mPlaceSearchResponseRepository;
+    private NearbySearchResponseRepository mNearbySearchResponseRepository;
 
     public PlaceDetailsResultsUseCase(LocationRepository locationRepository,
-                                      PlaceSearchResponseRepository placeSearchResponseRepository,
+                                      NearbySearchResponseRepository nearbySearchResponseRepository,
                                       PlaceDetailsResponseRepository placeDetailsResponseRepository) {
 
 
@@ -69,11 +67,11 @@ public class PlaceDetailsResultsUseCase {
  //     });
 
 
-       placeSearchResultsLiveData = Transformations.switchMap(locationRepository.getLocationLiveData(), new Function<Location, LiveData<PlaceSearchResults>>() {
+       placeSearchResultsLiveData = Transformations.switchMap(locationRepository.getLocationLiveData(), new Function<Location, LiveData<NearbySearchResults>>() {
            @Override
-           public LiveData<PlaceSearchResults> apply(Location input) {
+           public LiveData<NearbySearchResults> apply(Location input) {
                String locationAsText = input.getLatitude() + "," + input.getLongitude();
-               return placeSearchResponseRepository.getRestaurantListLiveData(
+               return nearbySearchResponseRepository.getRestaurantListLiveData(
                        "restaurant",
                        locationAsText,
                        "1000");
@@ -81,9 +79,9 @@ public class PlaceDetailsResultsUseCase {
            }
        });
 
-       placeDetails = Transformations.map(placeSearchResultsLiveData, new Function<PlaceSearchResults, List<PlaceDetailsResult>>() {
+       placeDetails = Transformations.map(placeSearchResultsLiveData, new Function<NearbySearchResults, List<PlaceDetailsResult>>() {
            @Override
-           public List<PlaceDetailsResult> apply(PlaceSearchResults input) {
+           public List<PlaceDetailsResult> apply(NearbySearchResults input) {
                for (int i = 0; i < input.getResults().size(); i++) {
                    String place_id = input.getResults().get(i).getPlaceId();
                    mPlaceDetailsResults.add(placeDetailsResponseRepository.getRestaurantDetailsLiveData(place_id).getValue());

@@ -7,9 +7,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.kardabel.go4lunch.pojo.PlaceSearchResults;
+import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.Photo;
-import com.kardabel.go4lunch.usecase.PlaceSearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 
 import java.util.List;
 
@@ -20,13 +20,13 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private LiveData<RestaurantDetailsViewState> restaurantDetailsViewStateLiveData;
     private RestaurantDetailsViewState result;
 
-    public RestaurantDetailsViewModel(@Nullable PlaceSearchResultsUseCase placeSearchResultsUseCase){
+    public RestaurantDetailsViewModel(@Nullable NearbySearchResultsUseCase nearbySearchResultsUseCase){
 
         // UPDATE LIVEDATA WITH MAP FUNCTION
         //listViewViewStateLiveData = Transformations.map(nearbyResultsLiveData, input -> map(input));
-        restaurantDetailsViewStateLiveData = Transformations.map(placeSearchResultsUseCase.getPlaceSearchResultsLiveData(), new Function<PlaceSearchResults, RestaurantDetailsViewState>() {
+        restaurantDetailsViewStateLiveData = Transformations.map(nearbySearchResultsUseCase.getNearbySearchResultsLiveData(), new Function<NearbySearchResults, RestaurantDetailsViewState>() {
             @Override
-            public RestaurantDetailsViewState apply(PlaceSearchResults input) {
+            public RestaurantDetailsViewState apply(NearbySearchResults input) {
                 return RestaurantDetailsViewModel.this.map(input);
             }
         });
@@ -34,15 +34,15 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     }
 
-    private RestaurantDetailsViewState map(@NonNull PlaceSearchResults placeSearchResults) {
+    private RestaurantDetailsViewState map(@NonNull NearbySearchResults nearbySearchResults) {
 
-        for (int i = 0; i < placeSearchResults.getResults().size(); i++) {
-            if(placeId.equals(placeSearchResults.getResults().get(i).getPlaceId())){
+        for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
+            if(placeId.equals(nearbySearchResults.getResults().get(i).getPlaceId())){
 
                 result = new RestaurantDetailsViewState(
-                        placeSearchResults.getResults().get(i).getRestaurantName(),
-                        placeSearchResults.getResults().get(i).getRestaurantAddress(),
-                        photoReference(placeSearchResults.getResults().get(i).getRestaurantPhotos()),
+                        nearbySearchResults.getResults().get(i).getRestaurantName(),
+                        nearbySearchResults.getResults().get(i).getRestaurantAddress(),
+                        photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos()),
                         "23 48 23 48",
                         "www.ouioui.com"
 

@@ -87,7 +87,14 @@ public class ListViewViewModel extends ViewModel {
             Double ratingRestaurant = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
             String placeIdRestaurant = nearbySearchResults.getResults().get(i).getPlaceId();
 
-            restaurantList.add(new RestaurantItemViewState(restaurantName, addressRestaurant, photoRestaurant, distanceRestaurant, openingHoursRestaurant, ratingRestaurant, placeIdRestaurant));
+            restaurantList.add(new RestaurantItemViewState(
+                    restaurantName,
+                    addressRestaurant,
+                    photoRestaurant,
+                    distanceRestaurant,
+                    openingHoursRestaurant,
+                    ratingRestaurant,
+                    placeIdRestaurant));
 
         }
         return new RestaurantsWrapperViewState(restaurantList);
@@ -109,7 +116,14 @@ public class ListViewViewModel extends ViewModel {
                     Double ratingRestaurant = convertRatingStars(place.getRating());
                     String placeIdRestaurant = place.getPlaceId();
 
-                    restaurantList.add(new RestaurantItemViewState(restaurantName, addressRestaurant, photoRestaurant, distanceRestaurant, openingHoursRestaurant, ratingRestaurant, placeIdRestaurant));
+                    restaurantList.add(new RestaurantItemViewState(
+                            restaurantName,
+                            addressRestaurant,
+                            photoRestaurant,
+                            distanceRestaurant,
+                            openingHoursRestaurant,
+                            ratingRestaurant,
+                            placeIdRestaurant));
                     break;
 
                 }
