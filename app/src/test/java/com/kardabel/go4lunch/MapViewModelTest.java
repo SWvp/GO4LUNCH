@@ -1,6 +1,8 @@
 package com.kardabel.go4lunch;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import android.location.Location;
 
@@ -34,107 +36,53 @@ import java.util.List;
 
 public class MapViewModelTest {
 
+    private static final double EXPECTED_LATITUDE = 30.0;
+    private static final double EXPECTED_LONGITUDE = 42.0;
+    private static final float EXPECTED_ZOOM_FOCUS = 15F;
+
     @Rule
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
     private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
     private final NearbySearchResultsUseCase nearbySearchResultsUseCase = Mockito.mock(NearbySearchResultsUseCase.class);
-    private final NearbySearchResponseRepository nearbySearchResponseRepository = Mockito.mock(NearbySearchResponseRepository.class);
 
     private final Location location = Mockito.mock(Location.class);
-    private final Location newLocation = Mockito.mock(Location.class);
 
     private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<NearbySearchResults> nearbySearchResultsMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<NearbySearchResults> nearbySearchResponseRepositoryMutableLiveData = new MutableLiveData<>();
 
     private MapViewModel mMapViewModel;
 
-    private final double lat = 30.0;
-    private final double lng = 42.0;
-
-    private final double newLat = 28.2;
-    private final double newLng = 25.3;
-
-    private final String latStr = lat + "";
-    private final String lngStr = lng + "";
-
-    private final String newLatStr = newLat + "";
-    private final String newLngStr = newLng + "";
-
     @Before
-    public void setUp(){
-
+    public void setUp() {
         // SETUP THE LOCATION
-        Mockito.doReturn(lat).when(location).getLatitude();
-        Mockito.doReturn(lng).when(location).getLongitude();
-
-        // SETUP THE NEW LOCATION
-        Mockito.doReturn(newLat).when(newLocation).getLatitude();
-        Mockito.doReturn(newLng).when(newLocation).getLongitude();
-
+        Mockito.doReturn(EXPECTED_LATITUDE).when(location).getLatitude();
+        Mockito.doReturn(EXPECTED_LONGITUDE).when(location).getLongitude();
 
         Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
-
-        // CONVERT LOCATION TO STRING
-        String latStr = lat + "";
-        String lngStr = lng + "";
-
-        Mockito.doReturn(nearbySearchResponseRepositoryMutableLiveData).when(nearbySearchResponseRepository).getRestaurantListLiveData(
-                "restaurant",
-                latStr + "," + lngStr,
-                "1000");
         Mockito.doReturn(nearbySearchResultsMutableLiveData).when(nearbySearchResultsUseCase).getNearbySearchResultsLiveData();
 
-
-        mMapViewModel = new MapViewModel(locationRepository, nearbySearchResultsUseCase);
-
-    }
-
-    @Test
-    public void nominalCase() throws InterruptedException {
-        // GIVEN
-        nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getDefaultRestaurants()));
-        // WHEN
-        MapViewState result = LiveDataTestUtils.getOrAwaitValue(mMapViewModel.getMapViewStateLiveData());
-        // THEN
-        assertEquals(2, result.getPoiList().size());
-        assertEquals(result, new MapViewState(getPoi(), locationRepository.getLocationLiveData().getValue()));
-
-    }
-
-    @Test
-    public void whenLocationIsUpdated() throws InterruptedException {
-        // GIVEN
         locationMutableLiveData.setValue(location);
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getDefaultRestaurants()));
-        nearbySearchResponseRepositoryMutableLiveData.setValue(new NearbySearchResults(getDefaultRestaurants()));
-        // WHEN
-        MapViewState result = LiveDataTestUtils.getOrAwaitValue(mMapViewModel.getMapViewStateLiveData());
-        // THEN
-        assertEquals(result, new MapViewState(getPoi(), locationRepository.getLocationLiveData().getValue()));
-        //Mockito.verify(nearbySearchResponseRepository).getRestaurantListLiveData(
-         //       "restaurant",
-         //       latStr + "," + lngStr,
-         //       "1000");
 
-
+        mMapViewModel = new MapViewModel(locationRepository, nearbySearchResultsUseCase);
     }
 
     @Test
-    public void whenLocationIsNotTheSameInRepo(){
-        // GIVEN
-        locationMutableLiveData.setValue(newLocation);
-
+    public void nominalCase() {
         // WHEN
+        LiveDataTestUtils.observeForTesting(mMapViewModel.getMapViewStateLiveData(), mapViewState -> {
+            // THEN
+            assertEquals(getDefaultMapViewState(), mapViewState);
 
-
-        // THEN
-
-        Mockito.verifyNoInteractions(nearbySearchResponseRepository);
+            verify(locationRepository).getLocationLiveData();
+            verify(nearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+            verifyNoMoreInteractions(locationRepository, nearbySearchResultsUseCase);
+        });
     }
 
-    private  List<RestaurantSearch> getDefaultRestaurants(){
+    // region IN
+    private List<RestaurantSearch> getDefaultRestaurants() {
         List<RestaurantSearch> restaurants = new ArrayList<>();
         restaurants.add(
                 new RestaurantSearch(
@@ -146,7 +94,6 @@ public class MapViewModelTest {
                         new OpeningHours(false, null, null),
                         2,
                         25
-
                 )
         );
         restaurants.add(
@@ -165,7 +112,26 @@ public class MapViewModelTest {
 
     }
 
-    private List<Poi> getPoi(){
+    private List<Photo> getPhoto() {
+
+        return Collections.singletonList(
+                new Photo(
+                        400,
+                        400,
+                        new ArrayList<>(),
+                        "photoTest"
+
+                )
+        );
+    }
+    // endregion
+
+    // region OUT
+    private MapViewState getDefaultMapViewState() {
+        return new MapViewState(getPoi(), new LatLng(EXPECTED_LATITUDE, EXPECTED_LONGITUDE), EXPECTED_ZOOM_FOCUS);
+    }
+
+    private List<Poi> getPoi() {
         List<Poi> poi = new ArrayList<>();
         poi.add(new Poi(
                 "hotel",
@@ -181,17 +147,6 @@ public class MapViewModelTest {
         ));
         return poi;
     }
+    // endregion OUT
 
-    private List<Photo> getPhoto(){
-
-        return Collections.singletonList(
-                new Photo(
-                        400,
-                        400,
-                        new ArrayList<>(),
-                        "photoTest"
-
-                )
-        );
-    }
 }
