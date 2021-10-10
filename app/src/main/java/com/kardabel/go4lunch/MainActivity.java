@@ -86,12 +86,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         mainActivityViewModel.getActionSingleLiveEvent().observe(this, action -> {
             switch (action){
                 case PERMISSION_GRANTED:
-                    Toast.makeText(MainActivity.this, "Permission already granted",
-                            Toast.LENGTH_SHORT).show();
                     break;
                 case PERMISSION_ASKED:
                     ActivityCompat.requestPermissions(MainActivity.this,
                             new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+                    break;
+                case PERMISSION_DENIED:
+                    ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION);
                     break;
 
             }
