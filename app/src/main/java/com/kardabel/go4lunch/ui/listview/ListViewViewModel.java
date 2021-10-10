@@ -6,9 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+import com.kardabel.go4lunch.pojo.OpeningHours;
 import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.PlaceDetailsResult;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
@@ -16,56 +16,58 @@ import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.usecase.PlaceDetailsResultsUseCase;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
+import com.kardabel.go4lunch.util.CurrentConvertedHour;
+import com.kardabel.go4lunch.util.CurrentNumericDay;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListViewViewModel extends ViewModel {
 
-    private MediatorLiveData<RestaurantsWrapperViewState> restaurantsWrapperViewStateMutableLiveData = new MediatorLiveData<>();
     private Location userLocation;
-    private NearbySearchResultsUseCase mNearbySearchResultsUseCase;
-    private PlaceDetailsResultsUseCase mPlaceDetailsResultsUseCase;
 
-    public ListViewViewModel(@NonNull LocationRepository locationRepository, @NonNull NearbySearchResultsUseCase nearbySearchResultsUseCase, @NonNull PlaceDetailsResultsUseCase placeDetailsResultsUseCase){
+    private final CurrentNumericDay currentNumericDay;
+    private final CurrentConvertedHour currentConvertedHour;
 
-        this.mNearbySearchResultsUseCase = nearbySearchResultsUseCase;
-        this.mPlaceDetailsResultsUseCase = placeDetailsResultsUseCase;
+    private final MediatorLiveData<RestaurantsWrapperViewState> restaurantsWrapperViewStateMutableLiveData = new MediatorLiveData<>();
 
-        LiveData<List<PlaceDetailsResult>> placeDetailsResult = mPlaceDetailsResultsUseCase.getPlaceDetailsResultLiveData();
-        LiveData<NearbySearchResults> placeSearchResultsLiveData = mNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
+    public ListViewViewModel(@NonNull LocationRepository locationRepository,
+                             @NonNull NearbySearchResultsUseCase nearbySearchResultsUseCase,
+                             @NonNull PlaceDetailsResultsUseCase placeDetailsResultsUseCase,
+                             @NonNull CurrentNumericDay currentNumericDay,
+                             @NonNull CurrentConvertedHour currentConvertedHour){
 
-        // OBSERVE USE CASES
+        this.currentNumericDay =currentNumericDay;
+        this.currentConvertedHour = currentConvertedHour;
 
-        // TODO: observe Location repo to retrieve position needed for distance calculation
+        LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
+        LiveData<List<PlaceDetailsResult>> placeDetailsResultLiveData = placeDetailsResultsUseCase.getPlaceDetailsResultLiveData();
+        LiveData<NearbySearchResults> placeSearchResultsLiveData = nearbySearchResultsUseCase.getNearbySearchResultsLiveData();
 
-        restaurantsWrapperViewStateMutableLiveData.addSource(placeSearchResultsLiveData, new Observer<NearbySearchResults>() {
-            @Override
-            public void onChanged(NearbySearchResults nearbySearchResults) {
-                combine(nearbySearchResults, placeDetailsResult.getValue());
+        // OBSERVERS
+        restaurantsWrapperViewStateMutableLiveData.addSource(locationLiveData, location ->
+                combine(placeSearchResultsLiveData.getValue(), placeDetailsResultLiveData.getValue(), location));
 
-            }
-        });
+        restaurantsWrapperViewStateMutableLiveData.addSource(placeSearchResultsLiveData, nearbySearchResults ->
+                combine(nearbySearchResults, placeDetailsResultLiveData.getValue(), locationLiveData.getValue()));
 
-        restaurantsWrapperViewStateMutableLiveData.addSource(placeDetailsResult, new Observer<List<PlaceDetailsResult>>() {
-            @Override
-            public void onChanged(List<PlaceDetailsResult> placeDetailsResults) {
-                combine(placeSearchResultsLiveData.getValue(), placeDetailsResults);
-
-            }
-        });
+        restaurantsWrapperViewStateMutableLiveData.addSource(placeDetailsResultLiveData, placeDetailsResults ->
+                combine(placeSearchResultsLiveData.getValue(), placeDetailsResults, locationLiveData.getValue()));
     }
 
     private void combine(@Nullable NearbySearchResults nearbySearchResults,
-                         @Nullable List<PlaceDetailsResult> placeDetailsResults) {
+                         @Nullable List<PlaceDetailsResult> placeDetailsResults,
+                         @Nullable Location location) {
 
-        // NEED TO RESOLVE REPO ISSUES
-        placeDetailsResults = null;
+        if(location != null){
+            this.userLocation = location;
+
+        }
 
         if(placeDetailsResults == null && nearbySearchResults != null){
               restaurantsWrapperViewStateMutableLiveData.setValue(map(nearbySearchResults));
 
-        }else if (placeDetailsResults != null && nearbySearchResults != null){
+        }else if(placeDetailsResults != null && nearbySearchResults != null){
             restaurantsWrapperViewStateMutableLiveData.setValue(mapWithDetails(nearbySearchResults, placeDetailsResults));
 
         }
@@ -74,7 +76,7 @@ public class ListViewViewModel extends ViewModel {
 
     // CREATE A LIST OF RESTAURANTS ITEMS WITH NEARBY RESULTS //
 
-    // 1.NEARBY SEARCH DATA
+    // 1.NEARBY SEARCH DATA (IF DETAILS ARE NOT SUPPORTED ANYMORE)
     private RestaurantsWrapperViewState map(NearbySearchResults nearbySearchResults){
         List<RestaurantItemViewState> restaurantList = new ArrayList<>();
 
@@ -82,12 +84,22 @@ public class ListViewViewModel extends ViewModel {
             String restaurantName = nearbySearchResults.getResults().get(i).getRestaurantName();
             String addressRestaurant = nearbySearchResults.getResults().get(i).getRestaurantAddress();
             String photoRestaurant = photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos());
-            String distanceRestaurant = distance(nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(), nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
-            String openingHoursRestaurant = OpeningHoursUnavailable();
-            Double ratingRestaurant = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
+            String distanceRestaurant = distance(
+                    nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
+                    nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
+            String openingHoursRestaurant = OpeningHoursLight(nearbySearchResults.getResults().get(i).getOpeningHours());
+            double ratingRestaurant = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
             String placeIdRestaurant = nearbySearchResults.getResults().get(i).getPlaceId();
 
-            restaurantList.add(new RestaurantItemViewState(restaurantName, addressRestaurant, photoRestaurant, distanceRestaurant, openingHoursRestaurant, ratingRestaurant, placeIdRestaurant));
+
+            restaurantList.add(new RestaurantItemViewState(
+                    restaurantName,
+                    addressRestaurant,
+                    photoRestaurant,
+                    distanceRestaurant,
+                    openingHoursRestaurant,
+                    ratingRestaurant,
+                    placeIdRestaurant));
 
         }
         return new RestaurantsWrapperViewState(restaurantList);
@@ -98,22 +110,27 @@ public class ListViewViewModel extends ViewModel {
     private RestaurantsWrapperViewState mapWithDetails(NearbySearchResults nearbySearchResults, List<PlaceDetailsResult> placeDetailsResults) {
         List<RestaurantItemViewState> restaurantList = new ArrayList<>();
 
+        if(placeDetailsResults != null){
         for (RestaurantSearch place : nearbySearchResults.getResults()) {
             for (int i = 0; i < placeDetailsResults.size(); i++) {
                 if (placeDetailsResults.get(i).getDetailsResult().getPlaceId().equals(place.getPlaceId())) {
                     String restaurantName = place.getRestaurantName();
                     String addressRestaurant = place.getRestaurantAddress();
                     String photoRestaurant = photoReference(place.getRestaurantPhotos());
-                    String distanceRestaurant = distance(place.getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(), place.getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
-                    String openingHoursRestaurant = getOpeningText();
-                    Double ratingRestaurant = convertRatingStars(place.getRating());
+                    String distanceRestaurant = distance(
+                            place.getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
+                            place.getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
+                    String openingHoursRestaurant = getOpeningText(placeDetailsResults.get(i).getDetailsResult().getOpeningHours());
+                    double ratingRestaurant = convertRatingStars(place.getRating());
                     String placeIdRestaurant = place.getPlaceId();
+
 
                     restaurantList.add(new RestaurantItemViewState(restaurantName, addressRestaurant, photoRestaurant, distanceRestaurant, openingHoursRestaurant, ratingRestaurant, placeIdRestaurant));
                     break;
 
                 }
             }
+        }
         }
         return new RestaurantsWrapperViewState(restaurantList);
 
@@ -133,18 +150,86 @@ public class ListViewViewModel extends ViewModel {
 
     }
 
-    // CONVERT OPENING HOURS
-    private String OpeningHoursUnavailable(){
-        String noHoursDetails = "Opening hours unavailable";
-        return noHoursDetails;
+    // GET MESSAGE FROM OPENING HOURS INFORMATION WITHOUT DETAILS
+    private String OpeningHoursLight(OpeningHours openingHours){
+        String openStatus;
+        if (openingHours != null) {
+            if (openingHours.getOpenNow()) {
+                openStatus = "open";
+
+            } else {
+                openStatus = "closed";
+
+            }
+        } else {
+            openStatus = "open hours unavailable";
+
+        }
+        return openStatus;
 
     }
 
-    private String getOpeningText() {
-        String alpha = "alpha";
-        return alpha;
+    // GET MESSAGE FROM OPENING HOURS INFORMATION
+    private String getOpeningText(OpeningHours openingHours) {
 
+        String messageToDisplay = "Opening hours unavailable";
+        int hourSolo;
+        int minSolo;
+        String minSoloString;
 
+        if (openingHours != null) {
+            if (openingHours.getPeriods().get(getCurrentDay()).getClose() != null) {
+
+                int closeHour = Integer.parseInt(openingHours.getPeriods().get(getCurrentDay()).getClose().getTime());
+                int openHour = Integer.parseInt(openingHours.getPeriods().get(getCurrentDay()).getOpen().getTime());
+
+                if (closeHour > getCurrentHour() && openHour <= getCurrentHour()) {
+                    messageToDisplay = "Open";
+
+                } else if (getCurrentHour() < openHour) {
+                    hourSolo = openHour / 100;
+                    minSolo = openHour - hourSolo * 100;
+                    if (minSolo < 10) {
+                        minSoloString = "0" + minSolo;
+                    } else {
+                        minSoloString = String.valueOf(minSolo);
+                    }
+                    messageToDisplay = "Closed until" + " " + hourSolo + "h" + minSoloString;
+
+                } else if (closeHour < getCurrentHour()) {
+                    hourSolo = openHour / 100;
+                    minSolo = openHour - hourSolo * 100;
+                    if (minSolo < 10) {
+                        minSoloString = "0" + minSolo;
+                    } else {
+                        minSoloString = String.valueOf(minSolo);
+                    }
+                    messageToDisplay = "Closed until" + " " + hourSolo + "h" + minSoloString + " Tomorrow";
+                } else {
+                    hourSolo = closeHour / 100;
+                    minSolo = closeHour - hourSolo * 100;
+                    messageToDisplay = "Open until" + " " + hourSolo + "h" + minSolo;
+
+                }
+            } else if (openingHours.getOpenNow()) {
+                messageToDisplay = "Open (opening hours unavailable)";
+
+            } else if (!openingHours.getOpenNow()) {
+                messageToDisplay = "Closed (opening hours unavailable)";
+
+            }
+        }
+        return messageToDisplay;
+
+    }
+
+    private int getCurrentDay(){
+        return currentNumericDay.getCurrentNumericDay();
+
+    }
+
+    private int getCurrentHour(){
+        return currentConvertedHour.getCurrentConvertedHour();
     }
 
     // GET LOCATION DISTANCE FROM USER TO RESTAURANT
@@ -165,31 +250,11 @@ public class ListViewViewModel extends ViewModel {
     private double convertRatingStars(double rating) {
 
         // GIVE AN INTEGER (NUMBER ROUNDED TO THE NEAREST INTEGER)
-        long convertedRating = Math.round(rating * 3 / 5);
-
-        return convertedRating;
+        return Math.round(rating * 3 / 5);
 
     }
 
-//  // OPENING HOURS
-//  private OpeningHoursPeriod getTodayOpeningHours(RestaurantDetails restaurantDetails) {
-//      OpeningHoursPeriod openingHours = null;
-//      int currentDay = nearbyResultsUseCase.getCurrentNumericDay();
-//      if (restaurantDetails.getOpeningHours().getPeriods() != null) {
-//          if (restaurantDetails.getOpeningHours().getPeriods().size() == 6) {
-//              openingHours = restaurantDetails.getOpeningHours().getPeriods().get(currentDay);
-//          }
-//      }
-//      return openingHours;
-//  }
-
-    private boolean closingSoonStatement(){
-        return false;
-    }
-
-    private void openRestaurant(){ }
-
-    // LIVEDATA OBSERVED BY LISTVIEWFRAGMENT
+    // LIVEDATA OBSERVED BY LIST VIEW FRAGMENT
     public LiveData<RestaurantsWrapperViewState> getListViewViewStateLiveData() {
         return restaurantsWrapperViewStateMutableLiveData;
 

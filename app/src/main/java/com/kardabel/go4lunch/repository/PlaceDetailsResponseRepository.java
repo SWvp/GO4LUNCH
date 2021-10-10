@@ -22,7 +22,7 @@ public class PlaceDetailsResponseRepository {
 
     private final GoogleMapsApi googleMapsApi;
     private final String key = "AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8";
-    private static final String FIELDS = "formatted_phone_number,opening_hours,website";
+    private static final String FIELDS = "formatted_phone_number,opening_hours,website,place_id";
 
     private final Map<String, PlaceDetailsResult> cache = new HashMap<>(2000);
 

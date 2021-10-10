@@ -38,4 +38,6 @@ public class RestaurantDetails {
     public String getFormatted_phone_number() { return formatted_phone_number; }
 
     public String getWebsite() { return website; }
+
+
 }

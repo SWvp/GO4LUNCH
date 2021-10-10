@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by stéphane Warin OCR on 02/09/2021.
+ * à virer si inutile !!!
  */
 public class OpeningHoursPeriod {
 
