@@ -22,6 +22,7 @@ android {
         }
 
     }
+    
     compileOptions {
 
         // NEEDED FOR LOCALDATE
@@ -30,8 +31,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     buildFeatures {
         viewBinding true
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 }
 
@@ -47,7 +53,7 @@ dependencies {
 
     // GRAPHICS
     implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
@@ -56,11 +62,14 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.4.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.firebaseui:firebase-ui-auth:8.0.0'
-    implementation 'com.google.firebase:firebase-auth:19.2.0'
-    implementation 'com.google.firebase:firebase-firestore:23.0.3'
+    implementation 'com.google.firebase:firebase-auth:21.0.1'
+    implementation 'com.google.firebase:firebase-firestore:23.0.4'
 
     // PERMISSIONS
     implementation 'pub.devrel:easypermissions:3.0.0'
+
+    // FACEBOOK
+    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
 
     // GOOGLE MAP SERVICES
     implementation 'com.google.android.gms:play-services-maps:17.0.1'

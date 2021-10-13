@@ -15,17 +15,17 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.kardabel.go4lunch.databinding.FragmentListviewBinding;
+import com.kardabel.go4lunch.databinding.RecyclerviewListviewBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 
 public class RestaurantsFragment extends Fragment {
 
     private RestaurantsViewModel mRestaurantsViewModel;
-    private FragmentListviewBinding binding;
+    private RecyclerviewListviewBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentListviewBinding.inflate(inflater, container, false);
+        binding = RecyclerviewListviewBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         return view;
     }
