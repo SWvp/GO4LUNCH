@@ -42,6 +42,10 @@ public class RestaurantSearch {
     @Expose
     private final int totalRatings;
 
+    @SerializedName("permanently_closed")
+    @Expose
+    private final boolean permanentlyClosed;
+
 
     public RestaurantSearch(String placeId,
                             String restaurantName,
@@ -50,7 +54,8 @@ public class RestaurantSearch {
                             Geometry restaurantGeometry,
                             OpeningHours openingHours,
                             double rating,
-                            int totalRatings) {
+                            int totalRatings,
+                            boolean permanentlyClosed) {
         this.placeId = placeId;
         this.restaurantName = restaurantName;
         this.restaurantAddress = restaurantAddress;
@@ -59,6 +64,7 @@ public class RestaurantSearch {
         this.openingHours = openingHours;
         this.rating = rating;
         this.totalRatings = totalRatings;
+        this.permanentlyClosed = permanentlyClosed;
 
     }
 
@@ -78,6 +84,10 @@ public class RestaurantSearch {
 
     public double getRating() { return rating; }
 
+    public boolean isPermanentlyClosed() {
+        return permanentlyClosed;
+    }
+
     public int getTotalRatings() { return totalRatings; }
 
     @Override
@@ -87,6 +97,7 @@ public class RestaurantSearch {
         RestaurantSearch that = (RestaurantSearch) o;
         return Double.compare(that.rating, rating) == 0 &&
                 totalRatings == that.totalRatings &&
+                permanentlyClosed == that.permanentlyClosed &&
                 Objects.equals(placeId, that.placeId) &&
                 Objects.equals(restaurantName, that.restaurantName) &&
                 Objects.equals(restaurantAddress, that.restaurantAddress) &&
@@ -105,6 +116,7 @@ public class RestaurantSearch {
                 restaurantGeometry,
                 openingHours,
                 rating,
-                totalRatings);
+                totalRatings,
+                permanentlyClosed);
     }
 }
