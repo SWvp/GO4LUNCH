@@ -171,14 +171,14 @@ public class RestaurantsViewModel extends ViewModel {
         String openStatus;
         if (openingHours != null) {
             if (openingHours.getOpenNow()) {
-                openStatus = "open";
+                openStatus = "Open";
 
             } else {
-                openStatus = "closed";
+                openStatus = "Closed";
 
             }
         } else {
-            openStatus = "open hours unavailable";
+            openStatus = "Open hours unavailable";
 
         }
         return openStatus;
@@ -302,6 +302,20 @@ public class RestaurantsViewModel extends ViewModel {
 
     }
 
+    // CHECK IF RESTAURANT IS CLOSED TODAY UNTIL TOMORROW
+    private boolean isRestaurantOpenToday(OpeningHours openingHours) {
+        boolean bool = true;
+        for (int i = 0; i < openingHours.getPeriods().size(); i++) {
+            if (openingHours.getPeriods().get(i).getOpen().getDay() ==
+                    getCurrentDay() && openingHours.getPeriods().get(i).getOpen().getTime() == null) {
+                bool = false;
+
+            }
+        }
+        return bool;
+
+    }
+
     // CONVERT CLOSE HOUR TO READABLE UK HOUR
     private String getReadableClosingHour(int ClosingHour) {
         int hour;
@@ -344,20 +358,6 @@ public class RestaurantsViewModel extends ViewModel {
 
     private int getCurrentHour(){
         return currentConvertedHour.getCurrentConvertedHour();
-    }
-
-    // CHECK IF RESTAURANT IS CLOSED TODAY UNTIL TOMORROW
-    private boolean isRestaurantOpenToday(OpeningHours openingHours) {
-        boolean bool = true;
-        for (int i = 0; i < openingHours.getPeriods().size(); i++) {
-            if (openingHours.getPeriods().get(i).getOpen().getDay() ==
-                    getCurrentDay() && openingHours.getPeriods().get(i).getOpen().getTime() == null) {
-                bool = false;
-
-            }
-        }
-        return bool;
-
     }
 
     // GET LOCATION DISTANCE FROM USER TO RESTAURANT
