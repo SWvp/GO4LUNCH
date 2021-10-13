@@ -18,4 +18,8 @@
     <string name="search_hint">Search restaurants</string>
     <string name="search_field">Search</string>
 
+    <!-- USED BY FACEBOOK AUTH -->
+    <string name="facebook_app_id">303261874567043</string>
+    <string name="fb_login_protocol_scheme">fb303261874567043</string>
+
 </resources>

@@ -7,18 +7,25 @@
     android:background="@drawable/auth_pictures"
     >
 
-    <Button
+
+
+    <com.google.android.gms.common.SignInButton
         android:id="@+id/google_auth"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:padding="20dp"
-        android:text="Sign up with Google"
-        android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:theme="@style/LoginTheme"/>
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/facebook_auth"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        app:layout_constraintBottom_toTopOf="@id/google_auth"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

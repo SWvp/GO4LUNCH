@@ -15,11 +15,11 @@
         android:id="@+id/navigation_listview"
         android:name="com.kardabel.go4lunch.ui.listview.RestaurantsFragment"
         android:label="@string/title_listview"
-        tools:layout="@layout/fragment_listview" />
+        tools:layout="@layout/recyclerview_listview" />
 
     <fragment
         android:id="@+id/navigation_workmates"
         android:name="com.kardabel.go4lunch.ui.workmates.WorkMatesFragment"
         android:label="@string/title_workmates"
-        tools:layout="@layout/fragment_workmates" />
+        tools:layout="@layout/recyclerview_workmates" />
 </navigation>
