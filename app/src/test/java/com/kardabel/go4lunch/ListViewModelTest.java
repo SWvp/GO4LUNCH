@@ -1,6 +1,8 @@
 package com.kardabel.go4lunch;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import android.location.Location;
 
@@ -88,9 +90,127 @@ public class ListViewModelTest {
         LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getDefaultRestaurantViewState(), restaurantsWrapperViewState);
+
+            verify(locationRepository).getLocationLiveData();
+            verify(nearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+            verify(restaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
+            verifyNoMoreInteractions(locationRepository, nearbySearchResultsUseCase, restaurantDetailsResultsUseCase);
         });
     }
 
+    ////////// TIME TESTS ///////////
+
+    @Test
+    public void openRestaurantShouldDisplayOpenUntilClosingTime(){
+
+    }
+
+    @Test
+    public void beforeOneHourClosingTimeShouldDisplayClosingSoon(){
+        // GIVEN
+        // WHEN
+        // THEN
+
+    }
+
+    @Test
+    public void neverClosingShouldDisplayH24(){
+        // GIVEN
+        restaurantDetailsResultsUseCaseMutableLiveData.setValue(getPermanentlyOpenRestaurantsDetails());
+        // WHEN
+        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+            // THEN
+            assertEquals(getPermanentlyOpenRestaurantViewState(), restaurantsWrapperViewState);
+
+        });
+    }
+
+    @Test
+    public void permanentlyClosedShouldDisplayThisStatus(){
+        // GIVEN
+        // WHEN
+        // THEN
+
+    }
+
+    @Test
+    public void afterClosingTimeShouldDisplayClosed(){
+        // GIVEN
+        // WHEN
+        // THEN
+
+    }
+
+    @Test
+    public void withoutPeriodsListButWithOpenNowShouldDisplayOpen(){
+        // GIVEN
+        // WHEN
+        // THEN
+
+    }
+
+    @Test
+    public void withoutPeriodsListButWithClosedNowShouldDisplayClosed(){
+        // GIVEN
+        // WHEN
+        // THEN
+
+    }
+
+    @Test
+    public void restaurantClosedUntilTomorrowShouldDisplayClosed(){
+        // GIVEN
+        // WHEN
+        // THEN
+
+    }
+
+
+    ////////// RATING STARS TESTS ///////////
+
+    @Test
+    public void forStarsShouldDisplayTwoStars(){
+        // GIVEN
+        // WHEN
+        // THEN
+
+    }
+
+    @Test
+    public void zeroStarsShouldDisplayZeroStars(){
+        // GIVEN
+        // WHEN
+        // THEN
+
+    }
+
+    /////////// RESTAURANTS LIST TEST ///////////
+
+    @Test
+    public void whenDetailsListIsEmptyShouldDisplayNearbyList(){
+        // GIVEN
+        // WHEN
+        // THEN
+
+    }
+
+    /////////// PHOTO TESTS ///////////
+
+    @Test
+    public void whenPhotoListIsNullShouldDisplayPhotoUnavailable(){
+        // GIVEN
+        // WHEN
+        // THEN
+
+    }
+
+    @Test
+    public void whenPhotoReferenceDontExistShouldDisplayPhotoUnavailable(){
+        // GIVEN
+        // WHEN
+        // THEN
+
+    }
 
     // region IN
     private List<RestaurantSearch> getDefaultRestaurants() {
@@ -116,7 +236,7 @@ public class ListViewModelTest {
                         getPhoto(),
                         new Geometry(new RestaurantLatLngLiteral(32.1, 42.2)),
                         new OpeningHours(true, null, null),
-                        2,
+                        4,
                         25,
                         false
                 )
@@ -144,6 +264,28 @@ public class ListViewModelTest {
         );
     }
 
+    private List<RestaurantDetailsResult> getPermanentlyOpenRestaurantsDetails() {
+        return Arrays.asList(
+                new RestaurantDetailsResult(new RestaurantDetails(
+                        "235",
+                        new OpeningHours(true, getPermanentlyOpenPeriods(), null),
+                        "0145204520",
+                        "www.coucou.com"
+
+                )),
+                new RestaurantDetailsResult(new RestaurantDetails(
+                        "450",
+                        new OpeningHours(true, getPermanentlyOpenPeriods(), null),
+                        "0625656488",
+                        "www.bonjour.fr"
+
+                ))
+
+        );
+    }
+
+
+
     private List<Periods> getFirstPeriods() {
         return Arrays.asList(
                 new Periods(
@@ -168,6 +310,17 @@ public class ListViewModelTest {
         );
     }
 
+    private List<Periods> getPermanentlyOpenPeriods() {
+        return Collections.singletonList(
+                new Periods(
+                        new Close(0, "0000"),
+                        new Open(0, "0000"))
+
+        );
+    }
+
+
+
     private List<Photo> getPhoto() {
         return Collections.singletonList(
                 new Photo(
@@ -184,20 +337,20 @@ public class ListViewModelTest {
 
     // region OUT
     private RestaurantsWrapperViewState getDefaultRestaurantViewState(){
-        return new RestaurantsWrapperViewState(getRestaurants());
+        return new RestaurantsWrapperViewState(getRestaurantsResults());
 
     }
 
-    private List<RestaurantsViewState> getRestaurants() {
+    private List<RestaurantsViewState> getRestaurantsResults() {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
                                 "hotel",
                                 "0102",
                                 "photoTest",
-                                "23m",
+                                "0m",
                                 "Closing soon",
-                                2,
+                                1,
                                 "235"),
 
                 new RestaurantsViewState
@@ -205,8 +358,65 @@ public class ListViewModelTest {
                                 "pipo",
                                 "bla",
                                 "photoTest",
-                                "23m",
+                                "0m",
                                 "Open until 1.am",
+                                2,
+                                "450")
+
+        );
+    }
+
+    private List<RestaurantsViewState> getRestaurantsWithoutDetails() {
+        return Arrays.asList(
+                new RestaurantsViewState
+                        (
+                                "hotel",
+                                "0102",
+                                "photoTest",
+                                "0m",
+                                "Open",
+                                1,
+                                "235"),
+
+                new RestaurantsViewState
+                        (
+                                "pipo",
+                                "bla",
+                                "photoTest",
+                                "0m",
+                                "Open",
+                                2,
+                                "450")
+
+        );
+    }
+
+
+
+    private RestaurantsWrapperViewState getPermanentlyOpenRestaurantViewState(){
+        return new RestaurantsWrapperViewState(getPermanentlyRestaurantsResults());
+
+    }
+
+    private List<RestaurantsViewState> getPermanentlyRestaurantsResults() {
+        return Arrays.asList(
+                new RestaurantsViewState
+                        (
+                                "hotel",
+                                "0102",
+                                "photoTest",
+                                "0m",
+                                "Open 24/7",
+                                1,
+                                "235"),
+
+                new RestaurantsViewState
+                        (
+                                "pipo",
+                                "bla",
+                                "photoTest",
+                                "0m",
+                                "Open 24/7",
                                 2,
                                 "450")
 

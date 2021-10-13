@@ -17,7 +17,6 @@ import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantLatLngLiteral;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewState;
@@ -30,7 +29,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,16 +71,13 @@ public class MapViewModelTest {
     @Test
     public void nominalCase() {
         // WHEN
-        LiveDataTestUtils.observeForTesting(mMapViewModel.getMapViewStateLiveData(), new LiveDataTestUtils.OnObservedListener<MapViewState>() {
-            @Override
-            public void onObserved(MapViewState mapViewState) {
-                // THEN
-                assertEquals(MapViewModelTest.this.getDefaultMapViewState(), mapViewState);
+        LiveDataTestUtils.observeForTesting(mMapViewModel.getMapViewStateLiveData(), mapViewState -> {
+            // THEN
+            assertEquals(MapViewModelTest.this.getDefaultMapViewState(), mapViewState);
 
-                verify(locationRepository).getLocationLiveData();
-                verify(nearbySearchResultsUseCase).getNearbySearchResultsLiveData();
-                verifyNoMoreInteractions(locationRepository, nearbySearchResultsUseCase);
-            }
+            verify(locationRepository).getLocationLiveData();
+            verify(nearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+            verifyNoMoreInteractions(locationRepository, nearbySearchResultsUseCase);
         });
     }
 
