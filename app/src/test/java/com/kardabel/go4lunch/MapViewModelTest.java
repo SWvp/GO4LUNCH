@@ -55,13 +55,15 @@ public class MapViewModelTest {
 
     @Before
     public void setUp() {
-        // SETUP THE LOCATION
+        // SETUP THE LOCATION VALUE
         Mockito.doReturn(EXPECTED_LATITUDE).when(location).getLatitude();
         Mockito.doReturn(EXPECTED_LONGITUDE).when(location).getLongitude();
 
+        // SETUP THE MOCK RETURN
         Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
         Mockito.doReturn(nearbySearchResultsMutableLiveData).when(nearbySearchResultsUseCase).getNearbySearchResultsLiveData();
 
+        // SET LIVEDATA VALUES
         locationMutableLiveData.setValue(location);
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getDefaultRestaurants()));
 
@@ -71,13 +73,16 @@ public class MapViewModelTest {
     @Test
     public void nominalCase() {
         // WHEN
-        LiveDataTestUtils.observeForTesting(mMapViewModel.getMapViewStateLiveData(), mapViewState -> {
-            // THEN
-            assertEquals(getDefaultMapViewState(), mapViewState);
+        LiveDataTestUtils.observeForTesting(mMapViewModel.getMapViewStateLiveData(), new LiveDataTestUtils.OnObservedListener<MapViewState>() {
+            @Override
+            public void onObserved(MapViewState mapViewState) {
+                // THEN
+                assertEquals(MapViewModelTest.this.getDefaultMapViewState(), mapViewState);
 
-            verify(locationRepository).getLocationLiveData();
-            verify(nearbySearchResultsUseCase).getNearbySearchResultsLiveData();
-            verifyNoMoreInteractions(locationRepository, nearbySearchResultsUseCase);
+                verify(locationRepository).getLocationLiveData();
+                verify(nearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+                verifyNoMoreInteractions(locationRepository, nearbySearchResultsUseCase);
+            }
         });
     }
 
@@ -93,7 +98,8 @@ public class MapViewModelTest {
                         new Geometry(new RestaurantLatLngLiteral(30.0, 42.1)),
                         new OpeningHours(false, null, null),
                         2,
-                        25
+                        25,
+                        false
                 )
         );
         restaurants.add(
@@ -105,7 +111,8 @@ public class MapViewModelTest {
                         new Geometry(new RestaurantLatLngLiteral(32.1, 42.2)),
                         new OpeningHours(false, null, null),
                         2,
-                        25
+                        25,
+                        false
                 )
         );
         return restaurants;
@@ -128,7 +135,9 @@ public class MapViewModelTest {
 
     // region OUT
     private MapViewState getDefaultMapViewState() {
-        return new MapViewState(getPoi(), new LatLng(EXPECTED_LATITUDE, EXPECTED_LONGITUDE), EXPECTED_ZOOM_FOCUS);
+        return new MapViewState(
+                getPoi(),
+                new LatLng(EXPECTED_LATITUDE, EXPECTED_LONGITUDE), EXPECTED_ZOOM_FOCUS);
     }
 
     private List<Poi> getPoi() {
