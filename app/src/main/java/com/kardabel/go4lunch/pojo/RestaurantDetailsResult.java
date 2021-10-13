@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class PlaceDetailsResult {
+public class RestaurantDetailsResult {
 
     @SerializedName("result")
        private final RestaurantDetails result;
 
 
-    public PlaceDetailsResult(RestaurantDetails result) { this.result = result; }
+    public RestaurantDetailsResult(RestaurantDetails result) { this.result = result; }
 
     public RestaurantDetails getDetailsResult() { return result; }
 

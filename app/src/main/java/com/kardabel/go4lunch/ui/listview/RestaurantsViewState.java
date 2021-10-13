@@ -1,6 +1,6 @@
 package com.kardabel.go4lunch.ui.listview;
 
-public class RestaurantItemViewState {
+public class RestaurantsViewState {
 
     private static final String API_URL = "https://maps.googleapis.com/maps/api/place/";
     private static final String PHOTO_REFERENCE ="photo?maxwidth=300&photo_reference=";
@@ -15,7 +15,7 @@ public class RestaurantItemViewState {
     private final double rating;
     private final String placeId;
 
-    public RestaurantItemViewState(String name, String address, String avatar, String distance, String openingHours, double rating, String placeId) {
+    public RestaurantsViewState(String name, String address, String avatar, String distance, String openingHours, double rating, String placeId) {
         this.name = name;
         this.address = address;
         this.avatar = avatar;
@@ -42,9 +42,9 @@ public class RestaurantItemViewState {
 
     public String getPlaceId() { return placeId; }
 
-    public static String urlPhoto(RestaurantItemViewState restaurantItemViewState) {
-        if (restaurantItemViewState.getAvatar() != null) {
-            String photoReference = restaurantItemViewState.getAvatar();
+    public static String urlPhoto(RestaurantsViewState restaurantsViewState) {
+        if (restaurantsViewState.getAvatar() != null) {
+            String photoReference = restaurantsViewState.getAvatar();
             return API_URL + PHOTO_REFERENCE + photoReference + "&key=" + API_KEY;
         }
         return "";

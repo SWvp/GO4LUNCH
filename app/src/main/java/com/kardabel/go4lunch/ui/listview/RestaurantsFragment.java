@@ -1,7 +1,6 @@
 package com.kardabel.go4lunch.ui.listview;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,9 +19,9 @@ import com.kardabel.go4lunch.databinding.FragmentListviewBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 
-public class ListViewFragment extends Fragment {
+public class RestaurantsFragment extends Fragment {
 
-    private ListViewViewModel listViewViewModel;
+    private RestaurantsViewModel mRestaurantsViewModel;
     private FragmentListviewBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,11 +43,11 @@ public class ListViewFragment extends Fragment {
 
         // INJECTION OF LISTVIEWMODEL
         ViewModelFactory listViewModelFactory = ViewModelFactory.getInstance();
-        listViewViewModel =
-                new ViewModelProvider(this, listViewModelFactory).get(ListViewViewModel.class);
+        mRestaurantsViewModel =
+                new ViewModelProvider(this, listViewModelFactory).get(RestaurantsViewModel.class);
 
         // CONFIGURE RECYCLERVIEW
-        listViewViewModel.getListViewViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<RestaurantsWrapperViewState>() {
+        mRestaurantsViewModel.getRestaurantsViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<RestaurantsWrapperViewState>() {
             @Override
             public void onChanged(RestaurantsWrapperViewState restaurantsWrapperViewState) {
                 adapter.setRestaurantListData(restaurantsWrapperViewState.getItemRestaurant());
@@ -59,9 +58,9 @@ public class ListViewFragment extends Fragment {
         // ON ITEM CLICK, GO TO DETAILS
         adapter.setOnItemClickListener(new RestaurantItemRecyclerViewAdapter.OnRestaurantItemClickListener() {
             @Override
-            public void onRestaurantItemClick(RestaurantItemViewState restaurantItemViewState) {
+            public void onRestaurantItemClick(RestaurantsViewState restaurantsViewState) {
 
-                startActivity(RestaurantDetailsActivity.navigate(requireContext(), restaurantItemViewState.getPlaceId()));
+                startActivity(RestaurantDetailsActivity.navigate(requireContext(), restaurantsViewState.getPlaceId()));
 
             }
         });
