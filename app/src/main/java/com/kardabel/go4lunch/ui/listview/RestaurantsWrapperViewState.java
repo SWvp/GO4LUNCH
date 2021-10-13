@@ -6,12 +6,12 @@ public class RestaurantsWrapperViewState {
 
     // WRAPPER OF RESTAURANTS ITEMS
 
-    private final List<RestaurantItemViewState> itemRestaurant;
+    private final List<RestaurantsViewState> itemRestaurant;
 
-    public RestaurantsWrapperViewState(List<RestaurantItemViewState> itemRestaurant) {
+    public RestaurantsWrapperViewState(List<RestaurantsViewState> itemRestaurant) {
         this.itemRestaurant = itemRestaurant;
 
     }
-    public List<RestaurantItemViewState> getItemRestaurant() { return itemRestaurant; }
+    public List<RestaurantsViewState> getItemRestaurant() { return itemRestaurant; }
 
 }

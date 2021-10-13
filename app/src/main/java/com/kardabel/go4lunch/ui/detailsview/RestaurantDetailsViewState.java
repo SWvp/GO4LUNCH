@@ -1,7 +1,5 @@
 package com.kardabel.go4lunch.ui.detailsview;
 
-import com.kardabel.go4lunch.ui.listview.RestaurantItemViewState;
-
 public class RestaurantDetailsViewState {
 
     private static final String API_URL = "https://maps.googleapis.com/maps/api/place/";

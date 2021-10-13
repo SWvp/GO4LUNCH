@@ -18,7 +18,7 @@ import java.util.List;
 
 public class RestaurantItemRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantItemRecyclerViewAdapter.ViewHolder> implements Filterable {
 
-    private List<RestaurantItemViewState> restaurantList = new ArrayList<>();
+    private List<RestaurantsViewState> restaurantList = new ArrayList<>();
     private OnRestaurantItemClickListener onRestaurantItemClickListener;
     private OnSearchViewQueryListener onSearchViewQueryListener;
 
@@ -34,7 +34,7 @@ public class RestaurantItemRecyclerViewAdapter extends RecyclerView.Adapter<Rest
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        RestaurantItemViewState restaurant = restaurantList.get(position);
+        RestaurantsViewState restaurant = restaurantList.get(position);
 
         holder.viewHolderBinding.itemListviewRestaurantName.setText(restaurant.getName());
         holder.viewHolderBinding.itemListviewAddress.setText(restaurant.getAddress());
@@ -42,7 +42,7 @@ public class RestaurantItemRecyclerViewAdapter extends RecyclerView.Adapter<Rest
         holder.viewHolderBinding.itemListviewDistance.setText(restaurant.getDistance());
         holder.viewHolderBinding.ratingBar.setRating((float) restaurant.getRating());
 
-        String urlPhoto = RestaurantItemViewState.urlPhoto(restaurant);
+        String urlPhoto = RestaurantsViewState.urlPhoto(restaurant);
         Glide.with(holder.viewHolderBinding.itemListviewRestaurantPicture.getContext())
                 .load(urlPhoto)
                 .into(holder.viewHolderBinding.itemListviewRestaurantPicture);
@@ -64,7 +64,7 @@ public class RestaurantItemRecyclerViewAdapter extends RecyclerView.Adapter<Rest
 
     }
 
-    public void setRestaurantListData(List<RestaurantItemViewState> restaurantList){
+    public void setRestaurantListData(List<RestaurantsViewState> restaurantList){
         this.restaurantList = restaurantList;
         notifyDataSetChanged();
 
@@ -82,12 +82,12 @@ public class RestaurantItemRecyclerViewAdapter extends RecyclerView.Adapter<Rest
         // RUN ON BACKGROUND THREAD
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            List<RestaurantItemViewState> filteredList = new ArrayList<>();
+            List<RestaurantsViewState> filteredList = new ArrayList<>();
 
             if(constraint.toString().isEmpty()){
                 filteredList.addAll(restaurantList);
             } else{
-                for (RestaurantItemViewState restaurant : restaurantList){
+                for (RestaurantsViewState restaurant : restaurantList){
                     if (restaurant.getName().toLowerCase().contains(constraint.toString().toLowerCase())){
                         filteredList.add(restaurant);
 
@@ -104,7 +104,7 @@ public class RestaurantItemRecyclerViewAdapter extends RecyclerView.Adapter<Rest
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             restaurantList.clear();
-            restaurantList.addAll((Collection<? extends RestaurantItemViewState>) results.values);
+            restaurantList.addAll((Collection<? extends RestaurantsViewState>) results.values);
             notifyDataSetChanged();
 
         }
@@ -126,7 +126,7 @@ public class RestaurantItemRecyclerViewAdapter extends RecyclerView.Adapter<Rest
 
     // WHEN USER CLICK ON A RESTAURANT ITEM TO DISPLAY RESTAURANT DETAILS
     public interface OnRestaurantItemClickListener{
-        void onRestaurantItemClick (RestaurantItemViewState restaurantItemViewState);
+        void onRestaurantItemClick (RestaurantsViewState restaurantsViewState);
 
     }
 
