@@ -119,4 +119,19 @@ public class RestaurantSearch {
                 totalRatings,
                 permanentlyClosed);
     }
+
+    @Override
+    public String toString() {
+        return "RestaurantSearch{" +
+                "placeId='" + placeId + '\'' +
+                ", restaurantName='" + restaurantName + '\'' +
+                ", restaurantAddress='" + restaurantAddress + '\'' +
+                ", restaurantPhotos=" + restaurantPhotos +
+                ", restaurantGeometry=" + restaurantGeometry +
+                ", openingHours=" + openingHours +
+                ", rating=" + rating +
+                ", totalRatings=" + totalRatings +
+                ", permanentlyClosed=" + permanentlyClosed +
+                '}';
+    }
 }

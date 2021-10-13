@@ -3,6 +3,8 @@ package com.kardabel.go4lunch.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Objects;
+
 public class RestaurantDetails {
 
     @SerializedName("place_id")
@@ -39,5 +41,36 @@ public class RestaurantDetails {
 
     public String getWebsite() { return website; }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RestaurantDetails that = (RestaurantDetails) o;
+        return Objects.equals(placeId, that.placeId) &&
+                Objects.equals(openingHours, that.openingHours) &&
+                Objects.equals(formatted_phone_number, that.formatted_phone_number) &&
+                Objects.equals(website, that.website);
 
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                placeId,
+                openingHours,
+                formatted_phone_number,
+                website);
+
+    }
+
+    @Override
+    public String toString() {
+        return "RestaurantDetails{" +
+                "placeId='" + placeId + '\'' +
+                ", openingHours=" + openingHours +
+                ", formatted_phone_number='" + formatted_phone_number + '\'' +
+                ", website='" + website + '\'' +
+                '}';
+
+    }
 }

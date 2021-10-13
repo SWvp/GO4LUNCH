@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.ui.listview;
 
+import java.util.Objects;
+
 public class RestaurantsViewState {
 
     private static final String API_URL = "https://maps.googleapis.com/maps/api/place/";
@@ -42,6 +44,47 @@ public class RestaurantsViewState {
 
     public String getPlaceId() { return placeId; }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RestaurantsViewState that = (RestaurantsViewState) o;
+        return Double.compare(that.rating, rating) == 0 &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(address, that.address) &&
+                Objects.equals(avatar, that.avatar) &&
+                Objects.equals(distance, that.distance) &&
+                Objects.equals(openingHours, that.openingHours) &&
+                Objects.equals(placeId, that.placeId);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                name,
+                address,
+                avatar,
+                distance,
+                openingHours,
+                rating,
+                placeId);
+
+    }
+
+    @Override
+    public String toString() {
+        return "RestaurantsViewState{" +
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", distance='" + distance + '\'' +
+                ", openingHours='" + openingHours + '\'' +
+                ", rating=" + rating +
+                ", placeId='" + placeId + '\'' +
+                '}';
+    }
+
     public static String urlPhoto(RestaurantsViewState restaurantsViewState) {
         if (restaurantsViewState.getAvatar() != null) {
             String photoReference = restaurantsViewState.getAvatar();
@@ -49,5 +92,7 @@ public class RestaurantsViewState {
         }
         return "";
     }
+
+
 }
 
