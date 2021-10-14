@@ -4,10 +4,6 @@ import java.util.Objects;
 
 public class RestaurantsViewState {
 
-    private static final String API_URL = "https://maps.googleapis.com/maps/api/place/";
-    private static final String PHOTO_REFERENCE ="photo?maxwidth=300&photo_reference=";
-    private static final String API_KEY ="AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8";
-
     private final String name;
     private final String address;
     private final String avatar;
@@ -84,15 +80,5 @@ public class RestaurantsViewState {
                 ", placeId='" + placeId + '\'' +
                 '}';
     }
-
-    public static String urlPhoto(RestaurantsViewState restaurantsViewState) {
-        if (restaurantsViewState.getAvatar() != null) {
-            String photoReference = restaurantsViewState.getAvatar();
-            return API_URL + PHOTO_REFERENCE + photoReference + "&key=" + API_KEY;
-        }
-        return "";
-    }
-
-
 }
 
