@@ -22,4 +22,26 @@
     <string name="facebook_app_id">303261874567043</string>
     <string name="fb_login_protocol_scheme">fb303261874567043</string>
 
+    <!-- MESSAGE FOR OPENING HOURS -->
+    <string name="open">Open</string>
+    <string name="closing_soon">Closing soon</string>
+    <string name="closed">Closed</string>
+    <string name="closed_until">Closed until</string>
+    <string name="closed_today">Closed today</string>
+    <string name="open_h24">Open 24/7</string>
+    <string name="open_until">Open until</string>
+    <string name="permanently_closed">Permanently closed</string>
+    <string name="opening_hours_unavailable">Opening hours unavailable</string>
+    <string name="am">am</string>
+    <string name="pm">pm</string>
+
+    <!-- MESSAGE FOR PHOTO -->
+    <string name="photo_unavailable">Photo unavailable</string>
+
+    <!-- MESSAGE FOR DISTANCE -->
+    <string name="distance_unavailable">Distance unavailable</string>
+    <string name="m">m</string>
+
+
+
 </resources>

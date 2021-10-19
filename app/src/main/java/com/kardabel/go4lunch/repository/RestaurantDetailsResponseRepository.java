@@ -16,7 +16,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PlaceDetailsResponseRepository {
+public class RestaurantDetailsResponseRepository {
 
     private final GoogleMapsApi googleMapsApi;
     private final String key = "AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8";
@@ -24,7 +24,7 @@ public class PlaceDetailsResponseRepository {
 
     private final Map<String, RestaurantDetailsResult> cache = new HashMap<>(2000);
 
-    public PlaceDetailsResponseRepository(GoogleMapsApi googleMapsApi) {
+    public RestaurantDetailsResponseRepository(GoogleMapsApi googleMapsApi) {
         this.googleMapsApi = googleMapsApi;
     }
 

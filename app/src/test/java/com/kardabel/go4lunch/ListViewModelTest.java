@@ -81,7 +81,13 @@ public class ListViewModelTest {
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getDefaultRestaurants()));
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails());
 
-        mRestaurantsViewModel = new RestaurantsViewModel(locationRepository, nearbySearchResultsUseCase, restaurantDetailsResultsUseCase, currentNumericDay, currentConvertedHour);
+        mRestaurantsViewModel = new RestaurantsViewModel(
+                application,
+                locationRepository,
+                nearbySearchResultsUseCase,
+                restaurantDetailsResultsUseCase,
+                currentNumericDay,
+                currentConvertedHour);
     }
 
     @Test

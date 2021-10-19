@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.kardabel.go4lunch.MainApplication;
 import com.kardabel.go4lunch.MainActivityViewModel;
 import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.repository.PlaceDetailsResponseRepository;
+import com.kardabel.go4lunch.repository.RestaurantDetailsResponseRepository;
 import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
@@ -17,8 +17,9 @@ import com.kardabel.go4lunch.ui.listview.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
-import com.kardabel.go4lunch.util.CurrentConvertedHour;
 import com.kardabel.go4lunch.util.CurrentNumericDay;
+
+import java.time.Clock;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -29,11 +30,10 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final Application application;
     private final LocationRepository locationRepository;
     private final NearbySearchResponseRepository nearbySearchResponseRepository;
-    private final PlaceDetailsResponseRepository placeDetailsResponseRepository;
+    private final RestaurantDetailsResponseRepository mRestaurantDetailsResponseRepository;
     private final NearbySearchResultsUseCase nearbySearchResultsUseCase;
     private final RestaurantDetailsResultsUseCase mRestaurantDetailsResultsUseCase;
     private final CurrentNumericDay currentNumericDay;
-    private final CurrentConvertedHour currentConvertedHour;
 
     public static ViewModelFactory getInstance() {
         if (factory == null) {
@@ -57,11 +57,15 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.application = MainApplication.getApplication();
         this.locationRepository = new LocationRepository();
         this.nearbySearchResponseRepository = new NearbySearchResponseRepository(googleMapsApi);
-        this.placeDetailsResponseRepository = new PlaceDetailsResponseRepository(googleMapsApi);
-        this.nearbySearchResultsUseCase = new NearbySearchResultsUseCase(locationRepository, nearbySearchResponseRepository);
-        this.mRestaurantDetailsResultsUseCase = new RestaurantDetailsResultsUseCase(locationRepository, nearbySearchResponseRepository, placeDetailsResponseRepository);
+        this.mRestaurantDetailsResponseRepository = new RestaurantDetailsResponseRepository(googleMapsApi);
+        this.nearbySearchResultsUseCase = new NearbySearchResultsUseCase(
+                locationRepository,
+                nearbySearchResponseRepository);
+        this.mRestaurantDetailsResultsUseCase = new RestaurantDetailsResultsUseCase(
+                locationRepository,
+                nearbySearchResponseRepository,
+                mRestaurantDetailsResponseRepository);
         this.currentNumericDay = new CurrentNumericDay();
-        this.currentConvertedHour = new CurrentConvertedHour();
 
     }
 
@@ -71,13 +75,24 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(RestaurantsViewModel.class)) {
-            return (T) new RestaurantsViewModel(locationRepository, nearbySearchResultsUseCase, mRestaurantDetailsResultsUseCase, currentNumericDay, currentConvertedHour);
+            return (T) new RestaurantsViewModel(
+                    application,
+                    locationRepository,
+                    nearbySearchResultsUseCase,
+                    mRestaurantDetailsResultsUseCase,
+                    currentNumericDay,
+                    Clock.systemDefaultZone());
         } else if (modelClass.isAssignableFrom(MapViewModel.class)) {
-            return (T) new MapViewModel(locationRepository, nearbySearchResultsUseCase);
+            return (T) new MapViewModel(
+                    locationRepository,
+                    nearbySearchResultsUseCase);
         } else if (modelClass.isAssignableFrom(MainActivityViewModel.class)) {
-            return (T) new MainActivityViewModel(application, locationRepository);
+            return (T) new MainActivityViewModel(
+                    application,
+                    locationRepository);
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
-            return (T) new RestaurantDetailsViewModel(nearbySearchResultsUseCase);
+            return (T) new RestaurantDetailsViewModel(
+                    nearbySearchResultsUseCase);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
 

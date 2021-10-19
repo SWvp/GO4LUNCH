@@ -42,7 +42,7 @@ public class RestaurantItemRecyclerViewAdapter extends RecyclerView.Adapter<Rest
         holder.viewHolderBinding.itemListviewDistance.setText(restaurant.getDistance());
         holder.viewHolderBinding.ratingBar.setRating((float) restaurant.getRating());
 
-        String urlPhoto = RestaurantsViewState.urlPhoto(restaurant);
+        String urlPhoto = RestaurantsViewModel.urlPhoto(restaurant);
         Glide.with(holder.viewHolderBinding.itemListviewRestaurantPicture.getContext())
                 .load(urlPhoto)
                 .into(holder.viewHolderBinding.itemListviewRestaurantPicture);
