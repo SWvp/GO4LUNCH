@@ -416,31 +416,6 @@ public class RestaurantsViewModelTest {
     }
 
 
-
-    private List<Periods> getFirstPeriods() {
-        return Arrays.asList(
-                new Periods(
-                        new Close(2, "1125"),
-                        new Open(2, "1000")),
-                new Periods(
-                        new Close(3, "1125"),
-                        new Open(3, "1000"))
-
-                );
-    }
-
-    private List<Periods> getSecondPeriods() {
-        return Arrays.asList(
-                new Periods(
-                        new Close(3, "0100"),
-                        new Open(2, "1000")),
-                new Periods(
-                        new Close(4, "1125"),
-                        new Open(3, "1000"))
-
-        );
-    }
-
     private List<Periods> getPermanentlyOpenPeriods() {
         return Collections.singletonList(
                 new Periods(
