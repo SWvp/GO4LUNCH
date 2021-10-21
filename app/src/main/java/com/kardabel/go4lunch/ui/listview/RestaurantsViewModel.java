@@ -172,156 +172,115 @@ public class RestaurantsViewModel extends ViewModel {
                 }
             }
         }
-        return application.getApplicationContext().getString(R.string.photo_unavailable);
+        return application.getString(R.string.photo_unavailable);
 
     }
 
-    // GET MESSAGE FROM OPENING HOURS INFORMATION WITHOUT DETAILS
+    // GET MESSAGE FOR THE OPENING HOUR FIELD (WITHOUT DETAILS INFORMATION)
     private String OpeningHoursLight(OpeningHours openingHours){
         String openStatus;
         if (openingHours != null) {
             if (openingHours.getOpenNow()) {
-                openStatus = application.getApplicationContext().getString(R.string.open);
+                openStatus = application.getString(R.string.open);
 
             } else {
-                openStatus = application.getApplicationContext().getString(R.string.closed);
+                openStatus = application.getString(R.string.closed);
 
             }
         } else {
-            openStatus = application.getApplicationContext().getString(R.string.opening_hours_unavailable);
+            openStatus = application.getString(R.string.opening_hours_unavailable);
 
         }
         return openStatus;
 
     }
 
-    // GET MESSAGE FROM OPENING HOURS INFORMATION
+    // GET MESSAGE FOR THE OPENING HOUR FIELD
     private String getOpeningText(OpeningHours openingHours, boolean permanentlyClosedStatus) {
 
-        String messageToDisplay = application.getApplicationContext().getString(R.string.opening_hours_unavailable);
+        // DEFAULT MESSAGE IF NO OPENING HOUR DATA
+        String messageToDisplay = application.getString(R.string.opening_hours_unavailable);
 
         if (openingHours != null) {
 
             LocalDateTime currentLocalDate = LocalDateTime.now(clock);
 
-            // IF THE PERIOD LIST HAS ONLY ONE ELEMENT, NOT NULL, CONSIDER THAT THE PLACE IS A 24/7 ONE
+            // IF THE PERIOD LIST HAS ONLY ONE ELEMENT, CONSIDER THAT THE PLACE IS A 24/7 ONE
             if (openingHours.getPeriods().size() == 1) {
                 if (openingHours.getOpenNow()) {
-                    messageToDisplay = application.getApplicationContext().getString(R.string.open_h24);
+                    messageToDisplay = application.getString(R.string.open_h24);
 
                 }
 
             } else if (openingHours.getPeriods().size() > 1) {
                 if (isRestaurantOpenToday(openingHours)) {
 
-                    LocalDateTime selectedOpeningHour = null;
-                    LocalDateTime selectedClosingHour = null;
-                    Integer openingHour = null;
-                    Integer closingHour = null;
+                    LocalDateTime selectedOpeningDateTime = null;
+                    LocalDateTime selectedClosingDateTime = null;
 
-                    // SET ALL OPENING AND CLOSED HOURS IF AFTER CURRENT DATE, TAKE THE BEST MATCH
-
+                    // SET OPENING AND CLOSED HOURS IF AFTER CURRENT DATE, TAKE THE CLOSEST MATCH
 
                     for (Periods period : openingHours.getPeriods()) {
 
-                        LocalDateTime openingHourToConsider = convertOpeningHourToLocalDate(period.getOpen().getTime(), period.getOpen().getDay());
-                        LocalDateTime closingHourToConsider = convertClosingHourToLocalDate(period.getClose());
+                        LocalDateTime openingHourToConsider = convertOpeningHourToLocalDateTime(period.getOpen().getTime(), period.getOpen().getDay());
+                        LocalDateTime closingHourToConsider = convertClosingHourToLocalDateTime(period.getClose());
 
-                        if(openingHourToConsider.isAfter(currentLocalDate) && isConsiderClosestThanSelected(selectedOpeningHour, openingHourToConsider)){
-                            selectedOpeningHour = openingHourToConsider;
-                            openingHour = Integer.parseInt(period.getOpen().getTime());
+                        if(openingHourToConsider.isAfter(currentLocalDate) && isConsiderClosestThanSelected(selectedOpeningDateTime, openingHourToConsider)){
+                            selectedOpeningDateTime = openingHourToConsider;
 
-                        }else if(closingHourToConsider.isAfter(currentLocalDate) && isConsiderClosestThanSelected(selectedClosingHour, closingHourToConsider)){
-                            selectedClosingHour = closingHourToConsider;
-                            closingHour = Integer.parseInt(period.getClose().getTime());
-
+                        }else if(closingHourToConsider.isAfter(currentLocalDate) && isConsiderClosestThanSelected(selectedClosingDateTime, closingHourToConsider)){
+                            selectedClosingDateTime = closingHourToConsider;
 
                         }
                     }
-                    assert selectedOpeningHour != null;
-                    if (selectedOpeningHour.isAfter(selectedClosingHour)) {
 
-                        assert selectedClosingHour != null;
-                        LocalDateTime closingSoonDate = selectedClosingHour.minus(1, ChronoUnit.HOURS);
+                    if (selectedOpeningDateTime != null) {
+                        if (selectedOpeningDateTime.isAfter(selectedClosingDateTime)) {
 
-                        messageToDisplay = application.getApplicationContext().getString(R.string.open_until) + getReadableHour(closingHour);
+                            assert selectedClosingDateTime != null;
+                            LocalDateTime closingSoonDate = selectedClosingDateTime.minus(1, ChronoUnit.HOURS);
 
-                        if (currentLocalDate.isAfter(closingSoonDate)) {
-                            messageToDisplay = application.getApplicationContext().getString(R.string.closing_soon);
+                            messageToDisplay = application.getString(R.string.open_until) +
+                                    getReadableHour(Integer.parseInt(selectedClosingDateTime.format(DateTimeFormatter.ofPattern("HHmm"))));
 
+                            if (currentLocalDate.isAfter(closingSoonDate)) {
+                                messageToDisplay = application.getString(R.string.closing_soon);
+
+                            }
+
+                        } else if (selectedOpeningDateTime.isAfter(currentLocalDate)) {
+                            messageToDisplay = application.getString(R.string.closed_until) +
+                                    getReadableDay(selectedOpeningDateTime) +
+                                    getReadableHour(Integer.parseInt(selectedOpeningDateTime.format(DateTimeFormatter.ofPattern("HHmm"))));
                         }
-
-                    } else if (selectedOpeningHour.isAfter(currentLocalDate)) {
-                        messageToDisplay = application.getApplicationContext().getString(R.string.closed_until) + getReadableHour(openingHour);
                     }
 
-
-
-
-
- //               for (Periods period : openingHours.getPeriods()) {
-
- //                   LocalDateTime openingHourToConsider = convertOpeningHourToLocalDate(period.getOpen().getTime(), period.getOpen().getDay());
- //                   LocalDateTime closingHourToConsider = convertClosingHourToLocalDate(period.getClose());
-
- //                   if (period.getOpen().getDay() == getCurrentNumericDay() && selectedOpeningHour == null && openingHourToConsider.isAfter(currentLocalDate)) {
- //                       selectedOpeningHour = openingHourToConsider;
- //                       selectedClosingHour = closingHourToConsider;
- //                       openingHour = Integer.parseInt(period.getOpen().getTime());
- //                       closingHour = Integer.parseInt(period.getClose().getTime());
-
- //                   } else if (period.getOpen().getDay() == getCurrentNumericDay() && selectedOpeningHour != null && isAfterDateToConsider(openingHourToConsider)) {
- //                       selectedOpeningHour = openingHourToConsider;
- //                       selectedClosingHour = closingHourToConsider;
- //                       openingHour = Integer.parseInt(period.getOpen().getTime());
- //                       closingHour = Integer.parseInt(period.getClose().getTime());
-
- //                   }
- //               }
-
-                    // COMPARE TO LOCAL DATE
-
- //                  if(currentLocalDate.isBefore(selectedOpeningHour) || currentLocalDate.isAfter(selectedClosingHour)){
- //                      //closed until
- //                      messageToDisplay = application.getApplicationContext().getString(R.string.closed_until) + getReadableHour(openingHour);
-
- //                  } else {
- //                      LocalDateTime closingSoonDate = selectedClosingHour.minus(1, ChronoUnit.HOURS);
- //                      if (currentLocalDate.isAfter(closingSoonDate)) {
- //                          // closed soon
- //                          messageToDisplay = application.getApplicationContext().getString(R.string.closing_soon);
-
-
- //                      } else {
- //                          // open until
- //                          messageToDisplay = application.getApplicationContext().getString(R.string.open_until) + getReadableHour(closingHour);
-
- //                      }
- //                  }
                 }else{
-                    // TODO: retrieve next opening day and hour
-                    messageToDisplay = application.getApplicationContext().getString(R.string.closed_today);
+                    messageToDisplay = application.getString(R.string.closed_today);
+
                 }
             }
 
             // IF THE PERIOD LIST IS EMPTY OR NULL, RETRIEVE ONLY OPEN STATUS
 
             else if (!openingHours.getOpenNow()) {
-                messageToDisplay = application.getApplicationContext().getString(R.string.closed);
+                messageToDisplay = application.getString(R.string.closed);
 
 
             } else if (openingHours.getOpenNow()) {
-                messageToDisplay = application.getApplicationContext().getString(R.string.open);
+                messageToDisplay = application.getString(R.string.open);
 
             }
         }
 
         if(permanentlyClosedStatus){
-            messageToDisplay = application.getApplicationContext().getString(R.string.permanently_closed);
+            messageToDisplay = application.getString(R.string.permanently_closed);
         }
         return messageToDisplay;
 
     }
+
+
 
 
     // GET LOCATION DISTANCE FROM USER TO RESTAURANT
@@ -332,9 +291,9 @@ public class RestaurantsViewModel extends ViewModel {
         restaurantLocation.setLatitude(lat);
         restaurantLocation.setLongitude(lng);
         float distance = userLocation.distanceTo(restaurantLocation);
-        return (int) distance + application.getApplicationContext().getString(R.string.m);
+        return (int) distance + application.getString(R.string.m);
         } else {
-            return application.getApplicationContext().getString(R.string.distance_unavailable);
+            return application.getString(R.string.distance_unavailable);
 
         }
     }
@@ -362,12 +321,12 @@ public class RestaurantsViewModel extends ViewModel {
     /////// DATE AND TIME ///////
 
     private boolean isConsiderClosestThanSelected(LocalDateTime selectedHour, LocalDateTime hourToConsider) {
-        if(selectedHour == null){
+        if (selectedHour == null) {
             return true;
-        }else return hourToConsider.isBefore(selectedHour);
+        } else return hourToConsider.isBefore(selectedHour);
     }
 
-    // CHECK IF RESTAURANT IS CLOSED TODAY UNTIL TOMORROW
+    // CHECK IF RESTAURANT IS CLOSED THIS CURRENT DAY
     private boolean isRestaurantOpenToday(@NonNull OpeningHours openingHours) {
         boolean bool = true;
         boolean isRestaurantActivityToday = false;
@@ -378,7 +337,6 @@ public class RestaurantsViewModel extends ViewModel {
                 isRestaurantActivityToday = true;
             }
         }
-
 
         for (int i = 0; i < openingHours.getPeriods().size(); i++) {
             if ((openingHours.getPeriods().get(i).getOpen().getDay() == getCurrentNumericDay() &&
@@ -391,17 +349,6 @@ public class RestaurantsViewModel extends ViewModel {
         return bool;
 
     }
-    // IS OPENING HOUR WE CONSIDER IS AFTER OR BEFORE NOW
-
-    // private boolean isAfterDateToConsider(LocalDateTime dateToConsider) {
-    //     LocalDateTime currentLocalDate = LocalDateTime.now(clock);
-
-    //     if (currentLocalDate.isBefore(dateToConsider)) {
-    //         return false;
-    //     } else {
-    //         return true;
-    //     }
-    // }
 
     private int getCurrentNumericDay(){ return currentNumericDay.getCurrentNumericDay(); }
 
@@ -423,6 +370,7 @@ public class RestaurantsViewModel extends ViewModel {
 
     }
 
+    // RETURN TRUE IF 30 DAYS MONTH
     private boolean isCurrentDayTheLastMonthDay() {
         return currentMonth() == 2 ||
                 currentMonth() == 4 ||
@@ -458,25 +406,35 @@ public class RestaurantsViewModel extends ViewModel {
         if (min == 0) {
             minReadable = "";
         } else if (min > 0 && min < 10) {
-            minReadable = "0" + min;
+            minReadable = ":0" + min;
         } else {
-            minReadable = String.valueOf(min);
+            minReadable = ":" + min;
         }
 
         // GET READABLE HOUR
         if (hour < 12 && hour > 0) {
-            readableHour = " " + hour + "." + minReadable + application.getApplicationContext().getString(R.string.am);
+            readableHour = " " + hour + minReadable + "." +application.getString(R.string.am);
         } else if (hour == 0) {
-            readableHour = " " + 12 + minReadable + application.getApplicationContext().getString(R.string.am);
+            readableHour = " " + 12 + minReadable + "." + application.getString(R.string.am);
         } else if (hour == 12) {
-            readableHour = " " + 12 + "." + minReadable + application.getApplicationContext().getString(R.string.pm);
+            readableHour = " " + 12 + minReadable + "." + application.getString(R.string.pm);
         } else {
-            readableHour = " " + (hour - 12) + "." + minReadable + application.getApplicationContext().getString(R.string.pm);
+            readableHour = " " + (hour - 12) + minReadable + "." + application.getString(R.string.pm);
         }
         return readableHour;
     }
 
-    private LocalDateTime convertOpeningHourToLocalDate(String openingHour, int openingDay) {
+    // IF THE NEXT OPENING IS NOT TODAY
+    private String getReadableDay(LocalDateTime selectedOpeningDateTime) {
+        if(selectedOpeningDateTime.getDayOfWeek() != LocalDateTime.now(clock).getDayOfWeek()){
+            return " " + selectedOpeningDateTime.getDayOfWeek().toString();
+
+        }else{
+            return "";
+        }
+    }
+
+    private LocalDateTime convertOpeningHourToLocalDateTime(String openingHour, int openingDay) {
         int dayToAdd = openingDay - getCurrentNumericDay();
 
         if (dayToAdd < 0) {
@@ -497,7 +455,7 @@ public class RestaurantsViewModel extends ViewModel {
 
     }
 
-    private LocalDateTime convertClosingHourToLocalDate(@NonNull Close closingHour) {
+    private LocalDateTime convertClosingHourToLocalDateTime(@NonNull Close closingHour) {
         // GET A DEFAULT DATE VALUE FOR PARSING
         String convertedClosingDate = "2000-01-01 00:00";
         int dayToAdd = closingHour.getDay() - getCurrentNumericDay();
