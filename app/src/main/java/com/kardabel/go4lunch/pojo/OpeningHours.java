@@ -15,20 +15,17 @@ public class OpeningHours {
     @Expose
     private final List<Periods> periods;
 
-    @SerializedName("weekday_text")
-    @Expose
-    private final List<String> weekdayText;
 
-    public OpeningHours(Boolean openNow, List<Periods> periods, List<String> weekdayText) {
+    public OpeningHours(Boolean openNow, List<Periods> periods) {
         this.openNow = openNow;
         this.periods = periods;
-        this.weekdayText = weekdayText;
+
     }
 
     public Boolean getOpenNow() { return openNow; }
 
     public List<Periods> getPeriods() { return periods; }
 
-    public List<String> getWeekdayText() { return weekdayText; }
+
 
 }

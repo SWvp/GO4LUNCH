@@ -1,9 +1,12 @@
 package com.kardabel.go4lunch;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
+import android.app.Application;
 import android.location.Location;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -35,12 +38,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ListViewModelTest {
+public class RestaurantsViewModelTest {
 
     private static final double EXPECTED_LATITUDE = 30.0;
     private static final double EXPECTED_LONGITUDE = 42.0;
@@ -53,9 +61,18 @@ public class ListViewModelTest {
     private final RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase = Mockito.mock(RestaurantDetailsResultsUseCase.class);
 
     private final CurrentNumericDay currentNumericDay = Mockito.mock(CurrentNumericDay.class);
-    private final CurrentConvertedHour currentConvertedHour = Mockito.mock(CurrentConvertedHour.class);
 
     private final Location location = Mockito.mock(Location.class);
+    private final Application application = Mockito.mock(Application.class);
+    private final Clock clock = Clock.fixed(
+            LocalDateTime
+                    .of(
+                            LocalDate.of(2021, 10, 20),
+                            LocalTime.of(10, 00)
+                    )
+                    .toInstant(ZoneOffset.UTC),
+            ZoneOffset.UTC
+    );
 
     private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<NearbySearchResults> nearbySearchResultsMutableLiveData = new MutableLiveData<>();
@@ -68,18 +85,67 @@ public class ListViewModelTest {
         // SETUP THE LOCATION VALUE
         Mockito.doReturn(EXPECTED_LATITUDE).when(location).getLatitude();
         Mockito.doReturn(EXPECTED_LONGITUDE).when(location).getLongitude();
+        Mockito.doReturn(666F).when(location).distanceTo(any());
 
         // SETUP THE MOCK RETURN
+
+        Mockito.doReturn("Open").when(application).getString(R.string.open);
+        Mockito.doReturn("Closing soon").when(application).getString(R.string.closing_soon);
+        Mockito.doReturn("Closed").when(application).getString(R.string.closed);
+        Mockito.doReturn("Closed until").when(application).getString(R.string.closed_until);
+        Mockito.doReturn("Closed today").when(application).getString(R.string.closed_today);
+        Mockito.doReturn("Open 24/7").when(application).getString(R.string.open_h24);
+        Mockito.doReturn("Open until").when(application).getString(R.string.open_until);
+        Mockito.doReturn("Permanently closed").when(application).getString(R.string.permanently_closed);
+        Mockito.doReturn("Opening hours unavailable").when(application).getString(R.string.opening_hours_unavailable);
+        Mockito.doReturn("am").when(application).getString(R.string.am);
+        Mockito.doReturn("pm").when(application).getString(R.string.pm);
+        Mockito.doReturn("m").when(application).getString(R.string.m);
+
+
         Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
         Mockito.doReturn(nearbySearchResultsMutableLiveData).when(nearbySearchResultsUseCase).getNearbySearchResultsLiveData();
         Mockito.doReturn(restaurantDetailsResultsUseCaseMutableLiveData).when(restaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
-        Mockito.doReturn(2).when(currentNumericDay).getCurrentNumericDay();
-        Mockito.doReturn(1100).when(currentConvertedHour).getCurrentConvertedHour();
+        Mockito.doReturn(3).when(currentNumericDay).getCurrentNumericDay();
 
         // SET LIVEDATA VALUES
         locationMutableLiveData.setValue(location);
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getDefaultRestaurants()));
-        restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails());
+        restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
+                new RestaurantDetails(
+                        "First_Place_Id",
+                        new OpeningHours(
+                                true,
+                                getDefaultPeriod(
+                                        new Periods(
+                                                new Close(3, "1300"),
+                                                new Open(3, "0900")),
+                                        new Periods(
+                                                new Close(3, "1450"),
+                                                new Open(3, "2300")
+
+                                        ))
+                        ),
+                        "First_Phone_Number",
+                        "First_Website"
+                ),
+                new RestaurantDetails(
+                        "Second_Place_Id",
+                        new OpeningHours(
+                                true,
+                                getDefaultPeriod(
+                                        new Periods(
+                                                new Close(3, "1150"),
+                                                new Open(3, "0800")),
+                                        new Periods(
+                                                new Close(3, "1700"),
+                                                new Open(3, "2256")
+                                        ))
+                        ),
+                        "Second_Phone_Number",
+                        "Second_Website"
+                )
+        ));
 
         mRestaurantsViewModel = new RestaurantsViewModel(
                 application,
@@ -87,7 +153,7 @@ public class ListViewModelTest {
                 nearbySearchResultsUseCase,
                 restaurantDetailsResultsUseCase,
                 currentNumericDay,
-                currentConvertedHour);
+                clock);
     }
 
     @Test
@@ -104,23 +170,70 @@ public class ListViewModelTest {
         });
     }
 
-    ////////// TIME TESTS ///////////
+    ////////// OPENING HOURS TESTS ///////////
 
     @Test
-    public void openRestaurantShouldDisplayOpenUntilClosingTime(){
+    public void open_Restaurant_Should_Display_Open_Until_Closing_Time(){
+        // GIVEN
+        restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
+                new RestaurantDetails(
+                        "First_Place_Id",
+                        new OpeningHours(
+                                true,
+                                getDefaultPeriod(
+                                        new Periods(
+                                                new Close(3, "1050"),
+                                                new Open(3, "0900")),
+                                        new Periods(
+                                                new Close(3, "1450"),
+                                                new Open(3, "2300")
+
+                                        ))
+                        ),
+                        "First_Phone_Number",
+                        "First_Website"
+                ),
+                new RestaurantDetails(
+                        "Second_Place_Id",
+                        new OpeningHours(
+                                true,
+                                getDefaultPeriod(
+                                        new Periods(
+                                                new Close(3, "1010"),
+                                                new Open(3, "0800")),
+                                        new Periods(
+                                                new Close(3, "1700"),
+                                                new Open(3, "2256")
+                                        ))
+                        ),
+                        "Second_Phone_Number",
+                        "Second_Website"
+                )
+        ));
+        // WHEN
+        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+            // THEN
+            assertEquals(getRestaurantsClosingSoon(), restaurantsWrapperViewState);
+
+            verify(locationRepository).getLocationLiveData();
+            verify(nearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+            verify(restaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
+            verifyNoMoreInteractions(locationRepository, nearbySearchResultsUseCase, restaurantDetailsResultsUseCase);
+        });
 
     }
 
     @Test
-    public void beforeOneHourClosingTimeShouldDisplayClosingSoon(){
+    public void before_One_Hour_Closing_Time_Should_Display_Closing_Soon(){
         // GIVEN
+
         // WHEN
         // THEN
 
     }
 
     @Test
-    public void neverClosingShouldDisplayH24(){
+    public void never_Closing_Should_Display_H24(){
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getPermanentlyOpenRestaurantsDetails());
         // WHEN
@@ -132,7 +245,7 @@ public class ListViewModelTest {
     }
 
     @Test
-    public void permanentlyClosedShouldDisplayThisStatus(){
+    public void permanently_Closed_Should_Display_This_Status(){
         // GIVEN
         // WHEN
         // THEN
@@ -140,7 +253,7 @@ public class ListViewModelTest {
     }
 
     @Test
-    public void afterClosingTimeShouldDisplayClosed(){
+    public void after_Closing_Time_Should_Display_Closed(){
         // GIVEN
         // WHEN
         // THEN
@@ -148,7 +261,7 @@ public class ListViewModelTest {
     }
 
     @Test
-    public void withoutPeriodsListButWithOpenNowShouldDisplayOpen(){
+    public void without_Periods_List_But_With_OpenNow_Should_Display_Open(){
         // GIVEN
         // WHEN
         // THEN
@@ -156,7 +269,7 @@ public class ListViewModelTest {
     }
 
     @Test
-    public void withoutPeriodsListButWithClosedNowShouldDisplayClosed(){
+    public void without_Periods_List_But_With_ClosedNow_Should_Display_Closed(){
         // GIVEN
         // WHEN
         // THEN
@@ -164,7 +277,7 @@ public class ListViewModelTest {
     }
 
     @Test
-    public void restaurantClosedUntilTomorrowShouldDisplayClosed(){
+    public void restaurant_Closed_Until_Tomorrow_Should_Display_Closed(){
         // GIVEN
         // WHEN
         // THEN
@@ -218,17 +331,22 @@ public class ListViewModelTest {
 
     }
 
+
+
+
+
     // region IN
+
     private List<RestaurantSearch> getDefaultRestaurants() {
-        List<RestaurantSearch> restaurants = new ArrayList<>();
+               List<RestaurantSearch> restaurants = new ArrayList<>();
         restaurants.add(
                 new RestaurantSearch(
-                        "235",
-                        "hotel",
-                        "0102",
+                        "First_Place_Id",
+                        "First_Name",
+                        "First_Address",
                         getPhoto(),
                         new Geometry(new RestaurantLatLngLiteral(30.0, 42.1)),
-                        new OpeningHours(true, null, null),
+                        new OpeningHours(true, null),
                         2,
                         25,
                         false
@@ -236,12 +354,12 @@ public class ListViewModelTest {
         );
         restaurants.add(
                 new RestaurantSearch(
-                        "450",
-                        "pipo",
-                        "bla",
+                        "Second_Place_Id",
+                        "Second_Name",
+                        "Second_Address",
                         getPhoto(),
                         new Geometry(new RestaurantLatLngLiteral(32.1, 42.2)),
-                        new OpeningHours(true, null, null),
+                        new OpeningHours(true, null),
                         4,
                         25,
                         false
@@ -251,37 +369,44 @@ public class ListViewModelTest {
 
     }
 
-    private List<RestaurantDetailsResult> getDefaultRestaurantsDetails() {
-        return Arrays.asList(
-                new RestaurantDetailsResult(new RestaurantDetails(
-                        "235",
-                        new OpeningHours(true, getFirstPeriods(), null),
-                        "0145204520",
-                        "www.coucou.com"
+    private List<RestaurantDetailsResult> getDefaultRestaurantsDetails(RestaurantDetails... restaurantDetails) {
 
-                        )),
-                new RestaurantDetailsResult(new RestaurantDetails(
-                        "450",
-                        new OpeningHours(true, getSecondPeriods(), null),
-                        "0625656488",
-                        "www.bonjour.fr"
+        List<RestaurantDetailsResult> results = new ArrayList<>();
 
-                ))
-        );
+        for(RestaurantDetails restaurantDetail : restaurantDetails){
+            results.add(new RestaurantDetailsResult(restaurantDetail));
+
+        }
+        return results;
+
     }
+
+    private List<Periods> getDefaultPeriod(Periods... periods) {
+        List<Periods> results = new ArrayList<>();
+
+        for (Periods period : periods) {
+            results.add(new Periods(
+                    period.getClose(),
+                    period.getOpen()));
+
+        }
+        return results;
+
+    }
+
 
     private List<RestaurantDetailsResult> getPermanentlyOpenRestaurantsDetails() {
         return Arrays.asList(
                 new RestaurantDetailsResult(new RestaurantDetails(
                         "235",
-                        new OpeningHours(true, getPermanentlyOpenPeriods(), null),
+                        new OpeningHours(true, getPermanentlyOpenPeriods()),
                         "0145204520",
                         "www.coucou.com"
 
                 )),
                 new RestaurantDetailsResult(new RestaurantDetails(
                         "450",
-                        new OpeningHours(true, getPermanentlyOpenPeriods(), null),
+                        new OpeningHours(true, getPermanentlyOpenPeriods()),
                         "0625656488",
                         "www.bonjour.fr"
 
@@ -338,10 +463,16 @@ public class ListViewModelTest {
                 )
         );
     }
+
     // endregion
 
 
+    /////////////////////////////////////////////////////////
+
+
+
     // region OUT
+
     private RestaurantsWrapperViewState getDefaultRestaurantViewState(){
         return new RestaurantsWrapperViewState(getRestaurantsResults());
 
@@ -351,48 +482,80 @@ public class ListViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
-                                "hotel",
-                                "0102",
+                                "First_Name",
+                                "First_Address",
                                 "photoTest",
-                                "0m",
-                                "Closing soon",
+                                "666m",
+                                "Open until 1.pm",
                                 1,
-                                "235"),
+                                "First_Place_Id"),
 
                 new RestaurantsViewState
                         (
-                                "pipo",
-                                "bla",
+                                "Second_Name",
+                                "Second_Address",
                                 "photoTest",
-                                "0m",
-                                "Open until 1.am",
+                                "666m",
+                                "Open until 11:50.am",
                                 2,
-                                "450")
+                                "Second_Place_Id")
 
         );
     }
+
+    private RestaurantsWrapperViewState getRestaurantsClosingSoon(){
+        return new RestaurantsWrapperViewState(getRestaurantsClosingSoonResults());
+
+    }
+
+    private List<RestaurantsViewState> getRestaurantsClosingSoonResults() {
+        return Arrays.asList(
+                new RestaurantsViewState
+                        (
+                                "First_Name",
+                                "First_Address",
+                                "photoTest",
+                                "666m",
+                                "Closing soon",
+                                1,
+                                "First_Place_Id"),
+
+                new RestaurantsViewState
+                        (
+                                "Second_Name",
+                                "Second_Address",
+                                "photoTest",
+                                "666m",
+                                "Closing soon",
+                                2,
+                                "Second_Place_Id")
+
+        );
+    }
+
+
 
     private List<RestaurantsViewState> getRestaurantsWithoutDetails() {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
-                                "hotel",
-                                "0102",
+                                "First_Name",
+                                "First_Address",
                                 "photoTest",
-                                "0m",
+                                "666m",
                                 "Open",
                                 1,
-                                "235"),
+                                "First_Place_Id"),
 
                 new RestaurantsViewState
                         (
-                                "pipo",
-                                "bla",
+                                "Second_Name",
+                                "Second_Address",
                                 "photoTest",
-                                "0m",
+                                "666m",
                                 "Open",
                                 2,
-                                "450")
+                                "Second_Place_Id")
 
         );
     }
@@ -411,7 +574,7 @@ public class ListViewModelTest {
                                 "hotel",
                                 "0102",
                                 "photoTest",
-                                "0m",
+                                "666m",
                                 "Open 24/7",
                                 1,
                                 "235"),
@@ -421,7 +584,7 @@ public class ListViewModelTest {
                                 "pipo",
                                 "bla",
                                 "photoTest",
-                                "0m",
+                                "666m",
                                 "Open 24/7",
                                 2,
                                 "450")

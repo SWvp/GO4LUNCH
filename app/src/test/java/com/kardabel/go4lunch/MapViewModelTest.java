@@ -91,7 +91,7 @@ public class MapViewModelTest {
                         "0102",
                         getPhoto(),
                         new Geometry(new RestaurantLatLngLiteral(30.0, 42.1)),
-                        new OpeningHours(false, null, null),
+                        new OpeningHours(false, null),
                         2,
                         25,
                         false
@@ -104,7 +104,7 @@ public class MapViewModelTest {
                         "bla",
                         getPhoto(),
                         new Geometry(new RestaurantLatLngLiteral(32.1, 42.2)),
-                        new OpeningHours(false, null, null),
+                        new OpeningHours(false, null),
                         2,
                         25,
                         false
