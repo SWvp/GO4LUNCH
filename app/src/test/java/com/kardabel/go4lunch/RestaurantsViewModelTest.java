@@ -1,10 +1,9 @@
-package com.kardabel.go4lunch;
+package com.kardabel.go4lunch; // TODO STEPHANE : attention au package, il doit être le même que le sujet du test
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 import android.app.Application;
 import android.location.Location;
@@ -30,7 +29,6 @@ import com.kardabel.go4lunch.ui.listview.RestaurantsViewState;
 import com.kardabel.go4lunch.ui.listview.RestaurantsWrapperViewState;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
-import com.kardabel.go4lunch.util.CurrentConvertedHour;
 import com.kardabel.go4lunch.util.CurrentNumericDay;
 
 import org.junit.Before;
@@ -68,7 +66,7 @@ public class RestaurantsViewModelTest {
             LocalDateTime
                     .of(
                             LocalDate.of(2021, 10, 20),
-                            LocalTime.of(10, 00)
+                            LocalTime.of(10, 0)
                     )
                     .toInstant(ZoneOffset.UTC),
             ZoneOffset.UTC
@@ -113,7 +111,7 @@ public class RestaurantsViewModelTest {
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getDefaultRestaurants()));
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
-                        "First_Place_Id",
+                        "First_Place_Id", // TODO STEPHANE A extraire (toutes les variables dans les IN & OUT)
                         new OpeningHours(
                                 true,
                                 getDefaultPeriod(
@@ -341,7 +339,7 @@ public class RestaurantsViewModelTest {
                List<RestaurantSearch> restaurants = new ArrayList<>();
         restaurants.add(
                 new RestaurantSearch(
-                        "First_Place_Id",
+                        "First_Place_Id", // TODO STEPHANE A extraire
                         "First_Name",
                         "First_Address",
                         getPhoto(),

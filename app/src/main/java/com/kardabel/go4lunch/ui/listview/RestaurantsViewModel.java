@@ -1,4 +1,4 @@
-package com.kardabel.go4lunch.ui.listview;
+package com.kardabel.go4lunch.ui.listview;// TODO STEPHANE : attention au nom de package
 
 import android.app.Application;
 import android.location.Location;
@@ -32,6 +32,7 @@ import java.util.List;
 
 public class RestaurantsViewModel extends ViewModel {
 
+    // TODO STEPHANE : Choisis ! Soit un / des delegates (CurrentNumericDay), soit la clock, mais pas les 2 :D
     private final CurrentNumericDay currentNumericDay;
 
 
@@ -177,6 +178,7 @@ public class RestaurantsViewModel extends ViewModel {
     }
 
     // GET MESSAGE FOR THE OPENING HOUR FIELD (WITHOUT DETAILS INFORMATION)
+    // TODO STEPHANE : function naming
     private String OpeningHoursLight(OpeningHours openingHours){
         String openStatus;
         if (openingHours != null) {
@@ -241,7 +243,10 @@ public class RestaurantsViewModel extends ViewModel {
                             LocalDateTime closingSoonDate = selectedClosingDateTime.minus(1, ChronoUnit.HOURS);
 
                             messageToDisplay = application.getString(R.string.open_until) +
-                                    getReadableHour(Integer.parseInt(selectedClosingDateTime.format(DateTimeFormatter.ofPattern("HHmm"))));
+                                    getReadableHour(
+                                        // TODO STEPHANE : mets ça aussi dans ta méthode getReadableHour (ne donne que "selectedClosingDateTime")
+                                        Integer.parseInt(selectedClosingDateTime.format(DateTimeFormatter.ofPattern("HHmm")))
+                                    );
 
                             if (currentLocalDate.isAfter(closingSoonDate)) {
                                 messageToDisplay = application.getString(R.string.closing_soon);
@@ -287,6 +292,7 @@ public class RestaurantsViewModel extends ViewModel {
     @NonNull
     private String distance(Location userLocation, double lat, double lng){
         if (userLocation != null){
+            // TODO STEPHANE : utilise plutôt distanceBetween pour éviter de créer une fake location
         Location restaurantLocation = new Location("restaurant location");
         restaurantLocation.setLatitude(lat);
         restaurantLocation.setLongitude(lng);
@@ -310,7 +316,7 @@ public class RestaurantsViewModel extends ViewModel {
     public static String urlPhoto(RestaurantsViewState restaurantsViewState) {
         String API_URL = "https://maps.googleapis.com/maps/api/place/";
         String PHOTO_REFERENCE = "photo?maxwidth=300&photo_reference=";
-        String API_KEY = "AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8";
+        String API_KEY = "AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8"; // TODO STEPHANE : A protéger grâce à Gradle
         if (restaurantsViewState.getAvatar() != null) {
             String photoReference = restaurantsViewState.getAvatar();
             return API_URL + PHOTO_REFERENCE + photoReference + "&key=" + API_KEY;
@@ -326,8 +332,10 @@ public class RestaurantsViewModel extends ViewModel {
         } else return hourToConsider.isBefore(selectedHour);
     }
 
+    // TODO STEPHANE : Closed (comment) or opened (function name) ?
     // CHECK IF RESTAURANT IS CLOSED THIS CURRENT DAY
     private boolean isRestaurantOpenToday(@NonNull OpeningHours openingHours) {
+        // TODO STEPHANE : Je suis sur que tu peux simplifier et éviter de boucler 2 fois :)
         boolean bool = true;
         boolean isRestaurantActivityToday = false;
 
@@ -350,8 +358,10 @@ public class RestaurantsViewModel extends ViewModel {
 
     }
 
+    // TODO STEPHANE : Non nécessaire
     private int getCurrentNumericDay(){ return currentNumericDay.getCurrentNumericDay(); }
 
+    // TODO STEPHANE : Arguably non nécessaire non plus (pour les 3 méthodes plus bas)
     private int currentYear(){
         LocalDate currentDate = LocalDate.now(clock);
         return currentDate.getYear();
@@ -394,6 +404,7 @@ public class RestaurantsViewModel extends ViewModel {
         String minReadable;
         String readableHour;
 
+        // TODO STEPHANE : 0 / 100 = 0, tu peux virer le if
         if (closingHour == 0) {
             hour = 0;
         } else {
@@ -457,6 +468,7 @@ public class RestaurantsViewModel extends ViewModel {
 
     private LocalDateTime convertClosingHourToLocalDateTime(@NonNull Close closingHour) {
         // GET A DEFAULT DATE VALUE FOR PARSING
+        // TODO STEPHANE : Jamais de valeur magique !
         String convertedClosingDate = "2000-01-01 00:00";
         int dayToAdd = closingHour.getDay() - getCurrentNumericDay();
 
@@ -474,6 +486,7 @@ public class RestaurantsViewModel extends ViewModel {
         if (closingDayOfMonth < 30) {
 
             if (closingHour.getDay() == getCurrentNumericDay()) {
+                // TODO STEPHANE : Je pense que tu peux encapsuler ça dans une fonction
                 convertedClosingDate = currentYear() + "-" + currentMonth() + "-" + closingDayReadable + " " + convertToReadableHour(closingHour.getTime());
 
             } else if (closingHour.getDay() == (getCurrentNumericDay() + 1)) {
@@ -488,6 +501,7 @@ public class RestaurantsViewModel extends ViewModel {
             }
 
         } else if (closingDayOfMonth < 31) {
+            // TODO STEPHANE : - et - ça fait + ! :D
             if (!isNotHappyNewYear()) {
                 if (isCurrentDayTheLastMonthDay()) {
                     int currentMonth = currentMonth() + 1;
@@ -506,6 +520,8 @@ public class RestaurantsViewModel extends ViewModel {
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+        // TODO STEPHANE : Commentaire global sur toute cette fonction :
+        //  plutôt que de construire une string pour ensuite la parser, pourquoi ne pas construire direct la LocalDateTime ?
         return LocalDateTime.parse(convertedClosingDate, formatter);
 
     }
