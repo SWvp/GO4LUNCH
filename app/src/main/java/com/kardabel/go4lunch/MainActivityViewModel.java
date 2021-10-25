@@ -2,6 +2,7 @@ package com.kardabel.go4lunch;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.pm.PackageManager;
 
@@ -19,7 +20,6 @@ public class MainActivityViewModel extends ViewModel {
 
     private LocationRepository locationRepository;
     private Application application;
-    private MainActivity mainActivity;
 
     public MainActivityViewModel(@Nullable Application application, @Nullable LocationRepository locationRepository) {
         super();
@@ -28,26 +28,23 @@ public class MainActivityViewModel extends ViewModel {
 
     }
 
-    public void checkPermission() {
+    public void checkPermission(Activity activity) {
         if (ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_GRANTED);
             permissionGranted();
 
         }
-    //  if (ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
 
-    //          actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
-    //      }
+  //    else if(ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
+  //        actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_ASKED);
 
+  //    }
 
-        //else if (ActivityCompat.shouldShowRequestPermissionRationale(mainActivity, ACCESS_FINE_LOCATION)) {
-            //actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
-         // In an educational UI, explain to the user why your app requires this
-         // permission for a specific feature to behave as expected. In this UI,
-         // include a "cancel" or "no thanks" button that allows the user to
-         // continue using your app without granting the permission.
-         // showInContextUI(...);
-        //}
+  //    else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, ACCESS_FINE_LOCATION)) {
+  //        actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
+
+  //    }
+
         else {
             actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_ASKED);
 
