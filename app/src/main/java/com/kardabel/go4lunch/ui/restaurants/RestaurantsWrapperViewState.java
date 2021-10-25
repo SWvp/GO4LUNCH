@@ -1,4 +1,4 @@
-package com.kardabel.go4lunch.ui.listview;
+package com.kardabel.go4lunch.ui.restaurants;
 
 import java.util.List;
 import java.util.Objects;

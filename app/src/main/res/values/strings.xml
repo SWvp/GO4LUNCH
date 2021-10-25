@@ -30,10 +30,12 @@
     <string name="closed_today">Closed today</string>
     <string name="open_h24">Open 24/7</string>
     <string name="open_until">Open until</string>
+    <string name="tomorrow">Tomorrow</string>
     <string name="permanently_closed">Permanently closed</string>
     <string name="opening_hours_unavailable">Opening hours unavailable</string>
     <string name="am">am</string>
     <string name="pm">pm</string>
+
 
 
     <!-- MESSAGE FOR PHOTO -->

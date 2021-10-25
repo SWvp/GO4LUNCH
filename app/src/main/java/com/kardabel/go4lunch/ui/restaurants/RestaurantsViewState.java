@@ -1,4 +1,4 @@
-package com.kardabel.go4lunch.ui.listview;
+package com.kardabel.go4lunch.ui.restaurants;
 
 import java.util.Objects;
 
@@ -6,19 +6,17 @@ public class RestaurantsViewState {
 
     private final String name;
     private final String address;
-    private final String avatar;
+    private final String photo;
     private final String distance;
-    //private final String foodType;
     private final String openingHours;
     private final double rating;
     private final String placeId;
 
-    public RestaurantsViewState(String name, String address, String avatar, String distance, String openingHours, double rating, String placeId) {
+    public RestaurantsViewState(String name, String address, String photo, String distance, String openingHours, double rating, String placeId) {
         this.name = name;
         this.address = address;
-        this.avatar = avatar;
+        this.photo = photo;
         this.distance = distance;
-        //this.foodType = foodType;
         this.openingHours = openingHours;
         this.rating = rating;
         this.placeId = placeId;
@@ -28,11 +26,9 @@ public class RestaurantsViewState {
 
     public String getAddress() { return address; }
 
-    public String getAvatar() { return avatar; }
+    public String getPhoto() { return photo; }
 
     public String getDistance() { return distance; }
-
-    //public String getFoodType() { return foodType; }
 
     public String getOpeningHours() { return openingHours; }
 
@@ -48,7 +44,7 @@ public class RestaurantsViewState {
         return Double.compare(that.rating, rating) == 0 &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(address, that.address) &&
-                Objects.equals(avatar, that.avatar) &&
+                Objects.equals(photo, that.photo) &&
                 Objects.equals(distance, that.distance) &&
                 Objects.equals(openingHours, that.openingHours) &&
                 Objects.equals(placeId, that.placeId);
@@ -60,7 +56,7 @@ public class RestaurantsViewState {
         return Objects.hash(
                 name,
                 address,
-                avatar,
+                photo,
                 distance,
                 openingHours,
                 rating,
@@ -73,7 +69,7 @@ public class RestaurantsViewState {
         return "RestaurantsViewState{" +
                 "name='" + name + '\'' +
                 ", address='" + address + '\'' +
-                ", avatar='" + avatar + '\'' +
+                ", avatar='" + photo + '\'' +
                 ", distance='" + distance + '\'' +
                 ", openingHours='" + openingHours + '\'' +
                 ", rating=" + rating +
