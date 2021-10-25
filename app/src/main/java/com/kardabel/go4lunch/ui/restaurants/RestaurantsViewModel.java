@@ -1,4 +1,4 @@
-package com.kardabel.go4lunch.ui.listview;
+package com.kardabel.go4lunch.ui.restaurants;
 
 import android.app.Application;
 import android.location.Location;
@@ -20,7 +20,6 @@ import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
-import com.kardabel.go4lunch.util.CurrentNumericDay;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -29,30 +28,26 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class RestaurantsViewModel extends ViewModel {
-
-    private final CurrentNumericDay currentNumericDay;
-
 
     private final MediatorLiveData<RestaurantsWrapperViewState> restaurantsWrapperViewStateMutableLiveData = new MediatorLiveData<>();
 
     private final Application application;
     private final Clock clock;
 
+    //private static final String googleMapApiKey = BuildConfig.
     public RestaurantsViewModel(
                                 @NonNull Application application,
                                 @NonNull LocationRepository locationRepository,
                                 @NonNull NearbySearchResultsUseCase nearbySearchResultsUseCase,
                                 @NonNull RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase,
-                                @NonNull CurrentNumericDay currentNumericDay,
                                 @NonNull Clock clock
     ){
 
-
         this.clock = clock;
         this.application = application;
-        this.currentNumericDay = currentNumericDay;
 
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
@@ -102,7 +97,7 @@ public class RestaurantsViewModel extends ViewModel {
                     location,
                     nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
                     nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
-            String openingHoursRestaurant = OpeningHoursLight(nearbySearchResults.getResults().get(i).getOpeningHours());
+            String openingHoursRestaurant = OpeningHoursWithoutDetails(nearbySearchResults.getResults().get(i).getOpeningHours());
             double ratingRestaurant = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
             String placeIdRestaurant = nearbySearchResults.getResults().get(i).getPlaceId();
 
@@ -164,20 +159,26 @@ public class RestaurantsViewModel extends ViewModel {
 
     // SEARCH FOR A PHOTO IN THE LIST PROVIDED BY NEARBY PLACES
     private String photoReference(List<Photo> photoList){
+        String result = null;
         if (photoList != null){
             for (Photo photo : photoList){
                 if (!photo.getPhotoReference().isEmpty()){
-                    return photo.getPhotoReference();
+                    result = photo.getPhotoReference();
 
                 }
             }
         }
-        return application.getString(R.string.photo_unavailable);
+
+        if(photoList == null){
+            result =  application.getString(R.string.photo_unavailable);
+        }
+
+        return result;
 
     }
 
     // GET MESSAGE FOR THE OPENING HOUR FIELD (WITHOUT DETAILS INFORMATION)
-    private String OpeningHoursLight(OpeningHours openingHours){
+    private String OpeningHoursWithoutDetails(OpeningHours openingHours){
         String openStatus;
         if (openingHours != null) {
             if (openingHours.getOpenNow()) {
@@ -206,64 +207,67 @@ public class RestaurantsViewModel extends ViewModel {
             LocalDateTime currentLocalDate = LocalDateTime.now(clock);
 
             // IF THE PERIOD LIST HAS ONLY ONE ELEMENT, CONSIDER THAT THE PLACE IS A 24/7 ONE
-            if (openingHours.getPeriods().size() == 1) {
-                if (openingHours.getOpenNow()) {
-                    messageToDisplay = application.getString(R.string.open_h24);
+            if (openingHours.getPeriods() != null) {
+                if (openingHours.getPeriods().size() == 1) {
+                    if (openingHours.getOpenNow()) {
+                        messageToDisplay = application.getString(R.string.open_h24);
 
-                }
-
-            } else if (openingHours.getPeriods().size() > 1) {
-                if (isRestaurantOpenToday(openingHours)) {
-
-                    LocalDateTime selectedOpeningDateTime = null;
-                    LocalDateTime selectedClosingDateTime = null;
-
-                    // SET OPENING AND CLOSED HOURS IF AFTER CURRENT DATE, TAKE THE CLOSEST MATCH
-
-                    for (Periods period : openingHours.getPeriods()) {
-
-                        LocalDateTime openingHourToConsider = convertOpeningHourToLocalDateTime(period.getOpen().getTime(), period.getOpen().getDay());
-                        LocalDateTime closingHourToConsider = convertClosingHourToLocalDateTime(period.getClose());
-
-                        if(openingHourToConsider.isAfter(currentLocalDate) && isConsiderClosestThanSelected(selectedOpeningDateTime, openingHourToConsider)){
-                            selectedOpeningDateTime = openingHourToConsider;
-
-                        }else if(closingHourToConsider.isAfter(currentLocalDate) && isConsiderClosestThanSelected(selectedClosingDateTime, closingHourToConsider)){
-                            selectedClosingDateTime = closingHourToConsider;
-
-                        }
                     }
 
-                    if (selectedOpeningDateTime != null) {
-                        if (selectedOpeningDateTime.isAfter(selectedClosingDateTime)) {
+                } else if (openingHours.getPeriods().size() > 1) {
+                    if (isRestaurantOpenToday(openingHours)) {
 
-                            assert selectedClosingDateTime != null;
-                            LocalDateTime closingSoonDate = selectedClosingDateTime.minus(1, ChronoUnit.HOURS);
+                        LocalDateTime selectedOpeningDateTime = null;
+                        LocalDateTime selectedClosingDateTime = null;
 
-                            messageToDisplay = application.getString(R.string.open_until) +
-                                    getReadableHour(Integer.parseInt(selectedClosingDateTime.format(DateTimeFormatter.ofPattern("HHmm"))));
+                        // SET OPENING AND CLOSED HOURS IF AFTER CURRENT DATE, TAKE THE CLOSEST MATCH
 
-                            if (currentLocalDate.isAfter(closingSoonDate)) {
-                                messageToDisplay = application.getString(R.string.closing_soon);
+                        for (Periods period : openingHours.getPeriods()) {
+
+                            LocalDateTime openingHourToConsider = convertOpeningHourToLocalDateTime(period.getOpen().getTime(), period.getOpen().getDay());
+                            LocalDateTime closingHourToConsider = convertClosingHourToLocalDateTime(period.getClose());
+
+                            if (openingHourToConsider.isAfter(currentLocalDate) && isConsiderClosestThanSelected(selectedOpeningDateTime, openingHourToConsider)) {
+                                selectedOpeningDateTime = openingHourToConsider;
 
                             }
+                            if (closingHourToConsider.isAfter(currentLocalDate) && isConsiderClosestThanSelected(selectedClosingDateTime, closingHourToConsider)) {
+                                selectedClosingDateTime = closingHourToConsider;
 
-                        } else if (selectedOpeningDateTime.isAfter(currentLocalDate)) {
-                            messageToDisplay = application.getString(R.string.closed_until) +
-                                    getReadableDay(selectedOpeningDateTime) +
-                                    getReadableHour(Integer.parseInt(selectedOpeningDateTime.format(DateTimeFormatter.ofPattern("HHmm"))));
+                            }
                         }
+
+                        if (selectedOpeningDateTime != null ) {
+
+                            if (selectedOpeningDateTime.isAfter(selectedClosingDateTime)) {
+
+
+                                LocalDateTime closingSoonDate = selectedClosingDateTime.minus(1, ChronoUnit.HOURS);
+
+                                messageToDisplay = application.getString(R.string.open_until) +
+                                        getReadableHour(selectedClosingDateTime);
+
+                                if (currentLocalDate.isAfter(closingSoonDate)) {
+                                    messageToDisplay = application.getString(R.string.closing_soon);
+
+                                }
+
+                            } else if (selectedOpeningDateTime.isAfter(currentLocalDate)) {
+                                // TODO mettre en nminuscule le jour
+                                messageToDisplay = application.getString(R.string.closed_until) +
+                                        getReadableDay(selectedOpeningDateTime) +
+                                        getReadableHour(selectedOpeningDateTime);
+                            }
+                        }
+
+                    } else {
+                        messageToDisplay = application.getString(R.string.closed_today);
+
                     }
-
-                }else{
-                    messageToDisplay = application.getString(R.string.closed_today);
-
                 }
-            }
 
-            // IF THE PERIOD LIST IS EMPTY OR NULL, RETRIEVE ONLY OPEN STATUS
-
-            else if (!openingHours.getOpenNow()) {
+                // IF THE PERIOD LIST IS EMPTY OR NULL, RETRIEVE ONLY OPEN STATUS
+            } else if (!openingHours.getOpenNow()) {
                 messageToDisplay = application.getString(R.string.closed);
 
 
@@ -287,12 +291,11 @@ public class RestaurantsViewModel extends ViewModel {
     @NonNull
     private String distance(Location userLocation, double lat, double lng){
         if (userLocation != null){
-        Location restaurantLocation = new Location("restaurant location");
-        restaurantLocation.setLatitude(lat);
-        restaurantLocation.setLongitude(lng);
-        float distance = userLocation.distanceTo(restaurantLocation);
-        return (int) distance + application.getString(R.string.m);
-        } else {
+            float[] results = new float[1];
+            Location.distanceBetween(userLocation.getLatitude(), userLocation.getLongitude(), lat, lng, results );
+            return String.valueOf((int)results[0]);
+
+        }else {
             return application.getString(R.string.distance_unavailable);
 
         }
@@ -303,19 +306,6 @@ public class RestaurantsViewModel extends ViewModel {
         // GIVE AN INTEGER (NUMBER ROUNDED TO THE NEAREST INTEGER)
         return Math.round(rating * 3 / 5);
 
-    }
-
-    // CONVERT PHOTO REFERENCE TO URL
-    @NonNull
-    public static String urlPhoto(RestaurantsViewState restaurantsViewState) {
-        String API_URL = "https://maps.googleapis.com/maps/api/place/";
-        String PHOTO_REFERENCE = "photo?maxwidth=300&photo_reference=";
-        String API_KEY = "AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8";
-        if (restaurantsViewState.getAvatar() != null) {
-            String photoReference = restaurantsViewState.getAvatar();
-            return API_URL + PHOTO_REFERENCE + photoReference + "&key=" + API_KEY;
-        }
-        return "";
     }
 
     /////// DATE AND TIME ///////
@@ -350,7 +340,15 @@ public class RestaurantsViewModel extends ViewModel {
 
     }
 
-    private int getCurrentNumericDay(){ return currentNumericDay.getCurrentNumericDay(); }
+    private int getCurrentNumericDay(){
+        LocalDateTime currentDate = LocalDateTime.now(clock);
+        int dayOfWeek = currentDate.getDayOfWeek().getValue();
+        // CONVERT SUNDAY TO 0 (NEEDED TO GET SAME DAY AS OPENING HOURS)
+        if(dayOfWeek == 7){
+            dayOfWeek = 0;
+        }
+
+        return dayOfWeek; }
 
     private int currentYear(){
         LocalDate currentDate = LocalDate.now(clock);
@@ -387,20 +385,15 @@ public class RestaurantsViewModel extends ViewModel {
 
     // CONVERT CLOSE HOUR TO READABLE UK HOUR
     @NonNull
-    private String getReadableHour(int closingHour) {
-        int hour;
-        int min;
+    private String getReadableHour(LocalDateTime selectedHour) {
+        Integer closingHour = Integer.parseInt(selectedHour.format(DateTimeFormatter.ofPattern("HHmm")));
 
         String minReadable;
         String readableHour;
 
-        if (closingHour == 0) {
-            hour = 0;
-        } else {
-            hour = closingHour / 100;
-        }
+        int hour = closingHour / 100;
 
-        min = closingHour - (hour * 100);
+        int min = closingHour - (hour * 100);
 
         // CONVERT MINUTES IF NEEDED
         if (min == 0) {
@@ -427,7 +420,16 @@ public class RestaurantsViewModel extends ViewModel {
     // IF THE NEXT OPENING IS NOT TODAY
     private String getReadableDay(LocalDateTime selectedOpeningDateTime) {
         if(selectedOpeningDateTime.getDayOfWeek() != LocalDateTime.now(clock).getDayOfWeek()){
-            return " " + selectedOpeningDateTime.getDayOfWeek().toString();
+            String str = null;
+            if(selectedOpeningDateTime.getDayOfWeek().getValue() == LocalDateTime.now(clock).getDayOfWeek().getValue() + 1){
+                str = application.getString(R.string.tomorrow);
+
+            }else{
+                 str = selectedOpeningDateTime.getDayOfWeek().toString().toLowerCase(Locale.ROOT);
+            }
+
+
+            return " " + str.substring(0,1).toUpperCase() + str.substring(1);
 
         }else{
             return "";
@@ -457,52 +459,43 @@ public class RestaurantsViewModel extends ViewModel {
 
     private LocalDateTime convertClosingHourToLocalDateTime(@NonNull Close closingHour) {
         // GET A DEFAULT DATE VALUE FOR PARSING
-        String convertedClosingDate = "2000-01-01 00:00";
+        String convertedClosingDate;
         int dayToAdd = closingHour.getDay() - getCurrentNumericDay();
 
         if (dayToAdd < 0) {
             dayToAdd = dayToAdd + 7;
         }
+
         int closingDayOfMonth = getCurrentDayOfMonth() + dayToAdd;
         String closingDayReadable = String.valueOf(closingDayOfMonth);
 
-        if (closingDayOfMonth < 10) {
-            closingDayReadable = "0" + getCurrentDayOfMonth();
-
-        }
 
         if (closingDayOfMonth < 30) {
-
-            if (closingHour.getDay() == getCurrentNumericDay()) {
-                convertedClosingDate = currentYear() + "-" + currentMonth() + "-" + closingDayReadable + " " + convertToReadableHour(closingHour.getTime());
-
-            } else if (closingHour.getDay() == (getCurrentNumericDay() + 1)) {
-                int tomorrow = getCurrentDayOfMonth() + 1;
-                closingDayReadable = String.valueOf(tomorrow);
-                if (tomorrow < 10) {
-                    closingDayReadable = "0" + tomorrow;
-
-                }
-                convertedClosingDate = currentYear() + "-" + currentMonth() + "-" + closingDayReadable + " " + convertToReadableHour(closingHour.getTime());
+            if (closingDayOfMonth < 10) {
+                closingDayReadable = "0" + closingDayOfMonth;
 
             }
+            convertedClosingDate = currentYear() + "-" + currentMonth() + "-" + closingDayReadable + " " + convertToReadableHour(closingHour.getTime());
+        } else if (closingDayOfMonth == 30) {
 
-        } else if (closingDayOfMonth < 31) {
-            if (!isNotHappyNewYear()) {
-                if (isCurrentDayTheLastMonthDay()) {
-                    int currentMonth = currentMonth() + 1;
-                    convertedClosingDate = currentYear() + "-" + currentMonth + "-0" + 1 + " " + convertToReadableHour(closingHour.getTime());
+            if (isCurrentDayTheLastMonthDay()) {
+                int currentMonth = currentMonth() + 1;
+                convertedClosingDate = currentYear() + "-" + currentMonth + "-0" + 1 + " " + convertToReadableHour(closingHour.getTime());
 
-                } else {
-                    int currentIntDay = closingDayOfMonth + 1;
-                    convertedClosingDate = currentYear() + "-" + currentMonth() + "-" + currentIntDay + " " + convertToReadableHour(closingHour.getTime());
+            } else {
+                int currentIntDay = closingDayOfMonth + 1;
+                convertedClosingDate = currentYear() + "-" + currentMonth() + "-" + currentIntDay + " " + convertToReadableHour(closingHour.getTime());
 
-                }
+            }
+        } else {
+            if (currentMonth() != 12) {
+                int currentMonth = currentMonth() + 1;
+                convertedClosingDate = currentYear() + "-" + currentMonth + "-0" + 1 + " " + convertToReadableHour(closingHour.getTime());
             } else {
                 int currentYear = currentYear() + 1;
                 convertedClosingDate = currentYear + "-" + "01" + "01" + " " + convertToReadableHour(closingHour.getTime());
-
             }
+
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 

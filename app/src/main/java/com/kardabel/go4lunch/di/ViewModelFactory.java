@@ -13,11 +13,10 @@ import com.kardabel.go4lunch.repository.RestaurantDetailsResponseRepository;
 import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
-import com.kardabel.go4lunch.ui.listview.RestaurantsViewModel;
+import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
-import com.kardabel.go4lunch.util.CurrentNumericDay;
 
 import java.time.Clock;
 
@@ -33,7 +32,6 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final RestaurantDetailsResponseRepository mRestaurantDetailsResponseRepository;
     private final NearbySearchResultsUseCase nearbySearchResultsUseCase;
     private final RestaurantDetailsResultsUseCase mRestaurantDetailsResultsUseCase;
-    private final CurrentNumericDay currentNumericDay;
 
     public static ViewModelFactory getInstance() {
         if (factory == null) {
@@ -65,7 +63,6 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                 locationRepository,
                 nearbySearchResponseRepository,
                 mRestaurantDetailsResponseRepository);
-        this.currentNumericDay = new CurrentNumericDay();
 
     }
 
@@ -80,7 +77,6 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     locationRepository,
                     nearbySearchResultsUseCase,
                     mRestaurantDetailsResultsUseCase,
-                    currentNumericDay,
                     Clock.systemDefaultZone());
         } else if (modelClass.isAssignableFrom(MapViewModel.class)) {
             return (T) new MapViewModel(
