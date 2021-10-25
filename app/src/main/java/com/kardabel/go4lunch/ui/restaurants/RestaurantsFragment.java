@@ -1,4 +1,4 @@
-package com.kardabel.go4lunch.ui.listview;
+package com.kardabel.go4lunch.ui.restaurants;
 
 import android.content.Context;
 import android.os.Bundle;

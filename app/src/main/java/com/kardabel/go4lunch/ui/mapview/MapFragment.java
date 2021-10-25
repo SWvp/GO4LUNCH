@@ -64,7 +64,6 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
                     googleMap.animateCamera(CameraUpdateFactory.zoomIn());
 
                     // CAMERA POSITION
-                    // TODO STEPHANE STILL NECESSARY ?
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(mapViewState.getLatLng())      // Sets the center of the map to Mountain View
                             .zoom(17)                   // Sets the zoom
