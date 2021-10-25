@@ -9,5 +9,5 @@
     app:layoutManager="LinearLayoutManager"
     android:fitsSystemWindows="true"
     android:clipToPadding="false"
-    tools:context=".ui.listview.RestaurantsFragment"
+    tools:context=".ui.restaurants.RestaurantsFragment"
     tools:listitem="@layout/item_restaurant" />

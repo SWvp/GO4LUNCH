@@ -1,4 +1,4 @@
-package com.kardabel.go4lunch.ui.listview;
+package com.kardabel.go4lunch.ui.restaurants;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +42,7 @@ public class RestaurantItemRecyclerViewAdapter extends RecyclerView.Adapter<Rest
         holder.viewHolderBinding.itemListviewDistance.setText(restaurant.getDistance());
         holder.viewHolderBinding.ratingBar.setRating((float) restaurant.getRating());
 
-        String urlPhoto = RestaurantsViewModel.urlPhoto(restaurant);
+        String urlPhoto = urlPhoto(restaurant);
         Glide.with(holder.viewHolderBinding.itemListviewRestaurantPicture.getContext())
                 .load(urlPhoto)
                 .into(holder.viewHolderBinding.itemListviewRestaurantPicture);
@@ -116,6 +116,19 @@ public class RestaurantItemRecyclerViewAdapter extends RecyclerView.Adapter<Rest
             super(itemView.getRoot());
             viewHolderBinding = itemView;
 
+        }
+    }
+
+    @NonNull
+    public static String urlPhoto(RestaurantsViewState restaurantsViewState) {
+        String API_URL = "https://maps.googleapis.com/maps/api/place/";
+        String PHOTO_REFERENCE = "photo?maxwidth=300&photo_reference=";
+        String API_KEY = "AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8";
+        if (restaurantsViewState.getPhoto() != null) {
+            String photoReference = restaurantsViewState.getPhoto();
+            return API_URL + PHOTO_REFERENCE + photoReference + "&key=" + API_KEY;
+        }else{
+            return "Photo unavailable";
         }
     }
 
