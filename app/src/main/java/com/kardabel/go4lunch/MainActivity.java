@@ -17,6 +17,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -29,6 +30,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
@@ -86,14 +88,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         mainActivityViewModel.getActionSingleLiveEvent().observe(this, action -> {
             switch (action){
                 case PERMISSION_GRANTED:
+                    Toast.makeText(MainActivity.this, "Welcome, take a seat, have a lunch!", Toast.LENGTH_LONG).show();
                     break;
                 case PERMISSION_ASKED:
                     ActivityCompat.requestPermissions(MainActivity.this,
                             new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+                    Toast.makeText(MainActivity.this, "Needed for retrieve your position, thank you", Toast.LENGTH_SHORT).show();
                     break;
-                case PERMISSION_DENIED:
-                    ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION);
-                    break;
+//             case PERMISSION_DENIED:
+//                 MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
+//                 alertDialogBuilder.setTitle("WARNING");
+//                 alertDialogBuilder.setMessage("if you want to take full advantage of GO4LUNCH , please reload GO4LUNCH and agree to share your position, thank you !");
+//                 alertDialogBuilder.show();
+
+
+  //              break;
+
 
             }
         });
@@ -178,11 +188,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 
     }
 
-    // WHEN VIEW IS ON RESUME? CHECK THE PERMISSION STATE IN VIEWMODEL
+    // WHEN VIEW IS ON RESUME CHECK THE PERMISSION STATE IN VIEWMODEL (AND PASSED THE ACTIVITY
+    // FOR THE ALERTDIALOG EVEN IF ITS NOT THE GOOD WAY TO USE A VIEWMODEL!)
     @Override
     protected void onResume() {
         super.onResume();
-        mainActivityViewModel.checkPermission();
+        mainActivityViewModel.checkPermission(this);
     }
 
 }
