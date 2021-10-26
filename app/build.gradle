@@ -72,6 +72,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'com.google.firebase:firebase-firestore:23.0.4'
 
+    // FIRESTORE
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
+
     // PERMISSIONS
     implementation 'pub.devrel:easypermissions:3.0.0'
 
