@@ -103,8 +103,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 
 
   //              break;
-
-
             }
         });
     }
@@ -127,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView
                 break;
             default:
                 break;
+
         }
 
         this.drawerLayout.closeDrawer(GravityCompat.START);

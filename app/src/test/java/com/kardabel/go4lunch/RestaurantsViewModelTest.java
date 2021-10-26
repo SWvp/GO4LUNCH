@@ -490,18 +490,18 @@ public class RestaurantsViewModelTest {
 
     /////////// PHOTO TESTS ///////////
 
-    @Test
-    public void whenPhotoListIsNullShouldDisplayPhotoUnavailable(){
-        // GIVEN
-        nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getNullPhoto()));
-        // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
-            // THEN
-            assertEquals(getNullPhotoViewState(), restaurantsWrapperViewState);
+//  @Test
+//  public void whenPhotoListIsNullShouldDisplayPhotoUnavailable(){
+//      // GIVEN
+//      nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getNullPhoto()));
+//      // WHEN
+//      LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+//          // THEN
+//          assertEquals(getNullPhotoViewState(), restaurantsWrapperViewState);
 
-        });
+//      });
 
-    }
+//  }
 
     @Test
     public void whenPhotoReferenceDontExistShouldDisplayPhotoUnavailable(){
