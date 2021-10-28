@@ -1,4 +1,4 @@
-package com.kardabel.go4lunch;
+package com.kardabel.go4lunch.ui.restaurants;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,6 +11,7 @@ import android.location.Location;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 
+import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.pojo.Close;
 import com.kardabel.go4lunch.pojo.Geometry;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
@@ -94,6 +95,7 @@ public class RestaurantsViewModelTest {
         Mockito.doReturn("Tomorrow").when(application).getString(R.string.tomorrow);
         Mockito.doReturn("Permanently closed").when(application).getString(R.string.permanently_closed);
         Mockito.doReturn("Opening hours unavailable").when(application).getString(R.string.opening_hours_unavailable);
+        Mockito.doReturn("Photo unavailable").when(application).getString(R.string.photo_unavailable);
         Mockito.doReturn("am").when(application).getString(R.string.am);
         Mockito.doReturn("pm").when(application).getString(R.string.pm);
         Mockito.doReturn("m").when(application).getString(R.string.m);
@@ -490,18 +492,18 @@ public class RestaurantsViewModelTest {
 
     /////////// PHOTO TESTS ///////////
 
-//  @Test
-//  public void whenPhotoListIsNullShouldDisplayPhotoUnavailable(){
-//      // GIVEN
-//      nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getNullPhoto()));
-//      // WHEN
-//      LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
-//          // THEN
-//          assertEquals(getNullPhotoViewState(), restaurantsWrapperViewState);
+  @Test
+  public void whenPhotoListIsNullShouldDisplayPhotoUnavailable(){
+      // GIVEN
+      nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getNullPhoto()));
+      // WHEN
+      LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+          // THEN
+          assertEquals(getNullPhotoViewState(), restaurantsWrapperViewState);
 
-//      });
+      });
 
-//  }
+  }
 
     @Test
     public void whenPhotoReferenceDontExistShouldDisplayPhotoUnavailable(){

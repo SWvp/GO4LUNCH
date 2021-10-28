@@ -169,11 +169,9 @@ public class RestaurantsViewModel extends ViewModel {
                 }
             }
         }
-
         if(photoList == null){
             result =  application.getString(R.string.photo_unavailable);
         }
-
         return result;
 
     }
