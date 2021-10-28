@@ -29,6 +29,10 @@ public class UserManager {
         }
     }
 
+    public Boolean isCurrentUserLogged(){
+        return (userRepository.getCurrentUser() != null);
+    }
+
     public void createUser() {
         userRepository.createUser();
     }

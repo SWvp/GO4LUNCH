@@ -7,6 +7,14 @@
     <string name="title_2">SETTINGS</string>
     <string name="title_3">LOGOUT</string>
 
+    <!-- USED IN AUTHENTICATION -->
+    <string name="button_login_text_logged">Display profile</string>
+    <string name="button_login_text_not_logged">Connexion</string>
+    <string name="connection_succeed">Authentication succeed !</string>
+    <string name="error_authentication_canceled">Authentication canceled</string>
+    <string name="error_no_internet">Internet unavailable</string>
+    <string name="error_unknown_error">Unknown error</string>
+
     <!-- USED IN NAVIGATIONDRAWER -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -19,7 +27,7 @@
     <string name="search_field">Search</string>
 
     <!-- USED BY FACEBOOK AUTH -->
-    <string name="facebook_app_id">303261874567043</string>
+    <string name="facebook_application_id">303261874567043</string>
     <string name="fb_login_protocol_scheme">fb303261874567043</string>
 
     <!-- MESSAGE FOR OPENING HOURS -->
