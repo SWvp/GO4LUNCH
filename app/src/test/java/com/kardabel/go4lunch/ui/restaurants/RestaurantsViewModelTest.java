@@ -69,6 +69,24 @@ public class RestaurantsViewModelTest {
                     .toInstant(ZoneOffset.UTC),
             ZoneOffset.UTC
     );
+    private final Clock clockNewMonth = Clock.fixed(
+            LocalDateTime
+                    .of(
+                            LocalDate.of(2021, 10, 31),
+                            LocalTime.of(10, 0)
+                    )
+                    .toInstant(ZoneOffset.UTC),
+            ZoneOffset.UTC
+    );
+    private final Clock clockNewYear = Clock.fixed(
+            LocalDateTime
+                    .of(
+                            LocalDate.of(2021, 12, 31),
+                            LocalTime.of(10, 0)
+                    )
+                    .toInstant(ZoneOffset.UTC),
+            ZoneOffset.UTC
+    );
 
     private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<NearbySearchResults> nearbySearchResultsMutableLiveData = new MutableLiveData<>();
@@ -83,8 +101,7 @@ public class RestaurantsViewModelTest {
         Mockito.doReturn(EXPECTED_LONGITUDE).when(location).getLongitude();
         //Mockito.doReturn(0).when(location).distanceTo(any());
 
-        // SETUP THE MOCK RETURN
-
+        // STRING RETURNS
         Mockito.doReturn("Open").when(application).getString(R.string.open);
         Mockito.doReturn("Closing soon").when(application).getString(R.string.closing_soon);
         Mockito.doReturn("Closed").when(application).getString(R.string.closed);
@@ -99,6 +116,8 @@ public class RestaurantsViewModelTest {
         Mockito.doReturn("am").when(application).getString(R.string.am);
         Mockito.doReturn("pm").when(application).getString(R.string.pm);
         Mockito.doReturn("m").when(application).getString(R.string.m);
+        Mockito.doReturn(":").when(application).getString(R.string.two_dots);
+        Mockito.doReturn(":0").when(application).getString(R.string.two_dots_for_minutes);
 
 
         Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
@@ -278,7 +297,7 @@ public class RestaurantsViewModelTest {
                 new RestaurantDetails(
                         firstPlaceId,
                         new OpeningHours(
-                                true,
+                                false,
                                 getDefaultPeriod(
                                         new Periods(
                                                 new Close(3, "0900"),
@@ -295,7 +314,7 @@ public class RestaurantsViewModelTest {
                 new RestaurantDetails(
                         secondPlaceId,
                         new OpeningHours(
-                                true,
+                                false,
                                 getDefaultPeriod(
                                         new Periods(
                                                 new Close(3, "1900"),
@@ -464,6 +483,131 @@ public class RestaurantsViewModelTest {
 
     }
 
+    @Test
+    public void last_Day_Goes_To_Next_Month(){
+        // GIVEN
+        mRestaurantsViewModel = new RestaurantsViewModel(
+                application,
+                locationRepository,
+                nearbySearchResultsUseCase,
+                restaurantDetailsResultsUseCase,
+                clockNewMonth);
+
+        restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
+                new RestaurantDetails(
+                        firstPlaceId,
+                        new OpeningHours(
+                                false,
+                                getDefaultPeriod(
+                                        new Periods(
+                                                new Close(0, "0930"),
+                                                new Open(0, "0900")),
+                                        new Periods(
+                                                new Close(1, "2300"),
+                                                new Open(1, "1450")
+
+                                        ))
+                        ),
+                        firstNumber,
+                        firstSite
+                ),
+                new RestaurantDetails(
+                        secondPlaceId,
+                        new OpeningHours(
+                                false,
+                                getDefaultPeriod(
+                                        new Periods(
+                                                new Close(0, "0900"),
+                                                new Open(0, "0800")),
+                                        new Periods(
+                                                new Close(2, "2300"),
+                                                new Open(2, "1700")
+                                        ))
+                        ),
+                        secondNumber,
+                        secondSite
+                )
+        ));
+
+        // WHEN
+        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+            // THEN
+            assertEquals(getLastDayOfMonth(), restaurantsWrapperViewState);
+
+        });
+
+    }
+
+    @Test
+    public void last_Day_Goes_To_Next_Year(){
+        // GIVEN
+        mRestaurantsViewModel = new RestaurantsViewModel(
+                application,
+                locationRepository,
+                nearbySearchResultsUseCase,
+                restaurantDetailsResultsUseCase,
+                clockNewYear);
+
+        restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
+                new RestaurantDetails(
+                        firstPlaceId,
+                        new OpeningHours(
+                                false,
+                                getDefaultPeriod(
+                                        new Periods(
+                                                new Close(0, "0930"),
+                                                new Open(0, "0900")),
+                                        new Periods(
+                                                new Close(6, "2300"),
+                                                new Open(6, "0830")
+
+                                        ))
+                        ),
+                        firstNumber,
+                        firstSite
+                ),
+                new RestaurantDetails(
+                        secondPlaceId,
+                        new OpeningHours(
+                                false,
+                                getDefaultPeriod(
+                                        new Periods(
+                                                new Close(4, "0900"),
+                                                new Open(4, "0800")),
+                                        new Periods(
+                                                new Close(2, "2300"),
+                                                new Open(2, "0900")
+                                        ))
+                        ),
+                        secondNumber,
+                        secondSite
+                )
+        ));
+
+        // WHEN
+        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+            // THEN
+            assertEquals(getLastDayOfYear(), restaurantsWrapperViewState);
+
+        });
+
+    }
+
+    @Test
+    public void details_Unavailable_should_Display_Nearby_Results(){
+        // GIVEN
+         restaurantDetailsResultsUseCaseMutableLiveData.setValue(null);
+        nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getNearbyWithoutDetailsRestaurants()));
+
+        // WHEN
+        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+            // THEN
+            assertEquals(getNearbyWithoutDetails(), restaurantsWrapperViewState);
+
+        });
+
+    }
+
 
     ////////// RATING STARS TESTS ///////////
 
@@ -504,18 +648,6 @@ public class RestaurantsViewModelTest {
       });
 
   }
-
-    @Test
-    public void whenPhotoReferenceDontExistShouldDisplayPhotoUnavailable(){
-        // GIVEN
-        // WHEN
-        // THEN
-
-    }
-
-
-
-
 
     // region IN
 
@@ -666,6 +798,50 @@ public class RestaurantsViewModelTest {
 
     }
 
+    private List<RestaurantSearch> getNearbyWithoutDetailsRestaurants() {
+        List<RestaurantSearch> restaurants = new ArrayList<>();
+        restaurants.add(
+                new RestaurantSearch(
+                        firstPlaceId,
+                        firstRestaurantName,
+                        firstAddress,
+                        getPhoto(),
+                        new Geometry(new RestaurantLatLngLiteral(30.0, 42.1)),
+                        new OpeningHours(true, null),
+                        2,
+                        25,
+                        false
+                )
+        );
+        restaurants.add(
+                new RestaurantSearch(
+                        secondPlaceId,
+                        secondRestaurantName,
+                        secondAddress,
+                        getPhoto(),
+                        new Geometry(new RestaurantLatLngLiteral(32.1, 42.2)),
+                        new OpeningHours(false, null),
+                        4,
+                        25,
+                        false
+                )
+        );
+        return restaurants;
+
+    }
+
+    private List<Photo> getPhoto() {
+        return Collections.singletonList(
+                new Photo(
+                        400,
+                        400,
+                        new ArrayList<>(),
+                        photo
+
+                )
+        );
+    }
+
 
 
     private List<RestaurantDetailsResult> getDefaultRestaurantsDetails(RestaurantDetails... restaurantDetails) {
@@ -693,24 +869,9 @@ public class RestaurantsViewModelTest {
 
     }
 
-    private List<Photo> getPhoto() {
-        return Collections.singletonList(
-                new Photo(
-                        400,
-                        400,
-                        new ArrayList<>(),
-                        photo
-
-                )
-        );
-    }
-
     // endregion
 
-
     /////////////////////////////////////////////////////////
-
-
 
     // region OUT
 
@@ -737,7 +898,7 @@ public class RestaurantsViewModelTest {
                                 secondAddress,
                                 photo,
                                 distance,
-                                "Open until 11:50.am",
+                                "Open until 11:50am",
                                 2,
                                 secondPlaceId)
 
@@ -1045,6 +1206,97 @@ public class RestaurantsViewModelTest {
 
         );
     }
+
+    private RestaurantsWrapperViewState getLastDayOfMonth() {
+        return new RestaurantsWrapperViewState(getLastDayOfMonthResults());
+
+    }
+
+    private List<RestaurantsViewState> getLastDayOfMonthResults() {
+        return Arrays.asList(
+                new RestaurantsViewState
+                        (
+                                firstRestaurantName,
+                                firstAddress,
+                                photo,
+                                distance,
+                                "Closed until Monday 2:50pm",
+                                1,
+                                firstPlaceId),
+
+                new RestaurantsViewState
+                        (
+                                secondRestaurantName,
+                                secondAddress,
+                                photo,
+                                distance,
+                                "Closed until Tuesday 5.pm",
+                                2,
+                                secondPlaceId)
+
+        );
+    }
+
+    private RestaurantsWrapperViewState getLastDayOfYear() {
+        return new RestaurantsWrapperViewState(getLastDayOfYearResults());
+
+    }
+
+    private List<RestaurantsViewState> getLastDayOfYearResults() {
+        return Arrays.asList(
+                new RestaurantsViewState
+                        (
+                                firstRestaurantName,
+                                firstAddress,
+                                photo,
+                                distance,
+                                "Closed until Tomorrow 8:30am",
+                                1,
+                                firstPlaceId),
+
+                new RestaurantsViewState
+                        (
+                                secondRestaurantName,
+                                secondAddress,
+                                photo,
+                                distance,
+                                "Closed until Tuesday 9.am",
+                                2,
+                                secondPlaceId)
+
+        );
+    }
+
+    private RestaurantsWrapperViewState getNearbyWithoutDetails() {
+        return new RestaurantsWrapperViewState(getNearbyWithoutDetailsResults());
+
+    }
+
+    private List<RestaurantsViewState> getNearbyWithoutDetailsResults() {
+        return Arrays.asList(
+                new RestaurantsViewState
+                        (
+                                firstRestaurantName,
+                                firstAddress,
+                                photo,
+                                distance,
+                                open,
+                                1,
+                                firstPlaceId),
+
+                new RestaurantsViewState
+                        (
+                                secondRestaurantName,
+                                secondAddress,
+                                photo,
+                                distance,
+                                closed,
+                                2,
+                                secondPlaceId)
+
+        );
+    }
+
 
 
     // endregion

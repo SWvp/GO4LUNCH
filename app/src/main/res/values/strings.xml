@@ -43,6 +43,8 @@
     <string name="opening_hours_unavailable">Opening hours unavailable</string>
     <string name="am">am</string>
     <string name="pm">pm</string>
+    <string name="two_dots">:</string>
+    <string name="two_dots_for_minutes">:0</string>
 
 
 
