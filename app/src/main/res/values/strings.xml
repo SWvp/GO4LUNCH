@@ -18,6 +18,9 @@
     <!-- USED IN NAVIGATIONDRAWER -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="header_tittle">GO4LUNCH</string>
+    <string name="info_no_email_found">Email unavailable</string>
+    <string name="info_no_username_found">Username unavailable</string>
 
     <!-- USED IN PERMISSION POP UP -->
     <string name="popup_title_permission_files_access">Cette application a besoin de permission pour fonctionner.</string>
@@ -45,8 +48,7 @@
     <string name="pm">pm</string>
     <string name="two_dots">:</string>
     <string name="two_dots_for_minutes">:0</string>
-
-
+    <string name="dot">.</string>
 
     <!-- MESSAGE FOR PHOTO -->
     <string name="photo_unavailable">Photo unavailable</string>
