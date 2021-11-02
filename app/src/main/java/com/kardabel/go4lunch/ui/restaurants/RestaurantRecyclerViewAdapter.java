@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class RestaurantItemRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantItemRecyclerViewAdapter.ViewHolder> implements Filterable {
+public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantRecyclerViewAdapter.ViewHolder> implements Filterable {
 
     private List<RestaurantsViewState> restaurantList = new ArrayList<>();
     private OnRestaurantItemClickListener onRestaurantItemClickListener;
@@ -25,9 +25,11 @@ public class RestaurantItemRecyclerViewAdapter extends RecyclerView.Adapter<Rest
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemRestaurantBinding binding = ItemRestaurantBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-        ViewHolder viewHolder = new ViewHolder(binding);
-        return viewHolder;
+        ItemRestaurantBinding binding = ItemRestaurantBinding.inflate(
+                LayoutInflater.from(parent.getContext()),
+                parent,
+                false);
+        return new ViewHolder(binding);
 
     }
 

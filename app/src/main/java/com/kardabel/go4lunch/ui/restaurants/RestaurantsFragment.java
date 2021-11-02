@@ -15,17 +15,17 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.kardabel.go4lunch.databinding.RecyclerviewListviewBinding;
+import com.kardabel.go4lunch.databinding.RecyclerviewRestaurantsBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 
 public class RestaurantsFragment extends Fragment {
 
     private RestaurantsViewModel mRestaurantsViewModel;
-    private RecyclerviewListviewBinding binding;
+    private RecyclerviewRestaurantsBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = RecyclerviewListviewBinding.inflate(inflater, container, false);
+        binding = RecyclerviewRestaurantsBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         return view;
     }
@@ -35,16 +35,16 @@ public class RestaurantsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context context = view.getContext();
 
-        RestaurantItemRecyclerViewAdapter adapter = new RestaurantItemRecyclerViewAdapter();
+        RestaurantRecyclerViewAdapter adapter = new RestaurantRecyclerViewAdapter();
 
         binding.restaurantListRecyclerView.setAdapter(adapter);
         binding.restaurantListRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         binding.restaurantListRecyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL,false));
 
-        // INJECTION OF LISTVIEWMODEL
-        ViewModelFactory listViewModelFactory = ViewModelFactory.getInstance();
+        // INJECTION OF RESTAURANT VIEWMODEL
+        ViewModelFactory restaurantsViewModelFactory = ViewModelFactory.getInstance();
         mRestaurantsViewModel =
-                new ViewModelProvider(this, listViewModelFactory).get(RestaurantsViewModel.class);
+                new ViewModelProvider(this, restaurantsViewModelFactory).get(RestaurantsViewModel.class);
 
         // CONFIGURE RECYCLERVIEW
         mRestaurantsViewModel.getRestaurantsViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<RestaurantsWrapperViewState>() {
@@ -56,7 +56,7 @@ public class RestaurantsFragment extends Fragment {
         });
 
         // ON ITEM CLICK, GO TO DETAILS
-        adapter.setOnItemClickListener(new RestaurantItemRecyclerViewAdapter.OnRestaurantItemClickListener() {
+        adapter.setOnItemClickListener(new RestaurantRecyclerViewAdapter.OnRestaurantItemClickListener() {
             @Override
             public void onRestaurantItemClick(RestaurantsViewState restaurantsViewState) {
 
