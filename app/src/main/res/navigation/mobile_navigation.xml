@@ -9,7 +9,7 @@
         android:id="@+id/navigation_mapview"
         android:name="com.kardabel.go4lunch.ui.mapview.MapViewFragment"
         android:label="@string/title_mapview"
-        tools:layout="@layout/fragment_mapview" />
+        tools:layout="@layout/map_fragment" />
 
     <fragment
         android:id="@+id/navigation_listview"
