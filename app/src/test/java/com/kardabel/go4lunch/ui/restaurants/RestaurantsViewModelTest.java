@@ -25,9 +25,6 @@ import com.kardabel.go4lunch.pojo.RestaurantLatLngLiteral;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
-import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
-import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewState;
-import com.kardabel.go4lunch.ui.restaurants.RestaurantsWrapperViewState;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
 
@@ -118,6 +115,7 @@ public class RestaurantsViewModelTest {
         Mockito.doReturn("m").when(application).getString(R.string.m);
         Mockito.doReturn(":").when(application).getString(R.string.two_dots);
         Mockito.doReturn(":0").when(application).getString(R.string.two_dots_for_minutes);
+        Mockito.doReturn(".").when(application).getString(R.string.dot);
 
 
         Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
