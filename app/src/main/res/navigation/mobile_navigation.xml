@@ -15,7 +15,7 @@
         android:id="@+id/navigation_listview"
         android:name="com.kardabel.go4lunch.ui.restaurants.RestaurantsFragment"
         android:label="@string/title_listview"
-        tools:layout="@layout/recyclerview_listview" />
+        tools:layout="@layout/recyclerview_restaurants" />
 
     <fragment
         android:id="@+id/navigation_workmates"
