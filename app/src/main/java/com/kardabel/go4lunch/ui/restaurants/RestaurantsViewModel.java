@@ -352,7 +352,7 @@ public class RestaurantsViewModel extends ViewModel {
             meridian = application.getString(R.string.am);
         }
         if(minutes == 0){
-            minReadable = ".";
+            minReadable = application.getString(R.string.dot);
         }else if(minutes < 10){
             minReadable = application.getString(R.string.two_dots_for_minutes) + minutes;
         }else {
