@@ -15,6 +15,7 @@ import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
 import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
+import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
 import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 
@@ -89,6 +90,13 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
                     nearbySearchResultsUseCase);
+        } else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
+            return (T) new WorkMatesViewModel(
+                    application,
+                    locationRepository,
+                    nearbySearchResultsUseCase,
+                    mRestaurantDetailsResultsUseCase,
+                    Clock.systemDefaultZone());
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
 
