@@ -1,35 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="176dp"
+    android:layout_height="280dp"
+    android:background="@color/black"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
-        android:id="@+id/header_avatar"
+    <TextView
+        android:id="@+id/header_tittle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        app:srcCompat="@mipmap/ic_launcher_round" />
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:text="@string/header_tittle"
+        android:textSize="28sp"
+        android:layout_marginTop="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:id="@+id/header_picture"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="16dp"
+        app:srcCompat="@mipmap/ic_launcher_round"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_tittle"/>
 
     <TextView
         android:id="@+id/header_name"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="name"
+        app:layout_constraintStart_toEndOf="@id/header_picture"
+        app:layout_constraintBottom_toTopOf="@id/header_email"
+        android:layout_marginStart="18dp"
+        android:textStyle="bold"
+        android:text="Name and firstname"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/header_mail"
+        android:id="@+id/header_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="mail" />
-</LinearLayout>
+        app:layout_constraintStart_toEndOf="@id/header_picture"
+        app:layout_constraintBottom_toBottomOf="@id/header_picture"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="Mail address" />
+</androidx.constraintlayout.widget.ConstraintLayout>
