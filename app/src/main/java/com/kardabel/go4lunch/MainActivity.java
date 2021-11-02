@@ -2,22 +2,29 @@ package com.kardabel.go4lunch;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -30,11 +37,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
+import com.kardabel.go4lunch.manager.UserManager;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView
@@ -46,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView
     private MainActivityBinding binding;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
+    private final UserManager userManager = UserManager.getInstance();
 
     private static final int LOCATION_PERMISSION_CODE = 100;
 
@@ -105,8 +113,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView
   //              break;
             }
         });
+
+        updateUIWhenCreating();
     }
 
+    private void updateUIWhenCreating() {
+        View header = binding.navigationView.getHeaderView(0);
+        ImageView profilePicture = (ImageView) header.findViewById(R.id.header_picture);
+        TextView profileUsername = (TextView) header.findViewById(R.id.header_name);
+        TextView profileUserEmail = (TextView) header.findViewById(R.id.header_email);
+
+        FirebaseUser currentUser = userManager.getCurrentUser();
+        if (currentUser != null) {
+
+            //Get picture URL from Firebase
+            Uri photoUrl = currentUser.getPhotoUrl();
+            if (photoUrl != null) {
+                Glide.with(this)
+                        .load(photoUrl)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(profilePicture);
+            }
+
+            //Get email & username from Firebase
+            String email = TextUtils.isEmpty(currentUser.getEmail()) ? getString(R.string.info_no_email_found) : currentUser.getEmail();
+            String username = TextUtils.isEmpty(currentUser.getDisplayName()) ? getString(R.string.info_no_username_found) : currentUser.getDisplayName();
+
+            //Update views with data
+            profileUsername.setText(username);
+            profileUserEmail.setText(email);
+        }
+    }
+
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // 4 - Handle Navigation Item Click
@@ -152,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 
     // 3 - Configure NavigationView
     private void configureNavigationView() {
-        this.navigationView = findViewById(R.id.navigation_view);
+        NavigationView navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
 
     }
