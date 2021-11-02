@@ -4,17 +4,17 @@ import androidx.annotation.Nullable;
 
 public class UserModel {
 
-    private String uid;
-    private String userName;
-    private String userEmail;
+    private final String uid;
+    private final String userName;
     @Nullable
-    private String userAvatarURL;
+    private final String userAvatarURL;
+    private final String userEmail;
 
-    public UserModel(String uid, String userName, String userEmail, @Nullable String userAvatarURL) {
+    public UserModel(String uid, String userName, @Nullable String userAvatarURL, String userEmail) {
         this.uid = uid;
         this.userName = userName;
-        this.userEmail = userEmail;
         this.userAvatarURL = userAvatarURL;
+        this.userEmail = userEmail;
     }
 
     public String getUid() { return uid; }
