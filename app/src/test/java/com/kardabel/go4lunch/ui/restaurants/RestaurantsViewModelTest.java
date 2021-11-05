@@ -1,7 +1,6 @@
 package com.kardabel.go4lunch.ui.restaurants;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -89,7 +88,7 @@ public class RestaurantsViewModelTest {
     private final MutableLiveData<NearbySearchResults> nearbySearchResultsMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<List<RestaurantDetailsResult>> restaurantDetailsResultsUseCaseMutableLiveData = new MutableLiveData<>();
 
-    private RestaurantsViewModel mRestaurantsViewModel;
+    private RestaurantsViewModel restaurantsViewModel;
 
     @Before
     public void setUp() {
@@ -162,7 +161,7 @@ public class RestaurantsViewModelTest {
                 )
         ));
 
-        mRestaurantsViewModel = new RestaurantsViewModel(
+        restaurantsViewModel = new RestaurantsViewModel(
                 application,
                 locationRepository,
                 nearbySearchResultsUseCase,
@@ -173,7 +172,7 @@ public class RestaurantsViewModelTest {
     @Test
     public void nominalCase() {
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getDefaultRestaurantViewState(), restaurantsWrapperViewState);
 
@@ -225,7 +224,7 @@ public class RestaurantsViewModelTest {
                 )
         ));
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getRestaurantsClosingSoon(), restaurantsWrapperViewState);
 
@@ -269,7 +268,7 @@ public class RestaurantsViewModelTest {
                 )
         ));
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getPermanentlyOpenRestaurant(), restaurantsWrapperViewState);
 
@@ -281,7 +280,7 @@ public class RestaurantsViewModelTest {
         // GIVEN
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getPermanentlyClosedRestaurants()));
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getPermanentlyClosedRestaurantsViewState(), restaurantsWrapperViewState);
 
@@ -327,7 +326,7 @@ public class RestaurantsViewModelTest {
                 )
         ));
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getRestaurantsClosed(), restaurantsWrapperViewState);
 
@@ -353,7 +352,7 @@ public class RestaurantsViewModelTest {
                 )
         ));
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getOpenRestaurantsViewState(), restaurantsWrapperViewState);
 
@@ -379,7 +378,7 @@ public class RestaurantsViewModelTest {
                 )
         ));
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getClosedRestaurantsViewState(), restaurantsWrapperViewState);
 
@@ -426,7 +425,7 @@ public class RestaurantsViewModelTest {
                 )
         ));
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getClosedUntilNextDayRestaurantsViewState(), restaurantsWrapperViewState);
 
@@ -473,7 +472,7 @@ public class RestaurantsViewModelTest {
                 )
         ));
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getClosedUntilTomorrowRestaurantsViewState(), restaurantsWrapperViewState);
 
@@ -484,7 +483,7 @@ public class RestaurantsViewModelTest {
     @Test
     public void last_Day_Goes_To_Next_Month(){
         // GIVEN
-        mRestaurantsViewModel = new RestaurantsViewModel(
+        restaurantsViewModel = new RestaurantsViewModel(
                 application,
                 locationRepository,
                 nearbySearchResultsUseCase,
@@ -528,7 +527,7 @@ public class RestaurantsViewModelTest {
         ));
 
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getLastDayOfMonth(), restaurantsWrapperViewState);
 
@@ -539,7 +538,7 @@ public class RestaurantsViewModelTest {
     @Test
     public void last_Day_Goes_To_Next_Year(){
         // GIVEN
-        mRestaurantsViewModel = new RestaurantsViewModel(
+        restaurantsViewModel = new RestaurantsViewModel(
                 application,
                 locationRepository,
                 nearbySearchResultsUseCase,
@@ -583,7 +582,7 @@ public class RestaurantsViewModelTest {
         ));
 
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getLastDayOfYear(), restaurantsWrapperViewState);
 
@@ -598,7 +597,7 @@ public class RestaurantsViewModelTest {
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getNearbyWithoutDetailsRestaurants()));
 
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getNearbyWithoutDetails(), restaurantsWrapperViewState);
 
@@ -614,7 +613,7 @@ public class RestaurantsViewModelTest {
         // GIVEN
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getRatingStars()));
         // WHEN
-        LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
             // THEN
             assertEquals(getRatingRestaurantsViewState(), restaurantsWrapperViewState);
 
@@ -639,7 +638,7 @@ public class RestaurantsViewModelTest {
       // GIVEN
       nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getNullPhoto()));
       // WHEN
-      LiveDataTestUtils.observeForTesting(mRestaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+      LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
           // THEN
           assertEquals(getNullPhotoViewState(), restaurantsWrapperViewState);
 
