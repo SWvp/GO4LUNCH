@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.repository.LocationRepository;
+import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.util.SingleLiveEvent;
 
 public class MainActivityViewModel extends ViewModel {
@@ -21,10 +22,16 @@ public class MainActivityViewModel extends ViewModel {
     private LocationRepository locationRepository;
     private Application application;
 
-    public MainActivityViewModel(@Nullable Application application, @Nullable LocationRepository locationRepository) {
+    private WorkmatesRepository mWorkmatesRepository;
+
+    public MainActivityViewModel(
+            @Nullable Application application,
+            @Nullable LocationRepository locationRepository,
+            WorkmatesRepository workmatesRepository) {
         super();
         this.application = application;
         this.locationRepository = locationRepository;
+        this.mWorkmatesRepository = workmatesRepository;
 
     }
 
@@ -51,8 +58,11 @@ public class MainActivityViewModel extends ViewModel {
         }
     }
 
+    // WHEN PERMISSION IS GRANTED, LETS RETRIEVE LOCATION AND USER DATA BASE
     private void permissionGranted() {
         locationRepository.StartLocationRequest();
+        mWorkmatesRepository.getWorkmates();
+
 
     }
 
