@@ -18,6 +18,7 @@ public class UserRepository {
 
     private static final String COLLECTION_NAME = "users";
     private static final String USERNAME_FIELD = "username";
+    private static final String USER_RESTAURANT_FIELD = "userRestaurant";
     private static volatile UserRepository instance;
 
     private UserRepository() { }
@@ -59,7 +60,7 @@ public class UserRepository {
         return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
     }
 
-    // Create User in Firestore
+    // CREATE USER IN FIRESTORE
     public void createUser() {
         FirebaseUser user = getCurrentUser();
         if(user != null){
@@ -71,14 +72,14 @@ public class UserRepository {
             UserModel userToCreate = new UserModel(uid, userName, userUrlPicture, userEmail);
 
             Task<DocumentSnapshot> userData = getUserData();
-            // If the user already exist in Firestore, we get his data (isMentor)
+            // If the user already exist in Firestore, we get his data
             userData.addOnSuccessListener(documentSnapshot -> {
                 this.getUsersCollection().document(uid).set(userToCreate);
             });
         }
     }
 
-    // Get User Data from Firestore
+    // GET USERS DATA FROM FIRESTORE
     public Task<DocumentSnapshot> getUserData(){
         String uid = this.getCurrentUserUID();
         if(uid != null){
@@ -88,7 +89,7 @@ public class UserRepository {
         }
     }
 
-    // Update User Username
+    // UPDATE USERS NAME
     public Task<Void> updateUsername(String username) {
         String uid = this.getCurrentUserUID();
         if(uid != null){
@@ -98,7 +99,7 @@ public class UserRepository {
         }
     }
 
-    // Delete the User from Firestore
+    // DELETE USER FROM FIRESTORE
     public void deleteUserFromFirestore() {
         String uid = this.getCurrentUserUID();
         if(uid != null){
