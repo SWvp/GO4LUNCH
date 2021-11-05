@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.R;
@@ -30,7 +31,7 @@ import java.util.Locale;
 
 public class RestaurantsViewModel extends ViewModel {
 
-    private final MediatorLiveData<RestaurantsWrapperViewState> restaurantsWrapperViewStateMutableLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<RestaurantsWrapperViewState> restaurantsWrapperViewStateMediatorLiveData = new MediatorLiveData<>();
 
     private final Application application;
     private final Clock clock;
@@ -54,13 +55,17 @@ public class RestaurantsViewModel extends ViewModel {
 
         // OBSERVERS
 
-        restaurantsWrapperViewStateMutableLiveData.addSource(locationLiveData, location ->
-                combine(nearbySearchResultsLiveData.getValue(), restaurantsDetailsResultLiveData.getValue(), location));
+        restaurantsWrapperViewStateMediatorLiveData.addSource(locationLiveData, new Observer<Location>() {
+            @Override
+            public void onChanged(Location location) {
+                RestaurantsViewModel.this.combine(nearbySearchResultsLiveData.getValue(), restaurantsDetailsResultLiveData.getValue(), location);
+            }
+        });
 
-        restaurantsWrapperViewStateMutableLiveData.addSource(nearbySearchResultsLiveData, nearbySearchResults ->
+        restaurantsWrapperViewStateMediatorLiveData.addSource(nearbySearchResultsLiveData, nearbySearchResults ->
                 combine(nearbySearchResults, restaurantsDetailsResultLiveData.getValue(), locationLiveData.getValue()));
 
-        restaurantsWrapperViewStateMutableLiveData.addSource(restaurantsDetailsResultLiveData, placeDetailsResults ->
+        restaurantsWrapperViewStateMediatorLiveData.addSource(restaurantsDetailsResultLiveData, placeDetailsResults ->
                 combine(nearbySearchResultsLiveData.getValue(), placeDetailsResults, locationLiveData.getValue()));
     }
 
@@ -69,10 +74,10 @@ public class RestaurantsViewModel extends ViewModel {
                          @Nullable Location location) {
 
         if(restaurantDetailsResults == null && nearbySearchResults != null){
-              restaurantsWrapperViewStateMutableLiveData.setValue(map(location, nearbySearchResults));
+              restaurantsWrapperViewStateMediatorLiveData.setValue(map(location, nearbySearchResults));
 
         }else if(restaurantDetailsResults != null && nearbySearchResults != null){
-            restaurantsWrapperViewStateMutableLiveData.setValue(mapWithDetails(location, nearbySearchResults, restaurantDetailsResults));
+            restaurantsWrapperViewStateMediatorLiveData.setValue(mapWithDetails(location, nearbySearchResults, restaurantDetailsResults));
 
         }
     }
@@ -417,7 +422,7 @@ public class RestaurantsViewModel extends ViewModel {
 
     // LIVEDATA OBSERVED BY LIST VIEW FRAGMENT
     public LiveData<RestaurantsWrapperViewState> getRestaurantsViewStateLiveData() {
-        return restaurantsWrapperViewStateMutableLiveData;
+        return restaurantsWrapperViewStateMediatorLiveData;
 
     }
 }
