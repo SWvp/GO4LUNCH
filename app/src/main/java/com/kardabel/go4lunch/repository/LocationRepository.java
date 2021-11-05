@@ -1,18 +1,14 @@
 package com.kardabel.go4lunch.repository;
 
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -23,8 +19,7 @@ public class LocationRepository {
 
     public static final int DEFAULT_UPDATE_INTERVAL = 50000;
     public static final int FASTEST_UPDATE_INTERVAL = 20000;
-    private MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
-    private MutableLiveData<Location> locationMutableLiveDatabis = new MutableLiveData<>();
+    private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
     private LocationCallback callback;
 
     @SuppressLint("MissingPermission")
@@ -32,12 +27,10 @@ public class LocationRepository {
         if (callback == null) {
             callback = new LocationCallback() {
                 @Override
-                public void onLocationResult(LocationResult locationResult) {
+                public void onLocationResult(@NonNull LocationResult locationResult) {
                     Location location = locationResult.getLastLocation();
-                    if (location != null) {
-                        locationMutableLiveData.setValue(location);
+                    locationMutableLiveData.setValue(location);
 
-                    }
                 }
             };
             LocationServices.getFusedLocationProviderClient(MainApplication.getApplication()).requestLocationUpdates(
@@ -61,9 +54,6 @@ public class LocationRepository {
         }
     }
     public LiveData<Location> getLocationLiveData() {
-        return locationMutableLiveData;
-    }
-    public LiveData<Location> getLocationMutableLiveDatabis() {
         return locationMutableLiveData;
     }
 
