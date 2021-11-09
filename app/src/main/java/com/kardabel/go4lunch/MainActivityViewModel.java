@@ -7,7 +7,6 @@ import android.app.Application;
 import android.content.pm.PackageManager;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModel;
 
@@ -22,7 +21,7 @@ public class MainActivityViewModel extends ViewModel {
     private LocationRepository locationRepository;
     private Application application;
 
-    private WorkmatesRepository mWorkmatesRepository;
+    private WorkmatesRepository workmatesRepository;
 
     public MainActivityViewModel(
             @Nullable Application application,
@@ -31,7 +30,7 @@ public class MainActivityViewModel extends ViewModel {
         super();
         this.application = application;
         this.locationRepository = locationRepository;
-        this.mWorkmatesRepository = workmatesRepository;
+        this.workmatesRepository = workmatesRepository;
 
     }
 
@@ -61,7 +60,8 @@ public class MainActivityViewModel extends ViewModel {
     // WHEN PERMISSION IS GRANTED, LETS RETRIEVE LOCATION AND USER DATA BASE
     private void permissionGranted() {
         locationRepository.StartLocationRequest();
-        mWorkmatesRepository.getWorkmates();
+        workmatesRepository.getWorkmates();
+        workmatesRepository.getRestaurantsWithFavorite();
 
 
     }
