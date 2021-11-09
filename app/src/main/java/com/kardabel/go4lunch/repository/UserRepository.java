@@ -12,16 +12,25 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.kardabel.go4lunch.model.DaysModel;
 import com.kardabel.go4lunch.model.UserModel;
+import com.kardabel.go4lunch.pojo.RestaurantSearch;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserRepository {
 
-    private static final String COLLECTION_NAME = "users";
+    private static final String COLLECTION_USERS = "users";
+    private static final String COLLECTION_RESTAURANTS = "favorite restaurants";
+    private static final String COLLECTION_DAYS = "days";
+    private static final String COLLECTION_FAVORITE_USERS = "favorite users";
     private static final String USERNAME_FIELD = "username";
     private static final String USER_RESTAURANT_FIELD = "userRestaurant";
     private static volatile UserRepository instance;
 
-    private UserRepository() { }
+    public UserRepository() { }
 
     public static UserRepository getInstance() {
         UserRepository result = instance;
@@ -57,7 +66,7 @@ public class UserRepository {
 
     // Get the Collection Reference
     private CollectionReference getUsersCollection(){
-        return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
+        return FirebaseFirestore.getInstance().collection(COLLECTION_USERS);
     }
 
     // CREATE USER IN FIRESTORE
@@ -79,7 +88,7 @@ public class UserRepository {
         }
     }
 
-    // GET USERS DATA FROM FIRESTORE
+    // GET USER DATA FROM FIRESTORE
     public Task<DocumentSnapshot> getUserData(){
         String uid = this.getCurrentUserUID();
         if(uid != null){
@@ -105,5 +114,49 @@ public class UserRepository {
         if(uid != null){
             this.getUsersCollection().document(uid).delete();
         }
+    }
+
+
+    ///// FAVORITES RESTAURANTS //////
+
+    public static CollectionReference getDayCollection(){
+        return FirebaseFirestore.getInstance().collection(COLLECTION_DAYS);
+    }
+
+    public void createUserInFavoriteRestaurant(String placeID, String name) {
+        LocalDate day = LocalDate.now();
+
+        String userId = this.getCurrentUserUID();
+
+        UserModel userToCreate = new UserModel(userId);
+        DaysModel dayToCreate = new DaysModel(day.toString());
+
+        Map<String, Object> restaurant = new HashMap<>();
+        restaurant.put("restaurant name", name);
+        restaurant.put("restaurant id", placeID);
+
+        Map<String, Object> user = new HashMap<>();
+        user.put("user id", userId);
+
+        UserRepository
+                .getDayCollection()
+                .document(String.valueOf(day))
+                .set(dayToCreate);
+
+        UserRepository
+                .getDayCollection()
+                .document(String.valueOf(day))
+                .collection(COLLECTION_RESTAURANTS)
+                .document(placeID)
+                .set(restaurant);
+
+        UserRepository
+                .getDayCollection()
+                .document(String.valueOf(day))
+                .collection(COLLECTION_RESTAURANTS)
+                .document(placeID)
+                .collection(COLLECTION_FAVORITE_USERS)
+                .document(userId)
+                .set(user);
     }
 }
