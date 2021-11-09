@@ -128,7 +128,7 @@ public class UserRepository {
 
         String userId = this.getCurrentUserUID();
 
-        UserModel userToCreate = new UserModel(userId);
+        //UserModel userToCreate = new UserModel(userId);
         DaysModel dayToCreate = new DaysModel(day.toString());
 
         Map<String, Object> restaurant = new HashMap<>();
