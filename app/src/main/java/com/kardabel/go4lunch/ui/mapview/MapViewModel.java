@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -41,7 +40,7 @@ public class MapViewModel extends ViewModel {
 
         for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
             String poiName = nearbySearchResults.getResults().get(i).getRestaurantName();
-            String poiPlaceId = nearbySearchResults.getResults().get(i).getPlaceId();
+            String poiPlaceId = nearbySearchResults.getResults().get(i).getRestaurantId();
             String poiAddress = nearbySearchResults.getResults().get(i).getRestaurantAddress();
             LatLng latLng = new LatLng(nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
                     nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
