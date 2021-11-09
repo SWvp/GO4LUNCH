@@ -36,19 +36,20 @@
                 app:navigationIcon="@drawable/back_arrow"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:baselineAlignBottom="false"
-        android:clickable="true"
         android:background="@color/white"
         android:src="@drawable/fab_detail"
         app:fabSize="normal"
-        android:layout_marginRight="16dp"
-        android:layout_gravity="end|bottom"/>
+        android:layout_marginEnd="16dp"
+        android:layout_gravity="end|bottom"
+        android:clickable="true"
+        android:focusable="true" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -65,6 +66,7 @@
                 android:layout_height="wrap_content"
 
                 android:background="@color/orange"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -72,23 +74,34 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Restaurant name"
+                    android:text="@string/restaurant_name"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <RatingBar
+                    android:id="@+id/details_rating"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
+                    android:numStars="3"
+                    app:layout_constraintStart_toEndOf="@id/detail_restaurant_name"
+                    app:layout_constraintTop_toTopOf="@+id/detail_restaurant_name" />
 
                 <TextView
                     android:id="@+id/detail_restaurant_address"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
-                    android:text="restaurant address"
+                    android:text="@string/restaurant_address"
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/detail_restaurant_name" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -97,30 +110,33 @@
                 android:id="@+id/call_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
+                android:layout_marginStart="32dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                android:drawableTop="@drawable/call_icon"
-                android:text="CALL"
+                android:text="@string/call_button"
                 android:textColor="@color/orange"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/details_restaurant_info" />
+                app:layout_constraintTop_toBottomOf="@+id/details_restaurant_info"
+                android:clickable="true"
+                android:focusable="true"
+                app:drawableTopCompat="@drawable/call_icon" />
 
             <ImageButton
                 android:id="@+id/detail_like_button"
                 android:layout_width="29dp"
                 android:layout_height="28dp"
                 android:background="@drawable/detail_star"
-                android:clickable="true"
                 app:layout_constraintEnd_toStartOf="@+id/web_icon"
                 app:layout_constraintStart_toEndOf="@+id/call_icon"
-                app:layout_constraintTop_toTopOf="@+id/call_icon" />
+                app:layout_constraintTop_toTopOf="@+id/call_icon"
+                android:clickable="true"
+                android:focusable="true" />
 
             <TextView
                 android:id="@+id/detail_like_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="FAVORITE"
+                android:text="@string/favorite_button"
                 android:textColor="@color/orange"
 
                 app:layout_constraintBottom_toBottomOf="@id/call_icon"
@@ -132,13 +148,15 @@
                 android:id="@+id/web_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="32dp"
-                android:drawableTop="@drawable/vpn_lock"
-                android:text="WEBSITE"
+                android:layout_marginEnd="32dp"
+                android:text="@string/web_icon"
                 android:textColor="@color/orange"
                 app:layout_constraintBottom_toBottomOf="@+id/call_icon"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/call_icon" />
+                app:layout_constraintTop_toTopOf="@id/call_icon"
+                app:drawableTopCompat="@drawable/ic_baseline_public_24"
+                android:clickable="true"
+                android:focusable="true" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/detail_recyclerView"
@@ -146,7 +164,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                app:layout_constraintTop_toBottomOf="@+id/call_icon" />
+                app:layout_constraintTop_toBottomOf="@+id/call_icon"
+                tools:listitem="@layout/item_workmate"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

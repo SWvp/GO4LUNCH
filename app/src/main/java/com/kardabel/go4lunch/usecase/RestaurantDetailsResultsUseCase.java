@@ -45,7 +45,7 @@ public class RestaurantDetailsResultsUseCase {
     private void combine(NearbySearchResults nearbySearchResults, @Nullable RestaurantDetailsResult restaurantDetailsResult) {
         if (nearbySearchResults != null) {
             for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
-                String placeId = nearbySearchResults.getResults().get(i).getPlaceId();
+                String placeId = nearbySearchResults.getResults().get(i).getRestaurantId();
                 if(!mListRestaurantDetailsResults.contains(restaurantDetailsResult) || restaurantDetailsResult == null){
                     mPlaceDetailsResultMediatorLiveData.addSource(mRestaurantDetailsResponseRepository.getRestaurantDetailsLiveData(placeId), restaurantDetailsResult1 -> {
                         mListRestaurantDetailsResults.add(restaurantDetailsResult1);

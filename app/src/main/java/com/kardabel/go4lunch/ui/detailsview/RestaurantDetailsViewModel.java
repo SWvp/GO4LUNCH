@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -17,7 +18,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     private String placeId = "";
 
-    private LiveData<RestaurantDetailsViewState> restaurantDetailsViewStateLiveData;
+    private final LiveData<RestaurantDetailsViewState> restaurantDetailsViewStateLiveData;
+    private final MediatorLiveData<List<WorkmatesDetailsViewState>> workMatesDetailsViewStateMediatorLiveData = new MediatorLiveData<>();
     private RestaurantDetailsViewState result;
 
     public RestaurantDetailsViewModel(@Nullable PlaceSearchResultsUseCase placeSearchResultsUseCase){
@@ -32,6 +34,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
         });
 
 
+
+
     }
 
     private RestaurantDetailsViewState map(@NonNull PlaceSearchResults placeSearchResults) {
@@ -44,7 +48,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
                         placeSearchResults.getResults().get(i).getRestaurantAddress(),
                         photoReference(placeSearchResults.getResults().get(i).getRestaurantPhotos()),
                         "23 48 23 48",
-                        "www.ouioui.com"
+                        "www.ouioui.com",
+                        nearbySearchResults.getResults().get(i).getRestaurantId()
 
                 );
             }
@@ -75,4 +80,11 @@ public class RestaurantDetailsViewModel extends ViewModel {
         return restaurantDetailsViewStateLiveData;
 
     }
+
+    public LiveData<List<WorkmatesDetailsViewState>> getDetailsWorkmatesViewStateLiveData() {
+        return workMatesDetailsViewStateMediatorLiveData;
+
+    }
+
+
 }
