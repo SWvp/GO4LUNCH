@@ -1,25 +1,20 @@
 package com.kardabel.go4lunch.ui.workmates;
 
-import static android.content.ContentValues.TAG;
-
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.model.UserModel;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
+import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
-import com.kardabel.go4lunch.ui.restaurants.RestaurantsWrapperViewState;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
-import com.kardabel.go4lunch.usecase.WorkmatesResultsUseCase;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -28,9 +23,6 @@ import java.util.List;
 public class WorkMatesViewModel extends ViewModel {
 
     private final MediatorLiveData<List<WorkMatesViewState>> workMatesViewStateMediatorLiveData = new MediatorLiveData<>();
-
-    private final Application application;
-    private final Clock clock;
 
     public WorkMatesViewModel(
             @NonNull Application application,
@@ -41,51 +33,75 @@ public class WorkMatesViewModel extends ViewModel {
             @NonNull Clock clock
     ) {
 
-        this.clock = clock;
-        this.application = application;
 
-
-
-
-
-        LiveData<NearbySearchResults> nearbySearchResultsLiveData = nearbySearchResultsUseCase.getNearbySearchResultsLiveData();
+        //LiveData<NearbySearchResults> nearbySearchResultsLiveData = nearbySearchResultsUseCase.getNearbySearchResultsLiveData();
         LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
-
+        LiveData<List<RestaurantSearch>> restaurantsSearchLiveData = workmatesRepository.getRestaurantsWithFavorite();
 
         // OBSERVERS
 
         workMatesViewStateMediatorLiveData.addSource(workMatesLiveData, new Observer<List<UserModel>>() {
             @Override
             public void onChanged(List<UserModel> userModels) {
-                combine(userModels);
+                combine(userModels, restaurantsSearchLiveData.getValue());
 
             }
         });
 
+        workMatesViewStateMediatorLiveData.addSource(restaurantsSearchLiveData, new Observer<List<RestaurantSearch>>() {
+            @Override
+            public void onChanged(List<RestaurantSearch> restaurants) {
+                combine(workMatesLiveData.getValue(), restaurants);
 
 
-
+            }
+        });
     }
 
-    private void combine(List<UserModel> userModels) {
+    private void combine(List<UserModel> users, List<RestaurantSearch> restaurants) {
 
-        workMatesViewStateMediatorLiveData.setValue(map(userModels));
+        if(restaurants != null){
+            workMatesViewStateMediatorLiveData.setValue(mapWithFavorites(users, restaurants));
 
+        }else{
+            workMatesViewStateMediatorLiveData.setValue(map(users));
+
+        }
     }
 
-    private List<WorkMatesViewState> map(List<UserModel> userModels) {
-
+    private List<WorkMatesViewState> map(List<UserModel> users) {
         List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
 
-        for (int i = 0; i < userModels.size() ; i++) {
+        for (int i = 0; i < users.size() ; i++) {
 
-
-            String description = userModels.get(i).getUserName();
-            String avatar = userModels.get(i).getAvatarURL();
-            String restaurant = "coucou";
+            String description = users.get(i).getUserName();
+            String avatar = users.get(i).getAvatarURL();
+            String restaurant = " (test)";
 
             workMatesViewStateList.add(new WorkMatesViewState(
-                    description,
+                    description + restaurant,
+                    avatar,
+                    restaurant
+            ));
+
+        }
+
+        return workMatesViewStateList;
+
+    }
+
+    private List<WorkMatesViewState> mapWithFavorites(List<UserModel> users, List<RestaurantSearch> restaurants) {
+        List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
+
+        for (int i = 0; i < users.size() ; i++) {
+
+
+            String description = users.get(i).getUserName();
+            String avatar = users.get(i).getAvatarURL();
+            String restaurant = " (test)";
+
+            workMatesViewStateList.add(new WorkMatesViewState(
+                    description + restaurant,
                     avatar,
                     restaurant
             ));

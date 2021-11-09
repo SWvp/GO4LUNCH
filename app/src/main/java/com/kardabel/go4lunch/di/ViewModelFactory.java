@@ -19,7 +19,6 @@ import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
 import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
-import com.kardabel.go4lunch.usecase.WorkmatesResultsUseCase;
 
 import java.time.Clock;
 
@@ -38,7 +37,6 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 
     private final NearbySearchResultsUseCase nearbySearchResultsUseCase;
     private final RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase;
-    private final WorkmatesResultsUseCase workmatesResultsUseCase;
 
     public static ViewModelFactory getInstance() {
         if (factory == null) {
@@ -73,10 +71,6 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                 locationRepository,
                 nearbySearchResponseRepository,
                 mRestaurantDetailsResponseRepository);
-        this.workmatesResultsUseCase = new WorkmatesResultsUseCase(
-                locationRepository,
-                workmatesRepository);
-
     }
 
 
@@ -103,7 +97,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
                     nearbySearchResultsUseCase);
-        } else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
+        }else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
             return (T) new WorkMatesViewModel(
                     application,
                     locationRepository,
