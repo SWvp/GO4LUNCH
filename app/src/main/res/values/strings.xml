@@ -57,6 +57,13 @@
     <string name="distance_unavailable">Distance unavailable</string>
     <string name="m">m</string>
 
+    <!-- DETAILS LAYOUT -->
+    <string name="favorite_button">FAVORITE</string>
+    <string name="call_button">CALL</string>
+    <string name="restaurant_name">Restaurant name</string>
+    <string name="restaurant_address">Restaurant address</string>
+    <string name="web_icon">Web icon</string>
+
 
 
 </resources>
