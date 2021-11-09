@@ -101,7 +101,7 @@ public class RestaurantsViewModel extends ViewModel {
                     nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
             String openingHoursRestaurant = OpeningHoursWithoutDetails(nearbySearchResults.getResults().get(i).getOpeningHours());
             double ratingRestaurant = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
-            String placeIdRestaurant = nearbySearchResults.getResults().get(i).getPlaceId();
+            String placeIdRestaurant = nearbySearchResults.getResults().get(i).getRestaurantId();
 
             restaurantList.add(new RestaurantsViewState(
                     restaurantName,
@@ -128,7 +128,7 @@ public class RestaurantsViewModel extends ViewModel {
         if (restaurantDetailsResults != null) {
             for (RestaurantSearch place : nearbySearchResults.getResults()) {
                 for (int i = 0; i < restaurantDetailsResults.size(); i++) {
-                    if (restaurantDetailsResults.get(i).getDetailsResult().getPlaceId().equals(place.getPlaceId())) {
+                    if (restaurantDetailsResults.get(i).getDetailsResult().getPlaceId().equals(place.getRestaurantId())) {
 
                         String restaurantName = place.getRestaurantName();
                         String addressRestaurant = place.getRestaurantAddress();
@@ -139,7 +139,7 @@ public class RestaurantsViewModel extends ViewModel {
                                 place.getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
                         String openingHoursRestaurant = getOpeningText(restaurantDetailsResults.get(i).getDetailsResult().getOpeningHours(), place.isPermanentlyClosed());
                         double ratingRestaurant = convertRatingStars(place.getRating());
-                        String placeIdRestaurant = place.getPlaceId();
+                        String placeIdRestaurant = place.getRestaurantId();
 
                         restaurantList.add(new RestaurantsViewState(
                                 restaurantName,
