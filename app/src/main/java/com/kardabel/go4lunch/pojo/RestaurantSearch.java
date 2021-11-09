@@ -12,42 +12,50 @@ public class RestaurantSearch {
 
     @SerializedName("place_id")
     @Expose
-    private final String placeId;
+    private String restaurantId;
 
     @SerializedName("name")
     @Expose
-    private final String restaurantName;
+    private String restaurantName;
 
     @SerializedName("vicinity")
     @Expose
-    private final String restaurantAddress;
+    private String restaurantAddress;
 
     @SerializedName("photos")
     @Expose
-    private final List<Photo> restaurantPhotos;
+    private List<Photo> restaurantPhotos;
 
     @SerializedName("geometry")
     @Expose
-    private final Geometry restaurantGeometry;
+    private Geometry restaurantGeometry;
 
     @SerializedName("opening_hours")
     @Expose
-    private final OpeningHours openingHours;
+    private OpeningHours openingHours;
 
     @SerializedName("rating")
     @Expose
-    private final double rating;
+    private double rating;
 
     @SerializedName("user_ratings_total")
     @Expose
-    private final int totalRatings;
+    private int totalRatings;
 
     @SerializedName("permanently_closed")
     @Expose
-    private final boolean permanentlyClosed;
+    private boolean permanentlyClosed;
+
+    public RestaurantSearch(){
+
+    }
+
+    public RestaurantSearch(String placeID){
+        this.restaurantId = placeID;
+    }
 
 
-    public RestaurantSearch(String placeId,
+    public RestaurantSearch(String restaurantId,
                             String restaurantName,
                             String restaurantAddress,
                             List<Photo> restaurantPhotos,
@@ -56,7 +64,7 @@ public class RestaurantSearch {
                             double rating,
                             int totalRatings,
                             boolean permanentlyClosed) {
-        this.placeId = placeId;
+        this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.restaurantAddress = restaurantAddress;
         this.restaurantPhotos = restaurantPhotos;
@@ -70,7 +78,7 @@ public class RestaurantSearch {
 
 
     // GETTERS
-    public String getPlaceId() { return placeId; }
+    public String getRestaurantId() { return restaurantId; }
 
     public String getRestaurantName() { return restaurantName; }
 
@@ -98,7 +106,7 @@ public class RestaurantSearch {
         return Double.compare(that.rating, rating) == 0 &&
                 totalRatings == that.totalRatings &&
                 permanentlyClosed == that.permanentlyClosed &&
-                Objects.equals(placeId, that.placeId) &&
+                Objects.equals(restaurantId, that.restaurantId) &&
                 Objects.equals(restaurantName, that.restaurantName) &&
                 Objects.equals(restaurantAddress, that.restaurantAddress) &&
                 Objects.equals(restaurantPhotos, that.restaurantPhotos) &&
@@ -109,7 +117,7 @@ public class RestaurantSearch {
     @Override
     public int hashCode() {
         return Objects.hash(
-                placeId,
+                restaurantId,
                 restaurantName,
                 restaurantAddress,
                 restaurantPhotos,
@@ -123,7 +131,7 @@ public class RestaurantSearch {
     @Override
     public String toString() {
         return "RestaurantSearch{" +
-                "placeId='" + placeId + '\'' +
+                "placeId='" + restaurantId + '\'' +
                 ", restaurantName='" + restaurantName + '\'' +
                 ", restaurantAddress='" + restaurantAddress + '\'' +
                 ", restaurantPhotos=" + restaurantPhotos +
