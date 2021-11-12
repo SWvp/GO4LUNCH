@@ -21,6 +21,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private final LiveData<RestaurantDetailsViewState> restaurantDetailsViewStateLiveData;
     private final MediatorLiveData<List<WorkmatesDetailsViewState>> workMatesDetailsViewStateMediatorLiveData = new MediatorLiveData<>();
     private RestaurantDetailsViewState result;
+    private final FirestoreUseCase firestoreUseCase;
 
     public RestaurantDetailsViewModel(@Nullable PlaceSearchResultsUseCase placeSearchResultsUseCase){
 
@@ -74,6 +75,11 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     public void init(String placeId){
         this.placeId = placeId;
+    }
+
+    public void onFavoriteClick(String restaurantId, String restaurantName){
+        firestoreUseCase.onFavoriteClick(restaurantId, restaurantName);
+
     }
 
     public LiveData<RestaurantDetailsViewState> getRestaurantDetailsViewStateLiveData(){
