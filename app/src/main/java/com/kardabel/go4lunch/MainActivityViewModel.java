@@ -6,7 +6,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.pm.PackageManager;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModel;
 
@@ -24,9 +24,9 @@ public class MainActivityViewModel extends ViewModel {
     private WorkmatesRepository workmatesRepository;
 
     public MainActivityViewModel(
-            @Nullable Application application,
-            @Nullable LocationRepository locationRepository,
-            WorkmatesRepository workmatesRepository) {
+            @NonNull Application application,
+            @NonNull LocationRepository locationRepository,
+            @NonNull WorkmatesRepository workmatesRepository) {
         super();
         this.application = application;
         this.locationRepository = locationRepository;
@@ -46,10 +46,10 @@ public class MainActivityViewModel extends ViewModel {
 
   //    }
 
-  //    else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, ACCESS_FINE_LOCATION)) {
-  //        actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
+ //  else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, ACCESS_FINE_LOCATION)) {
+ //      actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
 
-  //    }
+ //  }
 
         else {
             actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_ASKED);
