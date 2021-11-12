@@ -13,14 +13,14 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.kardabel.go4lunch.databinding.RestaurantDetailsBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
-import com.kardabel.go4lunch.repository.UserRepository;
+import com.kardabel.go4lunch.usecase.FirestoreUseCase;
 
 public class RestaurantDetailsActivity extends AppCompatActivity {
 
     private static final String RESTAURANT_ID = "RESTAURANT_ID";
     private String restaurantId;
     private String restaurantName;
-    private UserRepository userRepository;
+    private FirestoreUseCase firestoreUseCase;
 
 
     private RestaurantDetailsBinding binding;
@@ -39,7 +39,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = RestaurantDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        userRepository = new UserRepository();
+        firestoreUseCase = new FirestoreUseCase();
 
         // CONFIGURE VIEWMODEL
         ViewModelFactory listViewModelFactory = ViewModelFactory.getInstance();
@@ -68,7 +68,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         binding.addFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userRepository.createUserInFavoriteRestaurant(restaurantId, restaurantName);
+                restaurantDetailsViewModel.onFavoriteClick(restaurantId, restaurantName);
 
             }
         });
