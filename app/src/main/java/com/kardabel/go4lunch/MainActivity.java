@@ -3,8 +3,6 @@ package com.kardabel.go4lunch;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 import android.annotation.SuppressLint;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -203,7 +201,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         inflater.inflate(R.menu.search_menu, menu);
 
         // GET SEARCHVIEW AND CONFIGURE SEARCHMANAGER
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setBackgroundColor(Color.WHITE);
@@ -211,7 +208,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         editText.setTextColor(Color.BLACK);
         editText.setHintTextColor(Color.GRAY);
         // ASSUMES CURRENT ACTIVITY IS THE SEARCHABLE ACTIVITY
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false);
         return true;
 
