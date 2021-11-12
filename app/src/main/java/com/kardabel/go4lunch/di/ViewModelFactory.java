@@ -17,6 +17,7 @@ import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
 import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
+import com.kardabel.go4lunch.usecase.FirestoreUseCase;
 import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 
@@ -37,6 +38,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 
     private final NearbySearchResultsUseCase nearbySearchResultsUseCase;
     private final RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase;
+    private final FirestoreUseCase firestoreUseCase;
+
 
     public static ViewModelFactory getInstance() {
         if (factory == null) {
@@ -71,6 +74,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                 locationRepository,
                 nearbySearchResponseRepository,
                 mRestaurantDetailsResponseRepository);
+        this.firestoreUseCase = new FirestoreUseCase();
     }
 
 
@@ -96,7 +100,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     workmatesRepository);
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
-                    nearbySearchResultsUseCase);
+                    nearbySearchResultsUseCase,
+                    firestoreUseCase);
         }else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
             return (T) new WorkMatesViewModel(
                     application,
