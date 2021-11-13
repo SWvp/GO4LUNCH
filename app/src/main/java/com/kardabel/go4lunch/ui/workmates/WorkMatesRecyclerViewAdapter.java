@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.ui.workmates;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -32,7 +34,13 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
 
         WorkMatesViewState workMate = workmatesList.get(position);
 
-        holder.viewHolderBinding.itemWorkmateDescription.setText(workMate.getWorkmateDescription());
+        if(!workMate.isUserGotRestaurant()){
+            holder.viewHolderBinding.itemWorkmateDescription.setText(workMate.getWorkmateDescription());
+            holder.viewHolderBinding.itemWorkmateDescription.setTextColor(Color.GRAY);
+            holder.viewHolderBinding.itemWorkmateDescription.setTypeface(null, Typeface.ITALIC);
+        }else{
+            holder.viewHolderBinding.itemWorkmateDescription.setText(workMate.getWorkmateDescription());
+        }
 
         Glide.with(holder.viewHolderBinding.itemWorkmateAvatar.getContext())
                 .load(workMate.getWorkmatePhoto())
