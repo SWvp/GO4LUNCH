@@ -7,11 +7,13 @@ public class WorkMatesViewState {
     private final String workmateDescription;
     private final String workmatePhoto;
     private final String workmateRestaurant;
+    private boolean gotRestaurant;
 
-    public WorkMatesViewState(String workmateDescription, String workmatePhoto, String workmateRestaurant) {
+    public WorkMatesViewState(String workmateDescription, String workmatePhoto, String workmateRestaurant, boolean gotRestaurant) {
         this.workmateDescription = workmateDescription;
         this.workmatePhoto = workmatePhoto;
         this.workmateRestaurant = workmateRestaurant;
+        this.gotRestaurant = gotRestaurant;
     }
 
     public String getWorkmateDescription() {
@@ -24,6 +26,10 @@ public class WorkMatesViewState {
 
     public String getWorkmateRestaurant() {
         return workmateRestaurant;
+    }
+
+    public boolean isUserGotRestaurant() {
+        return gotRestaurant;
     }
 
     @Override
