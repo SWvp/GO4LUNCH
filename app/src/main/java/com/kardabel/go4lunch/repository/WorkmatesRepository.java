@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.kardabel.go4lunch.model.UserModel;
+import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 
@@ -22,6 +23,8 @@ import java.util.List;
 
 public class WorkmatesRepository {
 
+
+    // GET WORKMATES FROM FIRESTORE DATABASE
     public LiveData<List<UserModel>> getWorkmates() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         MutableLiveData<List<UserModel>> userModelMutableLiveData = new MutableLiveData<>();
@@ -50,17 +53,15 @@ public class WorkmatesRepository {
         return userModelMutableLiveData;
     }
 
-    public LiveData<List<RestaurantSearch>> getRestaurantsWithFavorite() {
+
+    public LiveData<List<UserWithFavoriteRestaurant>> getRestaurantsAddAsFavorite() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        MutableLiveData<List<RestaurantSearch>> userModelMutableLiveData = new MutableLiveData<>();
-        List<RestaurantSearch> restaurants = new ArrayList<>();
+        MutableLiveData<List<UserWithFavoriteRestaurant>> userModelMutableLiveData = new MutableLiveData<>();
+        List<UserWithFavoriteRestaurant> userWithRestaurant = new ArrayList<>();
 
         LocalDate today = LocalDate.now();
 
-        db.collection("days")
-                .document(today.toString())
-                .collection("favorite restaurants")
-                //.whereEqualTo(today.toString(), true)
+        db.collection(today.toString())
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -71,17 +72,10 @@ public class WorkmatesRepository {
                         }
                         for(DocumentChange document : value.getDocumentChanges()){
                             if(document.getType() == DocumentChange.Type.ADDED || document.getType() == DocumentChange.Type.MODIFIED){
-                                restaurants.add(document.getDocument().toObject(RestaurantSearch.class));
-                //             restaurants.add(document.getDocument().toObject(RestaurantSearch.class));
-                //             db
-                //                     .collection("days")
-                //                     .document(today.toString())
-                //                     .collection("favorite restaurants")
-                //                     .document();
+                                userWithRestaurant.add(document.getDocument().toObject(UserWithFavoriteRestaurant.class));
                             }
                         }
-                        userModelMutableLiveData.setValue(restaurants);
-
+                        userModelMutableLiveData.setValue(userWithRestaurant);
                     }
                 });
         return userModelMutableLiveData;
