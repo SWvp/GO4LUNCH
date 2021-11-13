@@ -102,14 +102,10 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new RestaurantDetailsViewModel(
                     nearbySearchResultsUseCase,
                     firestoreUseCase);
-        }else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
+        } else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
             return (T) new WorkMatesViewModel(
-                    application,
-                    locationRepository,
-                    nearbySearchResultsUseCase,
-                    restaurantDetailsResultsUseCase,
-                    workmatesRepository,
-                    Clock.systemDefaultZone());
+                    workmatesRepository
+            );
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
 
