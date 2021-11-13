@@ -30,8 +30,6 @@ public class FirestoreUseCase {
 
     private static final String COLLECTION_USERS = "users";
     private static final String COLLECTION_DAYS = LocalDate.now().toString();
-    private static final String COLLECTION_RESTAURANT_GOT_USERS = "favorite users";
-    private static final String COLLECTION_USER_GOT_RESTAURANT = "users restaurant";
     private static final String USERNAME_FIELD = "username";
 
     private static volatile FirestoreUseCase instance;
@@ -130,37 +128,29 @@ public class FirestoreUseCase {
         return FirebaseFirestore.getInstance().collection(COLLECTION_DAYS);
     }
 
-    // WHEN A CLICK IS PERFORMED ON FAVORITES DETAILS BUTTON, CHECK IF USER ALREADY EXIST ON DAYS DB
-    public void onFavoriteClick(String placeID, String name) {
+    // CHECK IF USER HAVE ALREADY SET THE RESTAURANT AS FAVORITE,
+    // IF YES, JUST DELETE,
+    // IF NO, DELETE OLD ONE AND CREATE
+    public void onFavoriteClick(String restaurantID, String name) {
         String userId = this.getCurrentUserUID();
 
-//      FirebaseFirestore.getInstance().collection(COLLECTION_DAYS)
-//              .get()
-//              .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                  @Override
-//                  public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                      if (task.isSuccessful()) {
-//                          for (QueryDocumentSnapshot document : task.getResult()) {
-
-//                              Log.d(TAG, document.getId() + " => " + document.getData());
-//                          }
-//                      } else {
-//                          Log.d(TAG, "Error getting documents: ", task.getException());
-//                      }
-//                  }
-//              });
-
-        DocumentReference docIdRef = getDayCollection().document(placeID).collection(COLLECTION_RESTAURANT_GOT_USERS).document(userId);
+        DocumentReference docIdRef = getDayCollection().document(userId);
         docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        deleteUserInFavorite(placeID, userId);
+                        if (document.getString("restaurantId").equals(restaurantID)) {
+                            deleteUsersFavoriteRestaurant(userId);
+                        } else {
+                            deleteUsersFavoriteRestaurant(userId);
+                            createUserWithRestaurant(restaurantID, name);
+                        }
+
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                     } else {
-                        createFavorite(placeID, name);
+                        createUserWithRestaurant(restaurantID, name);
                         Log.d(TAG, "No such document");
                     }
                 } else {
@@ -170,23 +160,8 @@ public class FirestoreUseCase {
         });
     }
 
-    public void deleteUserInFavorite(String placeId, String userId){
-        getDayCollection().document(placeId).collection(COLLECTION_RESTAURANT_GOT_USERS).document(userId)
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting document", e);
-                    }
-                });
-
-        getDayCollection().document(placeId).collection(COLLECTION_USER_GOT_RESTAURANT).document(userId)
+    public void deleteUsersFavoriteRestaurant(String userId){
+        getDayCollection().document(userId)
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -202,7 +177,7 @@ public class FirestoreUseCase {
                 });
     }
 
-    public void createFavorite(String placeId, String restaurantName) {
+    public void createUserWithRestaurant(String placeId, String restaurantName) {
         String userId = this.getCurrentUserUID();
 
         Map<String, Object> restaurant = new HashMap<>();
@@ -212,24 +187,15 @@ public class FirestoreUseCase {
         Map<String, Object> user = new HashMap<>();
         user.put("user id", userId);
 
-        FirestoreUseCase
-                .getDayCollection()
-                .document(placeId)
-                .set(restaurant);
+        Map<String, Object> userGotRestaurant = new HashMap<>();
+        userGotRestaurant.put("restaurantId", placeId);
+        userGotRestaurant.put("restaurantName", restaurantName);
+        userGotRestaurant.put("userId", userId);
 
         FirestoreUseCase
                 .getDayCollection()
-                .document(placeId)
-                .collection(COLLECTION_RESTAURANT_GOT_USERS)
                 .document(userId)
-                .set(user);
-
-        FirestoreUseCase
-                .getDayCollection()
-                .document(placeId)
-                .collection(COLLECTION_USER_GOT_RESTAURANT)
-                .document(userId)
-                .set(restaurant);
+                .set(userGotRestaurant);
 
     }
 }
