@@ -1,22 +1,15 @@
 package com.kardabel.go4lunch.ui.workmates;
 
-import android.app.Application;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
+
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.model.UserModel;
-import com.kardabel.go4lunch.pojo.NearbySearchResults;
-import com.kardabel.go4lunch.pojo.RestaurantSearch;
-import com.kardabel.go4lunch.repository.LocationRepository;
+import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
-import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
-import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
 
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,90 +18,99 @@ public class WorkMatesViewModel extends ViewModel {
     private final MediatorLiveData<List<WorkMatesViewState>> workMatesViewStateMediatorLiveData = new MediatorLiveData<>();
 
     public WorkMatesViewModel(
-            @NonNull Application application,
-            @NonNull LocationRepository locationRepository,
-            @NonNull NearbySearchResultsUseCase nearbySearchResultsUseCase,
-            @NonNull RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase,
-            @NonNull WorkmatesRepository workmatesRepository,
-            @NonNull Clock clock
+            @NonNull WorkmatesRepository workmatesRepository
     ) {
 
 
-        //LiveData<NearbySearchResults> nearbySearchResultsLiveData = nearbySearchResultsUseCase.getNearbySearchResultsLiveData();
         LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
-        LiveData<List<RestaurantSearch>> restaurantsSearchLiveData = workmatesRepository.getRestaurantsWithFavorite();
+        LiveData<List<UserWithFavoriteRestaurant>> restaurantsSearchLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
 
         // OBSERVERS
 
-        workMatesViewStateMediatorLiveData.addSource(workMatesLiveData, new Observer<List<UserModel>>() {
-            @Override
-            public void onChanged(List<UserModel> userModels) {
-                combine(userModels, restaurantsSearchLiveData.getValue());
+        workMatesViewStateMediatorLiveData.addSource(workMatesLiveData, userModels -> combine(userModels, restaurantsSearchLiveData.getValue()));
 
-            }
-        });
-
-        workMatesViewStateMediatorLiveData.addSource(restaurantsSearchLiveData, new Observer<List<RestaurantSearch>>() {
-            @Override
-            public void onChanged(List<RestaurantSearch> restaurants) {
-                combine(workMatesLiveData.getValue(), restaurants);
-
-
-            }
-        });
+        workMatesViewStateMediatorLiveData.addSource(restaurantsSearchLiveData, usersWithRestaurant -> combine(workMatesLiveData.getValue(), usersWithRestaurant));
     }
 
-    private void combine(List<UserModel> users, List<RestaurantSearch> restaurants) {
+    private void combine(List<UserModel> users, List<UserWithFavoriteRestaurant> usersWithRestaurant) {
 
-        if(restaurants != null){
-            workMatesViewStateMediatorLiveData.setValue(mapWithFavorites(users, restaurants));
+        if (usersWithRestaurant != null) {
+            workMatesViewStateMediatorLiveData.setValue(mapWithFavorites(users, usersWithRestaurant));
 
-        }else{
+        } else {
             workMatesViewStateMediatorLiveData.setValue(map(users));
 
         }
     }
 
+    // TODO: si le workmate c'est moi, ne pas afficher
     private List<WorkMatesViewState> map(List<UserModel> users) {
         List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
 
-        for (int i = 0; i < users.size() ; i++) {
+        for (int i = 0; i < users.size(); i++) {
 
             String description = users.get(i).getUserName();
             String avatar = users.get(i).getAvatarURL();
-            String restaurant = " (test)";
+            String restaurant = "";
 
             workMatesViewStateList.add(new WorkMatesViewState(
                     description + restaurant,
                     avatar,
-                    restaurant
+                    restaurant,
+                    false
             ));
-
         }
-
         return workMatesViewStateList;
 
     }
 
-    private List<WorkMatesViewState> mapWithFavorites(List<UserModel> users, List<RestaurantSearch> restaurants) {
+    private List<WorkMatesViewState> mapWithFavorites(List<UserModel> users,
+                                                      List<UserWithFavoriteRestaurant> usersWithRestaurant) {
         List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
 
-        for (int i = 0; i < users.size() ; i++) {
-
+        for (int i = 0; i < users.size(); i++) {
+            String userId = users.get(i).getUid();
 
             String description = users.get(i).getUserName();
             String avatar = users.get(i).getAvatarURL();
-            String restaurant = " (test)";
+            String restaurant = userFavorite(userId, usersWithRestaurant);
 
             workMatesViewStateList.add(new WorkMatesViewState(
                     description + restaurant,
                     avatar,
-                    restaurant
+                    restaurant,
+                    isUserHasDecided(userId, usersWithRestaurant)
             ));
-
         }
-
         return workMatesViewStateList;
+
+    }
+
+    private boolean isUserHasDecided(String userId,
+                                     List<UserWithFavoriteRestaurant> usersWithRestaurant) {
+        boolean state = false;
+
+        for (int i = 0; i < usersWithRestaurant.size(); i++) {
+            if (usersWithRestaurant.get(i).getUserId().equals(userId)) {
+                state = true;
+
+            }
+        }
+        return state;
+
+    }
+
+    private String userFavorite(@NonNull String userId,
+                                @NonNull List<UserWithFavoriteRestaurant> usersWithRestaurant) {
+        String restaurantName = " hasn't decided yet";
+
+        for (int i = 0; i < usersWithRestaurant.size(); i++) {
+            if (usersWithRestaurant.get(i).getUserId().equals(userId)) {
+                restaurantName = " (" + usersWithRestaurant.get(i).getRestaurantName() + ")";
+
+            }
+        }
+        return restaurantName;
 
     }
 
@@ -118,4 +120,5 @@ public class WorkMatesViewModel extends ViewModel {
         return workMatesViewStateMediatorLiveData;
 
     }
+
 }
