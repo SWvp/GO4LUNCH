@@ -1,4 +1,4 @@
-package com.kardabel.go4lunch;
+package com.kardabel.go4lunch.util;
 
 public enum PermissionsViewAction {
 
