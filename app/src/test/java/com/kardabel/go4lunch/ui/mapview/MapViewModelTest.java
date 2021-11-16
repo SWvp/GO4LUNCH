@@ -1,4 +1,4 @@
-package com.kardabel.go4lunch;
+package com.kardabel.go4lunch.ui.mapview;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -17,6 +17,7 @@ import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantLatLngLiteral;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
+import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewState;
@@ -43,6 +44,7 @@ public class MapViewModelTest {
 
     private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
     private final NearbySearchResultsUseCase nearbySearchResultsUseCase = Mockito.mock(NearbySearchResultsUseCase.class);
+    private final WorkmatesRepository workmateRepository = Mockito.mock(WorkmatesRepository.class);
 
     private final Location location = Mockito.mock(Location.class);
 
@@ -65,7 +67,10 @@ public class MapViewModelTest {
         locationMutableLiveData.setValue(location);
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getDefaultRestaurants()));
 
-        mMapViewModel = new MapViewModel(locationRepository, nearbySearchResultsUseCase);
+        mMapViewModel = new MapViewModel(
+                locationRepository,
+                nearbySearchResultsUseCase,
+                workmateRepository);
     }
 
     @Test
@@ -141,13 +146,15 @@ public class MapViewModelTest {
                 "hotel",
                 "235",
                 "0102",
-                new LatLng(30.0, 42.1)
+                new LatLng(30.0, 42.1),
+                false
         ));
         poi.add(new Poi(
                 "pipo",
                 "450",
                 "bla",
-                new LatLng(32.1, 42.2)
+                new LatLng(32.1, 42.2),
+                false
         ));
         return poi;
     }
