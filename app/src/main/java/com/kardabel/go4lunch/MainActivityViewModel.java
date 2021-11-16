@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
+import com.kardabel.go4lunch.util.PermissionsViewAction;
 import com.kardabel.go4lunch.util.SingleLiveEvent;
 
 public class MainActivityViewModel extends ViewModel {
