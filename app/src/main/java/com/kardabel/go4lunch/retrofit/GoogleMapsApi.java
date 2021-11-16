@@ -24,4 +24,15 @@ public interface GoogleMapsApi {
             @Query("fields") String fields
     );
 
+    @GET("maps/api/place/nearbysearch/json")
+    Call<NearbySearchResults> searchRestaurantWithSearchView(
+            @Query("key") String key,
+            @Query("type") String type,
+            @Query("location") String location,
+            @Query("radius") String radius,
+            @Query("keyword") String keyword
+    );
+
+
+
 }
