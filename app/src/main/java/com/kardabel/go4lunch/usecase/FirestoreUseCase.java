@@ -26,10 +26,10 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO stephane Split use cases
 public class FirestoreUseCase {
 
     private static final String COLLECTION_USERS = "users";
-    private static final String COLLECTION_DAYS = LocalDate.now().toString();
     private static final String USERNAME_FIELD = "username";
 
     private static volatile FirestoreUseCase instance;
@@ -125,36 +125,37 @@ public class FirestoreUseCase {
     ///// FAVORITES RESTAURANTS //////
 
     public static CollectionReference getDayCollection() {
-        return FirebaseFirestore.getInstance().collection(COLLECTION_DAYS);
+        return FirebaseFirestore.getInstance().collection(LocalDate.now().toString());
     }
 
     // CHECK IF USER HAVE ALREADY SET THE RESTAURANT AS FAVORITE,
     // IF YES, JUST DELETE,
     // IF NO, DELETE OLD ONE AND CREATE
-    public void onFavoriteClick(String restaurantID, String name) {
+    public void onFavoriteClick(String placeId, String restaurantName) {
+
         String userId = this.getCurrentUserUID();
 
-        DocumentReference docIdRef = getDayCollection().document(userId);
-        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        Map<String, Object> restaurant = new HashMap<>();
+        restaurant.put("restaurant name", restaurantName);
+        restaurant.put("restaurant id", placeId);
+
+        Map<String, Object> user = new HashMap<>();
+        user.put("user id", userId);
+
+        Map<String, Object> userGotRestaurant = new HashMap<>();
+        userGotRestaurant.put("restaurantId", placeId);
+        userGotRestaurant.put("restaurantName", restaurantName);
+        userGotRestaurant.put("userId", userId);
+
+        getDayCollection().document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        if (document.getString("restaurantId").equals(restaurantID)) {
-                            deleteUsersFavoriteRestaurant(userId);
-                        } else {
-                            deleteUsersFavoriteRestaurant(userId);
-                            createUserWithRestaurant(restaurantID, name);
-                        }
-
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    if (task.getResult().exists()) {
+                        task.getResult().getReference().delete();
                     } else {
-                        createUserWithRestaurant(restaurantID, name);
-                        Log.d(TAG, "No such document");
+                        task.getResult().getReference().set(userGotRestaurant);
                     }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });

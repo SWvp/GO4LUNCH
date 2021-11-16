@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.ui.detailsview;
 
+import androidx.annotation.DrawableRes;
+
 public class RestaurantDetailsViewState {
 
     private static final String API_URL = "https://maps.googleapis.com/maps/api/place/";
@@ -13,7 +15,8 @@ public class RestaurantDetailsViewState {
     private final String detailsWebsite;
     private final String detailsRestaurantId;
     private double rating;
-    private final boolean isFavorite;
+    @DrawableRes
+    private final int isFavoriteDrawableRes;
 
     public RestaurantDetailsViewState(String detailsRestaurantName,
                                       String detailsRestaurantAddress,

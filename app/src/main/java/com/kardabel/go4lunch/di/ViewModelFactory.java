@@ -19,6 +19,7 @@ import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
 import com.kardabel.go4lunch.usecase.FirestoreUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsByIdUseCase;
 import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.SearchViewUseCase;
@@ -40,6 +41,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final SearchViewRepository searchViewRepository;
 
     private final NearbySearchResultsUseCase nearbySearchResultsUseCase;
+    private final GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase;
     private final RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase;
     private final FirestoreUseCase firestoreUseCase;
     private final SearchViewUseCase searchViewUseCase;
@@ -73,6 +75,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.searchViewRepository = new SearchViewRepository(googleMapsApi);
 
         this.nearbySearchResultsUseCase = new NearbySearchResultsUseCase(
+                locationRepository,
+                nearbySearchResponseRepository);
+        this.getNearbySearchResultsByIdUseCase = new GetNearbySearchResultsByIdUseCase(
                 locationRepository,
                 nearbySearchResponseRepository);
         this.restaurantDetailsResultsUseCase = new RestaurantDetailsResultsUseCase(
@@ -110,7 +115,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     workmatesRepository);
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
-                    nearbySearchResultsUseCase,
+                getNearbySearchResultsByIdUseCase,
                     restaurantDetailsResultsUseCase,
                     firestoreUseCase,
                     workmatesRepository);

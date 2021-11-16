@@ -12,8 +12,10 @@ import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
+import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.usecase.FirestoreUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsByIdUseCase;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
 
@@ -22,61 +24,26 @@ import java.util.List;
 
 public class RestaurantDetailsViewModel extends ViewModel {
 
-    private String placeId = "";
     private final MediatorLiveData<RestaurantDetailsViewState> workMatesDetailsViewStateMediatorLiveData = new MediatorLiveData<>();
     private final MediatorLiveData<List<DetailsWorkmatesViewState>> workmatesLikeThisRestaurantMediatorLiveData = new MediatorLiveData<>();
     private RestaurantDetailsViewState result;
+    @NonNull
+    private final GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase;
+    @NonNull
+    private final RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase;
     private final FirestoreUseCase firestoreUseCase;
+    @NonNull
+    private final WorkmatesRepository workmatesRepository;
 
 
-    public RestaurantDetailsViewModel(@NonNull NearbySearchResultsUseCase nearbySearchResultsUseCase,
+    public RestaurantDetailsViewModel(@NonNull GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase,
                                       @NonNull RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase,
                                       @NonNull FirestoreUseCase firestoreUseCase,
                                       @NonNull WorkmatesRepository workmatesRepository){
-
+        this.getNearbySearchResultsByIdUseCase = getNearbySearchResultsByIdUseCase;
+        this.restaurantDetailsResultsUseCase = restaurantDetailsResultsUseCase;
         this.firestoreUseCase = firestoreUseCase;
-
-        LiveData<NearbySearchResults> nearbySearchResultsLiveData = nearbySearchResultsUseCase.getNearbySearchResultsLiveData();
-        LiveData<List<RestaurantDetailsResult>> restaurantDetailsResultsUseCaseLiveData = restaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
-        LiveData<List<UserWithFavoriteRestaurant>> userWithFavoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
-        LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
-
-
-        // OBSERVERS
-
-        workMatesDetailsViewStateMediatorLiveData.addSource(nearbySearchResultsLiveData, nearbySearchResults -> combine(
-                nearbySearchResults,
-                userWithFavoriteRestaurantLiveData.getValue(),
-                restaurantDetailsResultsUseCaseLiveData.getValue()));
-
-        workMatesDetailsViewStateMediatorLiveData.addSource(userWithFavoriteRestaurantLiveData, userWithFavoriteRestaurants -> combine(
-                nearbySearchResultsLiveData.getValue(),
-                userWithFavoriteRestaurants,
-                restaurantDetailsResultsUseCaseLiveData.getValue()));
-
-        workMatesDetailsViewStateMediatorLiveData.addSource(restaurantDetailsResultsUseCaseLiveData, restaurantDetailsResults -> combine(
-                nearbySearchResultsLiveData.getValue(),
-                userWithFavoriteRestaurantLiveData.getValue(),
-                restaurantDetailsResults));
-
-
-        // OBSERVERS FOR WORKMATES RECYCLERVIEW
-
-        workmatesLikeThisRestaurantMediatorLiveData.addSource(userWithFavoriteRestaurantLiveData, new Observer<List<UserWithFavoriteRestaurant>>() {
-            @Override
-            public void onChanged(List<UserWithFavoriteRestaurant> userWithFavoriteRestaurants) {
-                mapWorkmates(userWithFavoriteRestaurants, workMatesLiveData.getValue());
-
-            }
-        });
-
-        workmatesLikeThisRestaurantMediatorLiveData.addSource(workMatesLiveData, new Observer<List<UserModel>>() {
-            @Override
-            public void onChanged(List<UserModel> userModels) {
-                mapWorkmates(userWithFavoriteRestaurantLiveData.getValue(), userModels);
-
-            }
-        });
+        this.workmatesRepository = workmatesRepository;
     }
 
     private void mapWorkmates(List<UserWithFavoriteRestaurant> userWithFavoriteRestaurants, List<UserModel> users) {
@@ -103,7 +70,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     }
 
 
-    private void combine(@Nullable NearbySearchResults nearbySearchResults,
+    private void combine(@Nullable RestaurantSearch restaurantSearch,
                          @Nullable List<UserWithFavoriteRestaurant> usersWithFavoriteRestaurant,
                          @Nullable List<RestaurantDetailsResult> restaurantDetailsResults) {
         if (nearbySearchResults != null && restaurantDetailsResults == null) {
@@ -223,7 +190,47 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     // GET RESTAURANT TO PARSE HIS DETAILS
     public void init(String placeId){
-        this.placeId = placeId;
+        LiveData<RestaurantSearch> nearbySearchResultsLiveData = getNearbySearchResultsByIdUseCase.invoke(placeId);
+        LiveData<List<RestaurantDetailsResult>> restaurantDetailsResultsUseCaseLiveData = restaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
+        LiveData<List<UserWithFavoriteRestaurant>> userWithFavoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
+        LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
+
+
+        // OBSERVERS
+
+        workMatesDetailsViewStateMediatorLiveData.addSource(nearbySearchResultsLiveData, nearbySearchResults -> combine(
+            nearbySearchResults,
+            userWithFavoriteRestaurantLiveData.getValue(),
+            restaurantDetailsResultsUseCaseLiveData.getValue()));
+
+        workMatesDetailsViewStateMediatorLiveData.addSource(userWithFavoriteRestaurantLiveData, userWithFavoriteRestaurants -> combine(
+            nearbySearchResultsLiveData.getValue(),
+            userWithFavoriteRestaurants,
+            restaurantDetailsResultsUseCaseLiveData.getValue()));
+
+        workMatesDetailsViewStateMediatorLiveData.addSource(restaurantDetailsResultsUseCaseLiveData, restaurantDetailsResults -> combine(
+            nearbySearchResultsLiveData.getValue(),
+            userWithFavoriteRestaurantLiveData.getValue(),
+            restaurantDetailsResults));
+
+
+        // OBSERVERS FOR WORKMATES RECYCLERVIEW
+
+        workmatesLikeThisRestaurantMediatorLiveData.addSource(userWithFavoriteRestaurantLiveData, new Observer<List<UserWithFavoriteRestaurant>>() {
+            @Override
+            public void onChanged(List<UserWithFavoriteRestaurant> userWithFavoriteRestaurants) {
+                mapWorkmates(userWithFavoriteRestaurants, workMatesLiveData.getValue());
+
+            }
+        });
+
+        workmatesLikeThisRestaurantMediatorLiveData.addSource(workMatesLiveData, new Observer<List<UserModel>>() {
+            @Override
+            public void onChanged(List<UserModel> userModels) {
+                mapWorkmates(userWithFavoriteRestaurantLiveData.getValue(), userModels);
+
+            }
+        });
     }
 
     // SAY TO FIRESTORE THIS RESTAURANT IS ON FAVORITE OR NOT

@@ -36,7 +36,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
     public static Intent navigate(Context context, String placeId){
         Intent intent = new Intent(context, RestaurantDetailsActivity.class);
-        intent.putExtra(RestaurantDetailsActivity.RESTAURANT_ID, placeId);
+        intent.putExtra(RESTAURANT_ID, placeId);
         return intent;
     }
 
