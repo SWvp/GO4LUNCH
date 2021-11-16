@@ -23,6 +23,7 @@ import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.pojo.RestaurantLatLngLiteral;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
+import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
@@ -51,6 +52,8 @@ public class RestaurantsViewModelTest {
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
     private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
+    private final WorkmatesRepository workmatesRepository = Mockito.mock(WorkmatesRepository.class);
+
     private final NearbySearchResultsUseCase nearbySearchResultsUseCase = Mockito.mock(NearbySearchResultsUseCase.class);
     private final RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase = Mockito.mock(RestaurantDetailsResultsUseCase.class);
 
@@ -166,6 +169,7 @@ public class RestaurantsViewModelTest {
                 locationRepository,
                 nearbySearchResultsUseCase,
                 restaurantDetailsResultsUseCase,
+                workmatesRepository,
                 clock);
     }
 
@@ -488,6 +492,7 @@ public class RestaurantsViewModelTest {
                 locationRepository,
                 nearbySearchResultsUseCase,
                 restaurantDetailsResultsUseCase,
+                workmatesRepository,
                 clockNewMonth);
 
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
@@ -543,6 +548,7 @@ public class RestaurantsViewModelTest {
                 locationRepository,
                 nearbySearchResultsUseCase,
                 restaurantDetailsResultsUseCase,
+                workmatesRepository,
                 clockNewYear);
 
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
@@ -646,7 +652,7 @@ public class RestaurantsViewModelTest {
 
   }
 
-    // region IN
+    // VAL FOR TESTING //
 
     String firstPlaceId = "First_Place_Id";
     String secondPlaceId = "Second_Place_Id";
@@ -666,6 +672,9 @@ public class RestaurantsViewModelTest {
     String closingSoon = "Closing soon";
     String permanentlyClosed = "Permanently closed";
     String photoUnavailable = "Photo unavailable";
+    String like = "1";
+
+    // region IN
 
     private List<RestaurantSearch> getDefaultRestaurants() {
                List<RestaurantSearch> restaurants = new ArrayList<>();
@@ -887,7 +896,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 "Open until 1.pm",
                                 1,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -897,7 +907,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 "Open until 11:50am",
                                 2,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -917,7 +928,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 closingSoon,
                                 1,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -927,7 +939,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 closingSoon,
                                 2,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -947,7 +960,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 "Closed until 6.pm",
                                 1,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -957,7 +971,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 "Closed until 11.am",
                                 2,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -979,7 +994,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 openH24,
                                 1,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -989,7 +1005,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 openH24,
                                 2,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -1009,7 +1026,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 permanentlyClosed,
                                 1,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -1019,7 +1037,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 permanentlyClosed,
                                 2,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -1039,7 +1058,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 open,
                                 1,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -1049,7 +1069,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 open,
                                 2,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -1069,7 +1090,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 closed,
                                 1,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -1079,7 +1101,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 closed,
                                 2,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -1099,7 +1122,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 "Closed until Friday 9.pm",
                                 1,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -1109,7 +1133,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 "Closed until Tuesday 9.pm",
                                 2,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -1129,7 +1154,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 "Closed until Tomorrow 9.pm",
                                 1,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -1139,7 +1165,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 "Closed until Tomorrow 9.pm",
                                 2,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -1159,7 +1186,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 permanentlyClosed,
                                 2,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -1169,7 +1197,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 permanentlyClosed,
                                 1,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -1189,7 +1218,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 permanentlyClosed,
                                 2,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -1199,7 +1229,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 permanentlyClosed,
                                 1,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -1219,7 +1250,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 "Closed until Monday 2:50pm",
                                 1,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -1229,7 +1261,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 "Closed until Tuesday 5.pm",
                                 2,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -1249,7 +1282,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 "Closed until Tomorrow 8:30am",
                                 1,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -1259,7 +1293,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 "Closed until Tuesday 9.am",
                                 2,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
@@ -1279,7 +1314,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 open,
                                 1,
-                                firstPlaceId),
+                                firstPlaceId,
+                                like),
 
                 new RestaurantsViewState
                         (
@@ -1289,7 +1325,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 closed,
                                 2,
-                                secondPlaceId)
+                                secondPlaceId,
+                                like)
 
         );
     }
