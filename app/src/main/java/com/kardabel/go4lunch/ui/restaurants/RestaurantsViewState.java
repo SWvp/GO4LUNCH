@@ -11,8 +11,9 @@ public class RestaurantsViewState {
     private final String openingHours;
     private final double rating;
     private final String placeId;
+    private final String like;
 
-    public RestaurantsViewState(String name, String address, String photo, String distance, String openingHours, double rating, String placeId) {
+    public RestaurantsViewState(String name, String address, String photo, String distance, String openingHours, double rating, String placeId, String like) {
         this.name = name;
         this.address = address;
         this.photo = photo;
@@ -20,6 +21,7 @@ public class RestaurantsViewState {
         this.openingHours = openingHours;
         this.rating = rating;
         this.placeId = placeId;
+        this.like = like;
     }
 
     public String getName() { return name; }
@@ -36,19 +38,21 @@ public class RestaurantsViewState {
 
     public String getPlaceId() { return placeId; }
 
+    public String getLike() { return like; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantsViewState that = (RestaurantsViewState) o;
         return Double.compare(that.rating, rating) == 0 &&
+                like == that.like &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(address, that.address) &&
                 Objects.equals(photo, that.photo) &&
                 Objects.equals(distance, that.distance) &&
                 Objects.equals(openingHours, that.openingHours) &&
                 Objects.equals(placeId, that.placeId);
-
     }
 
     @Override
@@ -60,8 +64,8 @@ public class RestaurantsViewState {
                 distance,
                 openingHours,
                 rating,
-                placeId);
-
+                placeId,
+                like);
     }
 
     @Override
@@ -69,11 +73,12 @@ public class RestaurantsViewState {
         return "RestaurantsViewState{" +
                 "name='" + name + '\'' +
                 ", address='" + address + '\'' +
-                ", avatar='" + photo + '\'' +
+                ", photo='" + photo + '\'' +
                 ", distance='" + distance + '\'' +
                 ", openingHours='" + openingHours + '\'' +
                 ", rating=" + rating +
                 ", placeId='" + placeId + '\'' +
+                ", like=" + like +
                 '}';
     }
 }
