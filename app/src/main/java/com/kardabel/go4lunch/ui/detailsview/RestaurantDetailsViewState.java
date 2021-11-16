@@ -12,19 +12,25 @@ public class RestaurantDetailsViewState {
     private final String detailsRestaurantNumber;
     private final String detailsWebsite;
     private final String detailsRestaurantId;
+    private double rating;
+    private final boolean isFavorite;
 
     public RestaurantDetailsViewState(String detailsRestaurantName,
                                       String detailsRestaurantAddress,
                                       String detailsPhoto,
                                       String detailsRestaurantNumber,
                                       String detailsWebsite,
-                                      String detailsRestaurantId) {
+                                      String detailsRestaurantId,
+                                      double rating,
+                                      boolean isFavorite) {
         this.detailsRestaurantName = detailsRestaurantName;
         this.detailsRestaurantAddress = detailsRestaurantAddress;
         this.detailsPhoto = detailsPhoto;
         this.detailsRestaurantNumber = detailsRestaurantNumber;
         this.detailsWebsite = detailsWebsite;
         this.detailsRestaurantId = detailsRestaurantId;
+        this.rating = rating;
+        this.isFavorite = isFavorite;
 
     }
 
@@ -39,6 +45,10 @@ public class RestaurantDetailsViewState {
     public String getDetailsWebsite() { return detailsWebsite; }
 
     public String getDetailsRestaurantId() { return detailsRestaurantId; }
+
+    public double getRating() { return rating; }
+
+    public boolean isFavorite() { return isFavorite; }
 
     public static String urlPhotoDetails(RestaurantDetailsViewState restaurantDetailsViewState) {
         if (restaurantDetailsViewState.getDetailsPhoto() != null) {
