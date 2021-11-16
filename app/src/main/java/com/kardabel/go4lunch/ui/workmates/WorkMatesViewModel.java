@@ -23,13 +23,12 @@ public class WorkMatesViewModel extends ViewModel {
 
 
         LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
-        LiveData<List<UserWithFavoriteRestaurant>> restaurantsSearchLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
+        LiveData<List<UserWithFavoriteRestaurant>> favoriteRestaurantsLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
 
         // OBSERVERS
 
-        workMatesViewStateMediatorLiveData.addSource(workMatesLiveData, userModels -> combine(userModels, restaurantsSearchLiveData.getValue()));
-
-        workMatesViewStateMediatorLiveData.addSource(restaurantsSearchLiveData, usersWithRestaurant -> combine(workMatesLiveData.getValue(), usersWithRestaurant));
+        workMatesViewStateMediatorLiveData.addSource(workMatesLiveData, userModels -> combine(userModels, favoriteRestaurantsLiveData.getValue()));
+        workMatesViewStateMediatorLiveData.addSource(favoriteRestaurantsLiveData, usersWithRestaurant -> combine(workMatesLiveData.getValue(), usersWithRestaurant));
     }
 
     private void combine(List<UserModel> users, List<UserWithFavoriteRestaurant> usersWithRestaurant) {
@@ -73,7 +72,7 @@ public class WorkMatesViewModel extends ViewModel {
 
             String description = users.get(i).getUserName();
             String avatar = users.get(i).getAvatarURL();
-            String restaurant = userFavorite(userId, usersWithRestaurant);
+            String restaurant = userChoice(userId, usersWithRestaurant);
 
             workMatesViewStateList.add(new WorkMatesViewState(
                     description + restaurant,
@@ -100,8 +99,8 @@ public class WorkMatesViewModel extends ViewModel {
 
     }
 
-    private String userFavorite(@NonNull String userId,
-                                @NonNull List<UserWithFavoriteRestaurant> usersWithRestaurant) {
+    private String userChoice(@NonNull String userId,
+                              @NonNull List<UserWithFavoriteRestaurant> usersWithRestaurant) {
         String restaurantName = " hasn't decided yet";
 
         for (int i = 0; i < usersWithRestaurant.size(); i++) {

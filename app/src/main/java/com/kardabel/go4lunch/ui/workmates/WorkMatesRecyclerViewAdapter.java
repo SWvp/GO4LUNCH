@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.kardabel.go4lunch.databinding.ItemWorkmateBinding;
-import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
 
         WorkMatesViewState workMate = workmatesList.get(position);
 
-        if(!workMate.isUserGotRestaurant()){
+        if(!workMate.isUserHasDecided()){
             holder.viewHolderBinding.itemWorkmateDescription.setText(workMate.getWorkmateDescription());
             holder.viewHolderBinding.itemWorkmateDescription.setTextColor(Color.GRAY);
             holder.viewHolderBinding.itemWorkmateDescription.setTypeface(null, Typeface.ITALIC);

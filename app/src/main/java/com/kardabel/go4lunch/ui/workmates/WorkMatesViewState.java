@@ -28,7 +28,7 @@ public class WorkMatesViewState {
         return workmateRestaurant;
     }
 
-    public boolean isUserGotRestaurant() {
+    public boolean isUserHasDecided() {
         return gotRestaurant;
     }
 
