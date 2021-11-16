@@ -8,6 +8,7 @@
     android:layout_height="?attr/actionBarSize"
     android:minHeight="?attr/actionBarSize"
     android:elevation="12sp"
+    android:fitsSystemWindows="true"
     app:layout_collapseMode="pin"
     android:background="@color/orange"
     app:titleTextColor="@color/white"
