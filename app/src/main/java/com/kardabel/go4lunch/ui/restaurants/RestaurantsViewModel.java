@@ -7,19 +7,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.R;
+import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
+import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.OpeningHours;
 import com.kardabel.go4lunch.pojo.Periods;
 import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
-import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
+import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
+import com.kardabel.go4lunch.util.OpeningHoursColorViewAction;
+import com.kardabel.go4lunch.util.SingleLiveEvent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -33,6 +36,8 @@ public class RestaurantsViewModel extends ViewModel {
 
     private final MediatorLiveData<RestaurantsWrapperViewState> restaurantsWrapperViewStateMediatorLiveData = new MediatorLiveData<>();
 
+    private SingleLiveEvent<OpeningHoursColorViewAction> actionSingleLiveEvent = new SingleLiveEvent<>();
+
     private final Application application;
     private final Clock clock;
 
@@ -42,86 +47,106 @@ public class RestaurantsViewModel extends ViewModel {
                                 @NonNull LocationRepository locationRepository,
                                 @NonNull NearbySearchResultsUseCase nearbySearchResultsUseCase,
                                 @NonNull RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase,
+                                @NonNull WorkmatesRepository workmatesRepository,
                                 @NonNull Clock clock
     ){
 
         this.clock = clock;
         this.application = application;
 
-
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         LiveData<List<RestaurantDetailsResult>> restaurantsDetailsResultLiveData = restaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
         LiveData<NearbySearchResults> nearbySearchResultsLiveData = nearbySearchResultsUseCase.getNearbySearchResultsLiveData();
+        LiveData<List<UserWithFavoriteRestaurant>> favoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
 
         // OBSERVERS
 
-        restaurantsWrapperViewStateMediatorLiveData.addSource(locationLiveData, new Observer<Location>() {
-            @Override
-            public void onChanged(Location location) {
-                RestaurantsViewModel.this.combine(nearbySearchResultsLiveData.getValue(), restaurantsDetailsResultLiveData.getValue(), location);
-            }
-        });
-
         restaurantsWrapperViewStateMediatorLiveData.addSource(nearbySearchResultsLiveData, nearbySearchResults ->
-                combine(nearbySearchResults, restaurantsDetailsResultLiveData.getValue(), locationLiveData.getValue()));
+                combine(
+                        nearbySearchResults,
+                        restaurantsDetailsResultLiveData.getValue(),
+                        locationLiveData.getValue(),
+                        favoriteRestaurantLiveData.getValue()));
 
-        restaurantsWrapperViewStateMediatorLiveData.addSource(restaurantsDetailsResultLiveData, placeDetailsResults ->
-                combine(nearbySearchResultsLiveData.getValue(), placeDetailsResults, locationLiveData.getValue()));
+        restaurantsWrapperViewStateMediatorLiveData.addSource(restaurantsDetailsResultLiveData, restaurantDetailsResults ->
+                combine(
+                        nearbySearchResultsLiveData.getValue(),
+                        restaurantDetailsResults,
+                        locationLiveData.getValue(),
+                        favoriteRestaurantLiveData.getValue()));
+
+        restaurantsWrapperViewStateMediatorLiveData.addSource(locationLiveData, location ->
+                combine(
+                        nearbySearchResultsLiveData.getValue(),
+                        restaurantsDetailsResultLiveData.getValue(),
+                        location,
+                        favoriteRestaurantLiveData.getValue()));
+
+        restaurantsWrapperViewStateMediatorLiveData.addSource(favoriteRestaurantLiveData, userWithFavoriteRestaurants -> combine(
+                nearbySearchResultsLiveData.getValue(),
+                restaurantsDetailsResultLiveData.getValue(),
+                locationLiveData.getValue(),
+                userWithFavoriteRestaurants
+
+        ));
     }
 
     private void combine(@Nullable NearbySearchResults nearbySearchResults,
                          @Nullable List<RestaurantDetailsResult> restaurantDetailsResults,
-                         @Nullable Location location) {
+                         @Nullable Location location,
+                         @Nullable List<UserWithFavoriteRestaurant> favoriteRestaurants) {
 
         if(restaurantDetailsResults == null && nearbySearchResults != null){
-              restaurantsWrapperViewStateMediatorLiveData.setValue(map(location, nearbySearchResults));
+              restaurantsWrapperViewStateMediatorLiveData.setValue(map(location, nearbySearchResults, favoriteRestaurants));
 
         }else if(restaurantDetailsResults != null && nearbySearchResults != null){
-            restaurantsWrapperViewStateMediatorLiveData.setValue(mapWithDetails(location, nearbySearchResults, restaurantDetailsResults));
+            restaurantsWrapperViewStateMediatorLiveData.setValue(mapWithDetails(location, nearbySearchResults, restaurantDetailsResults, favoriteRestaurants));
 
         }
     }
 
-    // CREATE A LIST OF RESTAURANTS ITEMS WITH NEARBY RESULTS //
-
-    // 1.NEARBY SEARCH DATA (IF DETAILS ARE NOT SUPPORTED ANYMORE)
+    // 1.NEARBY SEARCH DATA (IF DETAILS ARE NOT SUPPORTED ANYMORE CAUSE TO CONNECTION PROBLEM)
     private RestaurantsWrapperViewState map(
             Location location,
-            NearbySearchResults nearbySearchResults){
+            NearbySearchResults nearbySearchResults,
+            List<UserWithFavoriteRestaurant> favoriteRestaurants){
 
         List<RestaurantsViewState> restaurantList = new ArrayList<>();
 
         for (int i = 0; i < nearbySearchResults.getResults().size(); i++){
-            String restaurantName = nearbySearchResults.getResults().get(i).getRestaurantName();
-            String addressRestaurant = nearbySearchResults.getResults().get(i).getRestaurantAddress();
-            String photoRestaurant = photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos());
-            String distanceRestaurant = distance(
+            String name = nearbySearchResults.getResults().get(i).getRestaurantName();
+            String address = nearbySearchResults.getResults().get(i).getRestaurantAddress();
+            String photo = photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos());
+            String distance = distance(
                     location,
                     nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
                     nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
-            String openingHoursRestaurant = OpeningHoursWithoutDetails(nearbySearchResults.getResults().get(i).getOpeningHours());
-            double ratingRestaurant = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
-            String placeIdRestaurant = nearbySearchResults.getResults().get(i).getRestaurantId();
+            String openingHours = OpeningHoursWithoutDetails(nearbySearchResults.getResults().get(i).getOpeningHours());
+            double rating = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
+            String restaurantId = nearbySearchResults.getResults().get(i).getRestaurantId();
+            String like = like(restaurantId,favoriteRestaurants);
 
             restaurantList.add(new RestaurantsViewState(
-                    restaurantName,
-                    addressRestaurant,
-                    photoRestaurant,
-                    distanceRestaurant,
-                    openingHoursRestaurant,
-                    ratingRestaurant,
-                    placeIdRestaurant));
+                    name,
+                    address,
+                    photo,
+                    distance,
+                    openingHours,
+                    rating,
+                    restaurantId,
+                    like));
 
         }
         return new RestaurantsWrapperViewState(restaurantList);
 
     }
 
-    // 2.PLACE DETAILS DATA
+    // 2.NEARBY SEARCH WITH PLACE DETAILS DATA
     private RestaurantsWrapperViewState mapWithDetails(
             Location location,
             NearbySearchResults nearbySearchResults,
-            List<RestaurantDetailsResult> restaurantDetailsResults) {
+            List<RestaurantDetailsResult> restaurantDetailsResults,
+            List<UserWithFavoriteRestaurant> favoriteRestaurants) {
 
         List<RestaurantsViewState> restaurantList = new ArrayList<>();
 
@@ -130,25 +155,27 @@ public class RestaurantsViewModel extends ViewModel {
                 for (int i = 0; i < restaurantDetailsResults.size(); i++) {
                     if (restaurantDetailsResults.get(i).getDetailsResult().getPlaceId().equals(place.getRestaurantId())) {
 
-                        String restaurantName = place.getRestaurantName();
-                        String addressRestaurant = place.getRestaurantAddress();
-                        String photoRestaurant = photoReference(place.getRestaurantPhotos());
-                        String distanceRestaurant = distance(
+                        String name = place.getRestaurantName();
+                        String address = place.getRestaurantAddress();
+                        String photo = photoReference(place.getRestaurantPhotos());
+                        String distance = distance(
                                 location,
                                 place.getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
                                 place.getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
-                        String openingHoursRestaurant = getOpeningText(restaurantDetailsResults.get(i).getDetailsResult().getOpeningHours(), place.isPermanentlyClosed());
-                        double ratingRestaurant = convertRatingStars(place.getRating());
-                        String placeIdRestaurant = place.getRestaurantId();
+                        String openingHours = getOpeningText(restaurantDetailsResults.get(i).getDetailsResult().getOpeningHours(), place.isPermanentlyClosed());
+                        double rating = convertRatingStars(place.getRating());
+                        String restaurantId = place.getRestaurantId();
+                        String like = like(restaurantId,favoriteRestaurants);
 
                         restaurantList.add(new RestaurantsViewState(
-                                restaurantName,
-                                addressRestaurant,
-                                photoRestaurant,
-                                distanceRestaurant,
-                                openingHoursRestaurant,
-                                ratingRestaurant,
-                                placeIdRestaurant));
+                                name,
+                                address,
+                                photo,
+                                distance,
+                                openingHours,
+                                rating,
+                                restaurantId,
+                                like));
                         break;
 
                     }
@@ -156,6 +183,27 @@ public class RestaurantsViewModel extends ViewModel {
             }
         }
         return new RestaurantsWrapperViewState(restaurantList);
+
+    }
+
+    private String like(String restaurantId, List<UserWithFavoriteRestaurant> favoriteRestaurants) {
+        int likes = 0;
+        String likeAsString;
+        if(favoriteRestaurants!= null){
+            for (int i = 0; i < favoriteRestaurants.size(); i++) {
+                if(favoriteRestaurants.get(i).getRestaurantId().equals(restaurantId)){
+                    likes += 1;
+                }
+            }
+        }
+
+        if(likes != 0){
+            likeAsString = "(" + likes + ")";
+        }else{
+            likeAsString = "";
+        }
+
+        return likeAsString;
 
     }
 
@@ -177,7 +225,7 @@ public class RestaurantsViewModel extends ViewModel {
 
     }
 
-    // GET MESSAGE FOR THE OPENING HOUR FIELD (WITHOUT DETAILS INFORMATION)
+    // GET MESSAGE FOR THE OPENING HOUR FIELD IN CASE THERE IS NO DETAILS INFORMATION
     private String OpeningHoursWithoutDetails(OpeningHours openingHours){
         String openStatus;
         if (openingHours != null) {
@@ -196,7 +244,7 @@ public class RestaurantsViewModel extends ViewModel {
 
     }
 
-    // GET MESSAGE FOR THE OPENING HOUR FIELD
+    // GET MESSAGE FOR THE OPENING HOUR FIELD WITH DETAILS
     private String getOpeningText(OpeningHours openingHours, boolean permanentlyClosedStatus) {
 
         // DEFAULT MESSAGE IF NO OPENING HOUR DATA
@@ -341,7 +389,7 @@ public class RestaurantsViewModel extends ViewModel {
                 currentMonth() == 11;
     }
 
-    //////// CONVERTERS FOR TIME AND DATE ////////
+    //////// CONVERTERS FOR DATE AND TIME ////////
 
     // CONVERT CLOSE HOUR TO READABLE UK HOUR
     private String getReadableHour(LocalDateTime selectedHour){
@@ -423,6 +471,11 @@ public class RestaurantsViewModel extends ViewModel {
     // LIVEDATA OBSERVED BY LIST VIEW FRAGMENT
     public LiveData<RestaurantsWrapperViewState> getRestaurantsViewStateLiveData() {
         return restaurantsWrapperViewStateMediatorLiveData;
+
+    }
+
+    public SingleLiveEvent<OpeningHoursColorViewAction> getActionSingleLiveEvent() {
+        return actionSingleLiveEvent;
 
     }
 }
