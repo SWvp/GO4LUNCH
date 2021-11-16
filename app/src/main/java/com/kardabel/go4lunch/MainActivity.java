@@ -41,12 +41,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.manager.UserManager;
+import com.kardabel.go4lunch.usecase.SearchViewUseCase;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView
         .OnNavigationItemSelectedListener {
 
     private MainActivityViewModel mainActivityViewModel;
+    private SearchViewUseCase searchViewUseCase;
 
     private AppBarConfiguration appBarConfiguration;
     private MainActivityBinding binding;
@@ -200,16 +202,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.search_menu, menu);
 
-        // GET SEARCHVIEW AND CONFIGURE SEARCHMANAGER
+        // GET SEARCHVIEW
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setBackgroundColor(Color.WHITE);
         EditText editText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         editText.setTextColor(Color.BLACK);
         editText.setHintTextColor(Color.GRAY);
-        // ASSUMES CURRENT ACTIVITY IS THE SEARCHABLE ACTIVITY
-        searchView.setIconifiedByDefault(false);
-        return true;
+
+ //      searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+ //          @Override
+ //          public boolean onQueryTextSubmit(String query) {
+ //              //searchViewUseCase.getSearchViewResults(query);
+ //              return false;
+ //          }
+
+ //          @Override
+ //          public boolean onQueryTextChange(String newText) {
+ //              return false; }
+ //      });
+ //      // ASSUMES CURRENT ACTIVITY IS THE SEARCHABLE ACTIVITY
+ //      searchView.setIconifiedByDefault(false);
+       return true;
 
     }
 
