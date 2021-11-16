@@ -7,9 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewbinding.ViewBinding;
 
-/**
- * Created by stéphane Warin OCR on 28/10/2021.
- */
 public abstract class BaseActivity<T extends ViewBinding> extends AppCompatActivity {
 
     public abstract T getViewBinding();
