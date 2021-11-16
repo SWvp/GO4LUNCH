@@ -7,9 +7,15 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
-import com.kardabel.go4lunch.pojo.PlaceSearchResults;
+import com.kardabel.go4lunch.model.UserModel;
+import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
+import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.Photo;
-import com.kardabel.go4lunch.usecase.PlaceSearchResultsUseCase;
+import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
+import com.kardabel.go4lunch.repository.WorkmatesRepository;
+import com.kardabel.go4lunch.usecase.FirestoreUseCase;
+import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +29,18 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private final FirestoreUseCase firestoreUseCase;
 
 
-    public RestaurantDetailsViewModel(@Nullable PlaceSearchResultsUseCase placeSearchResultsUseCase){
+    public RestaurantDetailsViewModel(@NonNull NearbySearchResultsUseCase nearbySearchResultsUseCase,
+                                      @NonNull RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase,
+                                      @NonNull FirestoreUseCase firestoreUseCase,
+                                      @NonNull WorkmatesRepository workmatesRepository){
+
+        this.firestoreUseCase = firestoreUseCase;
+
+        LiveData<NearbySearchResults> nearbySearchResultsLiveData = nearbySearchResultsUseCase.getNearbySearchResultsLiveData();
+        LiveData<List<RestaurantDetailsResult>> restaurantDetailsResultsUseCaseLiveData = restaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
+        LiveData<List<UserWithFavoriteRestaurant>> userWithFavoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
+        LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
+
 
         // OBSERVERS
 
@@ -101,9 +118,21 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private RestaurantDetailsViewState mapWithoutDetails(@NonNull NearbySearchResults nearbySearchResults,
                                                          List<UserWithFavoriteRestaurant> usersWithFavoriteRestaurant) {
 
-        for (int i = 0; i < placeSearchResults.getResults().size(); i++) {
-            if(placeId.equals(placeSearchResults.getResults().get(i).getPlaceId())){
+        List<String> restaurantAsFavoriteId = new ArrayList<>();
 
+        if (usersWithFavoriteRestaurant != null) {
+            for (int i = 0; i < usersWithFavoriteRestaurant.size(); i++) {
+                restaurantAsFavoriteId.add(usersWithFavoriteRestaurant.get(i).getRestaurantId());
+
+            }
+        }
+
+        for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
+            if (placeId.equals(nearbySearchResults.getResults().get(i).getRestaurantId())) {
+                boolean isFavorite = false;
+                if(restaurantAsFavoriteId.contains(nearbySearchResults.getResults().get(i).getRestaurantId())){
+                    isFavorite = true;
+                }
                 result = new RestaurantDetailsViewState(
                         nearbySearchResults.getResults().get(i).getRestaurantName(),
                         nearbySearchResults.getResults().get(i).getRestaurantAddress(),
