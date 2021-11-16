@@ -69,7 +69,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
                 if (userWithFavoriteRestaurants.get(i).getRestaurantId().equals(placeId)) {
                     for (int j = 0; j < users.size(); j++) {
                         if (users.get(j).getUid().equals(userWithFavoriteRestaurants.get(i).getUserId())) {
-                            String name = users.get(j).getUserName();
+                            String name = users.get(j).getUserName() + " is joining!";
                             String avatar = users.get(j).getAvatarURL();
 
                             workMatesViewStateList.add(new DetailsWorkmatesViewState(
