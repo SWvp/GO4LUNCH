@@ -14,12 +14,12 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.kardabel.go4lunch.model.UserModel;
 import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
-import com.kardabel.go4lunch.pojo.RestaurantSearch;
-import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class WorkmatesRepository {
 
@@ -28,32 +28,37 @@ public class WorkmatesRepository {
     public LiveData<List<UserModel>> getWorkmates() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         MutableLiveData<List<UserModel>> userModelMutableLiveData = new MutableLiveData<>();
-        List<UserModel> workmates = new ArrayList<>();
+
+        // WITH SET, WE ENSURE THERE IS NO DUPLICATE, FOR EXAMPLE WHEN ANOTHER USER CHANGE NAME FIELD
+        Set<UserModel> workmates = new HashSet<>();
 
         // TODO : order by "is restaurant been chosen"
         db.collection("users")
-               // .orderBy("userName", Query.Direction.ASCENDING)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                .orderBy("userName")
+                .addSnapshotListener((value, error) -> {
 
-                        if(error != null){
-                            Log.e("Firestore error", error.getMessage());
-                            return;
-                        }
-                        for(DocumentChange document : value.getDocumentChanges()){
-                            if(document.getType() == DocumentChange.Type.ADDED || document.getType() == DocumentChange.Type.MODIFIED){
-                                workmates.add(document.getDocument().toObject(UserModel.class));
-                            }
-                        }
-                        userModelMutableLiveData.setValue(workmates);
-
+                    if(error != null){
+                        Log.e("Firestore error", error.getMessage());
+                        return;
                     }
+                    for(DocumentChange document : value.getDocumentChanges()){
+                        if(
+                                document.getType() == DocumentChange.Type.ADDED ||
+                                document.getType() == DocumentChange.Type.MODIFIED){
+
+                            workmates.add(document.getDocument().toObject(UserModel.class));
+
+                        }
+                    }
+                    List<UserModel> workmatesList = new ArrayList<>(workmates);
+                    userModelMutableLiveData.setValue(workmatesList);
+
                 });
         return userModelMutableLiveData;
     }
 
 
+    // GET WORMATES WHO DECIDED WHERE THEY WOULD EAT
     public LiveData<List<UserWithFavoriteRestaurant>> getRestaurantsAddAsFavorite() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         MutableLiveData<List<UserWithFavoriteRestaurant>> userModelMutableLiveData = new MutableLiveData<>();
@@ -71,8 +76,12 @@ public class WorkmatesRepository {
                             return;
                         }
                         for(DocumentChange document : value.getDocumentChanges()){
-                            if(document.getType() == DocumentChange.Type.ADDED || document.getType() == DocumentChange.Type.MODIFIED){
+                            if(
+                                    document.getType() == DocumentChange.Type.ADDED ||
+                                    document.getType() == DocumentChange.Type.MODIFIED){
+
                                 userWithRestaurant.add(document.getDocument().toObject(UserWithFavoriteRestaurant.class));
+
                             }
                         }
                         userModelMutableLiveData.setValue(userWithRestaurant);
