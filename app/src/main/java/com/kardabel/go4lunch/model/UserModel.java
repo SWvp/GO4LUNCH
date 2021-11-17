@@ -2,6 +2,8 @@ package com.kardabel.go4lunch.model;
 
 import androidx.annotation.Nullable;
 
+import java.util.Objects;
+
 public class UserModel {
 
     private String uid;
@@ -30,5 +32,28 @@ public class UserModel {
     @Nullable
     public String getAvatarURL() { return avatarURL; }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserModel userModel = (UserModel) o;
+        return Objects.equals(uid, userModel.uid) && Objects.equals(userName, userModel.userName) && Objects.equals(avatarURL, userModel.avatarURL) && Objects.equals(email, userModel.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid, userName, avatarURL, email);
+    }
+
+    @Override
+    public String toString() {
+        return "UserModel{" +
+                "uid='" + uid + '\'' +
+                ", userName='" + userName + '\'' +
+                ", avatarURL='" + avatarURL + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }
 
