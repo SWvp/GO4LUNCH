@@ -10,12 +10,12 @@ import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 
-public class NearbySearchResultsUseCase {
+public class GetNearbySearchResultsUseCase {
 
     public LiveData<NearbySearchResults> NearbySearchResultsLiveData;
 
     // RETRIEVE NEARBY RESULTS FROM LOCATION
-    public NearbySearchResultsUseCase(LocationRepository locationRepository, NearbySearchResponseRepository nearbySearchResponseRepository) {
+    public GetNearbySearchResultsUseCase(LocationRepository locationRepository, NearbySearchResponseRepository nearbySearchResponseRepository) {
 
         NearbySearchResultsLiveData = Transformations.switchMap(locationRepository.getLocationLiveData(), new Function<Location, LiveData<NearbySearchResults>>() {
             @Override

@@ -19,8 +19,8 @@ import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
 import com.kardabel.go4lunch.usecase.FirestoreUseCase;
-import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
-import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.SearchViewUseCase;
 
 import java.time.Clock;
@@ -39,8 +39,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final WorkmatesRepository workmatesRepository;
     private final SearchViewRepository searchViewRepository;
 
-    private final NearbySearchResultsUseCase nearbySearchResultsUseCase;
-    private final RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase;
+    private final GetNearbySearchResultsUseCase mGetNearbySearchResultsUseCase;
+    private final GetRestaurantDetailsResultsUseCase mGetRestaurantDetailsResultsUseCase;
     private final FirestoreUseCase firestoreUseCase;
     private final SearchViewUseCase searchViewUseCase;
 
@@ -72,10 +72,10 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.workmatesRepository = new WorkmatesRepository();
         this.searchViewRepository = new SearchViewRepository(googleMapsApi);
 
-        this.nearbySearchResultsUseCase = new NearbySearchResultsUseCase(
+        this.mGetNearbySearchResultsUseCase = new GetNearbySearchResultsUseCase(
                 locationRepository,
                 nearbySearchResponseRepository);
-        this.restaurantDetailsResultsUseCase = new RestaurantDetailsResultsUseCase(
+        this.mGetRestaurantDetailsResultsUseCase = new GetRestaurantDetailsResultsUseCase(
                 locationRepository,
                 nearbySearchResponseRepository,
                 mRestaurantDetailsResponseRepository);
@@ -94,14 +94,14 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new RestaurantsViewModel(
                     application,
                     locationRepository,
-                    nearbySearchResultsUseCase,
-                    restaurantDetailsResultsUseCase,
+                    mGetNearbySearchResultsUseCase,
+                    mGetRestaurantDetailsResultsUseCase,
                     workmatesRepository,
                     Clock.systemDefaultZone());
         } else if (modelClass.isAssignableFrom(MapViewModel.class)) {
             return (T) new MapViewModel(
                     locationRepository,
-                    nearbySearchResultsUseCase,
+                    mGetNearbySearchResultsUseCase,
                     workmatesRepository);
         } else if (modelClass.isAssignableFrom(MainActivityViewModel.class)) {
             return (T) new MainActivityViewModel(
@@ -110,8 +110,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     workmatesRepository);
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
-                    nearbySearchResultsUseCase,
-                    restaurantDetailsResultsUseCase,
+                    mGetNearbySearchResultsUseCase,
+                    mGetRestaurantDetailsResultsUseCase,
                     firestoreUseCase,
                     workmatesRepository);
         } else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {

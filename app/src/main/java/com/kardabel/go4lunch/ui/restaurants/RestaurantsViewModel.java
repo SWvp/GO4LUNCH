@@ -19,8 +19,8 @@ import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
-import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
-import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
 import com.kardabel.go4lunch.util.OpeningHoursColorViewAction;
 import com.kardabel.go4lunch.util.SingleLiveEvent;
 
@@ -45,8 +45,8 @@ public class RestaurantsViewModel extends ViewModel {
     public RestaurantsViewModel(
                                 @NonNull Application application,
                                 @NonNull LocationRepository locationRepository,
-                                @NonNull NearbySearchResultsUseCase nearbySearchResultsUseCase,
-                                @NonNull RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase,
+                                @NonNull GetNearbySearchResultsUseCase getNearbySearchResultsUseCase,
+                                @NonNull GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase,
                                 @NonNull WorkmatesRepository workmatesRepository,
                                 @NonNull Clock clock
     ){
@@ -55,8 +55,8 @@ public class RestaurantsViewModel extends ViewModel {
         this.application = application;
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
-        LiveData<List<RestaurantDetailsResult>> restaurantsDetailsResultLiveData = restaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
-        LiveData<NearbySearchResults> nearbySearchResultsLiveData = nearbySearchResultsUseCase.getNearbySearchResultsLiveData();
+        LiveData<List<RestaurantDetailsResult>> restaurantsDetailsResultLiveData = getRestaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
+        LiveData<NearbySearchResults> nearbySearchResultsLiveData = getNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
         LiveData<List<UserWithFavoriteRestaurant>> favoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
 
         // OBSERVERS

@@ -9,8 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
-import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
-import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
 
 import org.junit.Rule;
 import org.mockito.Mockito;
@@ -27,8 +27,8 @@ public class WorkmatesViewModelTest {
     @Rule
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
-    private final NearbySearchResultsUseCase nearbySearchResultsUseCase = Mockito.mock(NearbySearchResultsUseCase.class);
-    private final RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase = Mockito.mock(RestaurantDetailsResultsUseCase.class);
+    private final GetNearbySearchResultsUseCase mGetNearbySearchResultsUseCase = Mockito.mock(GetNearbySearchResultsUseCase.class);
+    private final GetRestaurantDetailsResultsUseCase mGetRestaurantDetailsResultsUseCase = Mockito.mock(GetRestaurantDetailsResultsUseCase.class);
 
     private final Location location = Mockito.mock(Location.class);
     private final Application application = Mockito.mock(Application.class);

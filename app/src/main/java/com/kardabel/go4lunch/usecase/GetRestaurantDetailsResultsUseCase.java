@@ -14,7 +14,7 @@ import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RestaurantDetailsResultsUseCase {
+public class GetRestaurantDetailsResultsUseCase {
 
     private final MediatorLiveData<List<RestaurantDetailsResult>> placeDetailsMediatorLiveData = new MediatorLiveData<>();
     private final MediatorLiveData<RestaurantDetailsResult> mPlaceDetailsResultMediatorLiveData = new MediatorLiveData<>();
@@ -22,9 +22,9 @@ public class RestaurantDetailsResultsUseCase {
     public LiveData<NearbySearchResults> nearbySearchResultsLiveData;
     private final RestaurantDetailsResponseRepository mRestaurantDetailsResponseRepository;
 
-    public RestaurantDetailsResultsUseCase(LocationRepository locationRepository,
-                                           NearbySearchResponseRepository nearbySearchResponseRepository,
-                                           RestaurantDetailsResponseRepository restaurantDetailsResponseRepository) {
+    public GetRestaurantDetailsResultsUseCase(LocationRepository locationRepository,
+                                              NearbySearchResponseRepository nearbySearchResponseRepository,
+                                              RestaurantDetailsResponseRepository restaurantDetailsResponseRepository) {
         this.mRestaurantDetailsResponseRepository = restaurantDetailsResponseRepository;
 
 

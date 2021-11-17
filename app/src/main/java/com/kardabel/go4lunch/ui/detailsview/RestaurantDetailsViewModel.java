@@ -14,8 +14,8 @@ import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.usecase.FirestoreUseCase;
-import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
-import com.kardabel.go4lunch.usecase.RestaurantDetailsResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +29,15 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private final FirestoreUseCase firestoreUseCase;
 
 
-    public RestaurantDetailsViewModel(@NonNull NearbySearchResultsUseCase nearbySearchResultsUseCase,
-                                      @NonNull RestaurantDetailsResultsUseCase restaurantDetailsResultsUseCase,
+    public RestaurantDetailsViewModel(@NonNull GetNearbySearchResultsUseCase getNearbySearchResultsUseCase,
+                                      @NonNull GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase,
                                       @NonNull FirestoreUseCase firestoreUseCase,
                                       @NonNull WorkmatesRepository workmatesRepository){
 
         this.firestoreUseCase = firestoreUseCase;
 
-        LiveData<NearbySearchResults> nearbySearchResultsLiveData = nearbySearchResultsUseCase.getNearbySearchResultsLiveData();
-        LiveData<List<RestaurantDetailsResult>> restaurantDetailsResultsUseCaseLiveData = restaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
+        LiveData<NearbySearchResults> nearbySearchResultsLiveData = getNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
+        LiveData<List<RestaurantDetailsResult>> restaurantDetailsResultsUseCaseLiveData = getRestaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
         LiveData<List<UserWithFavoriteRestaurant>> userWithFavoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
         LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
 

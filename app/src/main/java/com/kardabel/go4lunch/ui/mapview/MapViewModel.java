@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -14,7 +13,7 @@ import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
-import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +25,11 @@ public class MapViewModel extends ViewModel {
     private final MediatorLiveData<MapViewState> mapViewStatePoiMediatorLiveData = new MediatorLiveData<>();
 
     public MapViewModel(@NonNull LocationRepository locationRepository,
-                        @NonNull NearbySearchResultsUseCase nearbySearchResultsUseCase,
+                        @NonNull GetNearbySearchResultsUseCase getNearbySearchResultsUseCase,
                         @NonNull WorkmatesRepository workmatesRepository) {
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
-        LiveData<NearbySearchResults> nearbySearchResultsLiveData = nearbySearchResultsUseCase.getNearbySearchResultsLiveData();
+        LiveData<NearbySearchResults> nearbySearchResultsLiveData = getNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
         LiveData<List<UserWithFavoriteRestaurant>> favoriteRestaurantsLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
 
         // OBSERVERS

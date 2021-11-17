@@ -19,10 +19,7 @@ import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
-import com.kardabel.go4lunch.ui.mapview.MapViewModel;
-import com.kardabel.go4lunch.ui.mapview.MapViewState;
-import com.kardabel.go4lunch.ui.mapview.Poi;
-import com.kardabel.go4lunch.usecase.NearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,7 +40,7 @@ public class MapViewModelTest {
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
     private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
-    private final NearbySearchResultsUseCase nearbySearchResultsUseCase = Mockito.mock(NearbySearchResultsUseCase.class);
+    private final GetNearbySearchResultsUseCase mGetNearbySearchResultsUseCase = Mockito.mock(GetNearbySearchResultsUseCase.class);
     private final WorkmatesRepository workmateRepository = Mockito.mock(WorkmatesRepository.class);
 
     private final Location location = Mockito.mock(Location.class);
@@ -61,7 +58,7 @@ public class MapViewModelTest {
 
         // SETUP THE MOCK RETURN
         Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
-        Mockito.doReturn(nearbySearchResultsMutableLiveData).when(nearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+        Mockito.doReturn(nearbySearchResultsMutableLiveData).when(mGetNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
 
         // SET LIVEDATA VALUES
         locationMutableLiveData.setValue(location);
@@ -69,7 +66,7 @@ public class MapViewModelTest {
 
         mMapViewModel = new MapViewModel(
                 locationRepository,
-                nearbySearchResultsUseCase,
+                mGetNearbySearchResultsUseCase,
                 workmateRepository);
     }
 
@@ -81,8 +78,8 @@ public class MapViewModelTest {
             assertEquals(MapViewModelTest.this.getDefaultMapViewState(), mapViewState);
 
             verify(locationRepository).getLocationLiveData();
-            verify(nearbySearchResultsUseCase).getNearbySearchResultsLiveData();
-            verifyNoMoreInteractions(locationRepository, nearbySearchResultsUseCase);
+            verify(mGetNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+            verifyNoMoreInteractions(locationRepository, mGetNearbySearchResultsUseCase);
         });
     }
 
