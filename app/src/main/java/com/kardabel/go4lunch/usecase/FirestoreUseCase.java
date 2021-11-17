@@ -29,7 +29,6 @@ import java.util.Map;
 public class FirestoreUseCase {
 
     private static final String COLLECTION_USERS = "users";
-    private static final String COLLECTION_DAYS = LocalDate.now().toString();
     private static final String USERNAME_FIELD = "username";
 
     private static volatile FirestoreUseCase instance;
@@ -51,13 +50,8 @@ public class FirestoreUseCase {
     }
 
     @Nullable
-    public FirebaseUser getCurrentUser() {
-        return FirebaseAuth.getInstance().getCurrentUser();
-    }
-
-    @Nullable
     public String getCurrentUserUID() {
-        FirebaseUser user = getCurrentUser();
+        FirebaseUser user = GetCurrentUserUseCase.getCurrentUser();
         return (user != null) ? user.getUid() : null;
     }
 
@@ -72,35 +66,6 @@ public class FirestoreUseCase {
     // Get the Collection Reference
     private CollectionReference getUsersCollection() {
         return FirebaseFirestore.getInstance().collection(COLLECTION_USERS);
-    }
-
-    // CREATE USER IN FIRESTORE
-    public void createUser() {
-        FirebaseUser user = getCurrentUser();
-        if (user != null) {
-            String userUrlPicture = (user.getPhotoUrl() != null) ? user.getPhotoUrl().toString() : null;
-            String userName = user.getDisplayName();
-            String uid = user.getUid();
-            String userEmail = user.getEmail();
-
-            UserModel userToCreate = new UserModel(uid, userName, userUrlPicture, userEmail);
-
-            Task<DocumentSnapshot> userData = getUserData();
-            // If the user already exist in Firestore, we get his data
-            userData.addOnSuccessListener(documentSnapshot -> {
-                this.getUsersCollection().document(uid).set(userToCreate);
-            });
-        }
-    }
-
-    // GET USER DATA FROM FIRESTORE
-    public Task<DocumentSnapshot> getUserData() {
-        String uid = this.getCurrentUserUID();
-        if (uid != null) {
-            return this.getUsersCollection().document(uid).get();
-        } else {
-            return null;
-        }
     }
 
     // UPDATE USERS NAME
@@ -119,93 +84,5 @@ public class FirestoreUseCase {
         if (uid != null) {
             this.getUsersCollection().document(uid).delete();
         }
-    }
-
-
-    ///// FAVORITES RESTAURANTS //////
-
-    public static CollectionReference getDayCollection() {
-        return FirebaseFirestore.getInstance().collection(COLLECTION_DAYS);
-    }
-
-    // CHECK IF USER HAVE ALREADY SET THE RESTAURANT AS FAVORITE,
-    // IF YES, JUST DELETE,
-    // IF NO, DELETE OLD ONE AND CREATE
-    public void onFavoriteClick(String restaurantID, String name) {
-        String userId = this.getCurrentUserUID();
-
-        DocumentReference docIdRef = getDayCollection().document(userId);
-        docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        if (document.getString("restaurantId").equals(restaurantID)) {
-                            deleteUsersFavoriteRestaurant(userId);
-                        } else {
-                            deleteUsersFavoriteRestaurant(userId);
-                            createUserWithRestaurant(restaurantID, name);
-                        }
-
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                    } else {
-                        createUserWithRestaurant(restaurantID, name);
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-    }
-
-    public void deleteUsersFavoriteRestaurant(String userId){
-        getDayCollection().document(userId)
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting document", e);
-                    }
-                });
-    }
-
-    public void createUserWithRestaurant(String placeId, String restaurantName) {
-        String userId = this.getCurrentUserUID();
-
-        Map<String, Object> restaurant = new HashMap<>();
-        restaurant.put("restaurant name", restaurantName);
-        restaurant.put("restaurant id", placeId);
-
-        Map<String, Object> user = new HashMap<>();
-        user.put("user id", userId);
-
-        Map<String, Object> userGotRestaurant = new HashMap<>();
-        userGotRestaurant.put("restaurantId", placeId);
-        userGotRestaurant.put("restaurantName", restaurantName);
-        userGotRestaurant.put("userId", userId);
-
-        FirestoreUseCase
-                .getDayCollection()
-                .document(userId)
-                .set(userGotRestaurant);
-
-
-//      Map<String, Object> favoriteRestaurants = new HashMap<>();
-//      Map<String, Object> restaurant = new HashMap<>();
-//      restaurant.put("restaruantIdOne", true);
-//      favoriteRestaurants.put("favoriteRestaurants", restaurant);
-//      String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-//      FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
-//      DocumentReference uidRef = rootRef.collection("users").document(uid);
-//      uidRef.update(favoriteRestaurants);
-
     }
 }

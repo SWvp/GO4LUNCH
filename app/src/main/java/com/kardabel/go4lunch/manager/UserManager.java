@@ -5,7 +5,10 @@ import android.content.Context;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.kardabel.go4lunch.model.UserModel;
+import com.kardabel.go4lunch.usecase.CreateUserUseCase;
 import com.kardabel.go4lunch.usecase.FirestoreUseCase;
+import com.kardabel.go4lunch.usecase.GetCurrentUserDataUseCase;
+import com.kardabel.go4lunch.usecase.GetCurrentUserUseCase;
 
 public class UserManager {
 
@@ -30,15 +33,15 @@ public class UserManager {
     }
 
     public Boolean isCurrentUserLogged(){
-        return (mFirestoreUseCase.getCurrentUser() != null);
+        return (GetCurrentUserUseCase.getCurrentUser() != null);
     }
 
     public void createUser() {
-        mFirestoreUseCase.createUser();
+        CreateUserUseCase.createUser();
     }
 
     public FirebaseUser getCurrentUser(){
-        return mFirestoreUseCase.getCurrentUser();
+        return GetCurrentUserUseCase.getCurrentUser();
     }
 
     public Task<Void> signOut(Context context){
@@ -47,6 +50,6 @@ public class UserManager {
 
     public Task<UserModel> getUserData() {
         // Get the user from Firestore and cast it to a User model Object
-        return mFirestoreUseCase.getUserData().continueWith(task -> task.getResult().toObject(UserModel.class));
+        return GetCurrentUserDataUseCase.getUserData().continueWith(task -> task.getResult().toObject(UserModel.class));
     }
 }

@@ -13,6 +13,7 @@ import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
+import com.kardabel.go4lunch.usecase.ChangeFavoriteStateUseCase;
 import com.kardabel.go4lunch.usecase.FirestoreUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
@@ -228,7 +229,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     // SAY TO FIRESTORE THIS RESTAURANT IS ON FAVORITE OR NOT
     public void onFavoriteClick(String restaurantId, String restaurantName){
-        firestoreUseCase.onFavoriteClick(restaurantId, restaurantName);
+        //firestoreUseCase.onFavoriteClick(restaurantId, restaurantName);
+        ChangeFavoriteStateUseCase.onFavoriteClick(restaurantId, restaurantName);
 
     }
 
