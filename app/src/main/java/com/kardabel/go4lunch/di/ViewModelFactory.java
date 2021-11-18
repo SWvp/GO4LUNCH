@@ -19,6 +19,8 @@ import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
 import com.kardabel.go4lunch.usecase.FirestoreUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsByIdUseCase;
+import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsByIdUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.SearchViewUseCase;
@@ -39,8 +41,10 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final WorkmatesRepository workmatesRepository;
     private final SearchViewRepository searchViewRepository;
 
-    private final GetNearbySearchResultsUseCase mGetNearbySearchResultsUseCase;
-    private final GetRestaurantDetailsResultsUseCase mGetRestaurantDetailsResultsUseCase;
+    private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase;
+    private final GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase;
+    private final GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase;
+    private final GetRestaurantDetailsResultsByIdUseCase getRestaurantDetailsResultsByIdUseCase;
     private final FirestoreUseCase firestoreUseCase;
     private final SearchViewUseCase searchViewUseCase;
 
@@ -72,13 +76,19 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.workmatesRepository = new WorkmatesRepository();
         this.searchViewRepository = new SearchViewRepository(googleMapsApi);
 
-        this.mGetNearbySearchResultsUseCase = new GetNearbySearchResultsUseCase(
+        this.getNearbySearchResultsUseCase = new GetNearbySearchResultsUseCase(
                 locationRepository,
                 nearbySearchResponseRepository);
-        this.mGetRestaurantDetailsResultsUseCase = new GetRestaurantDetailsResultsUseCase(
+        this.getNearbySearchResultsByIdUseCase = new GetNearbySearchResultsByIdUseCase(
+                locationRepository,
+                nearbySearchResponseRepository);
+        this.getRestaurantDetailsResultsUseCase = new GetRestaurantDetailsResultsUseCase(
                 locationRepository,
                 nearbySearchResponseRepository,
                 mRestaurantDetailsResponseRepository);
+        this.getRestaurantDetailsResultsByIdUseCase = new GetRestaurantDetailsResultsByIdUseCase(
+                mRestaurantDetailsResponseRepository
+        );
         this.firestoreUseCase = new FirestoreUseCase();
         this.searchViewUseCase = new SearchViewUseCase(
                 searchViewRepository,
@@ -94,14 +104,14 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new RestaurantsViewModel(
                     application,
                     locationRepository,
-                    mGetNearbySearchResultsUseCase,
-                    mGetRestaurantDetailsResultsUseCase,
+                    getNearbySearchResultsUseCase,
+                    getRestaurantDetailsResultsUseCase,
                     workmatesRepository,
                     Clock.systemDefaultZone());
         } else if (modelClass.isAssignableFrom(MapViewModel.class)) {
             return (T) new MapViewModel(
                     locationRepository,
-                    mGetNearbySearchResultsUseCase,
+                    getNearbySearchResultsUseCase,
                     workmatesRepository);
         } else if (modelClass.isAssignableFrom(MainActivityViewModel.class)) {
             return (T) new MainActivityViewModel(
@@ -110,9 +120,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     workmatesRepository);
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
-                    mGetNearbySearchResultsUseCase,
-                    mGetRestaurantDetailsResultsUseCase,
-                    firestoreUseCase,
+                    getNearbySearchResultsByIdUseCase,
+                    getRestaurantDetailsResultsByIdUseCase,
                     workmatesRepository);
         } else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
             return (T) new WorkMatesViewModel(

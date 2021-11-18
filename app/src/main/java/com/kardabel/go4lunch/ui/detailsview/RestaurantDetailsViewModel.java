@@ -9,114 +9,101 @@ import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.model.UserModel;
 import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
-import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
+import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.usecase.ChangeFavoriteStateUseCase;
-import com.kardabel.go4lunch.usecase.FirestoreUseCase;
-import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
-import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsByIdUseCase;
+import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsByIdUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantDetailsViewModel extends ViewModel {
 
-    private String placeId = "";
     private final MediatorLiveData<RestaurantDetailsViewState> workMatesDetailsViewStateMediatorLiveData = new MediatorLiveData<>();
     private final MediatorLiveData<List<DetailsWorkmatesViewState>> workmatesLikeThisRestaurantMediatorLiveData = new MediatorLiveData<>();
     private RestaurantDetailsViewState result;
-    private final FirestoreUseCase firestoreUseCase;
+    @NonNull
+    private final GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase;
+    @NonNull
+    private final GetRestaurantDetailsResultsByIdUseCase getRestaurantDetailsResultsByIdUseCase;
+    @NonNull
+    private final WorkmatesRepository workmatesRepository;
 
 
-    public RestaurantDetailsViewModel(@NonNull GetNearbySearchResultsUseCase getNearbySearchResultsUseCase,
-                                      @NonNull GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase,
-                                      @NonNull FirestoreUseCase firestoreUseCase,
+    public RestaurantDetailsViewModel(@NonNull GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase,
+                                      @NonNull GetRestaurantDetailsResultsByIdUseCase getRestaurantDetailsResultsByIdUseCase,
                                       @NonNull WorkmatesRepository workmatesRepository){
+        this.getNearbySearchResultsByIdUseCase = getNearbySearchResultsByIdUseCase;
+        this.getRestaurantDetailsResultsByIdUseCase = getRestaurantDetailsResultsByIdUseCase;
+        this.workmatesRepository = workmatesRepository;
 
-        this.firestoreUseCase = firestoreUseCase;
+    }
 
-        LiveData<NearbySearchResults> nearbySearchResultsLiveData = getNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
-        LiveData<List<RestaurantDetailsResult>> restaurantDetailsResultsUseCaseLiveData = getRestaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
+    public void init(String placeId){
+        LiveData<RestaurantSearch> restaurantLiveData = getNearbySearchResultsByIdUseCase.invoke(placeId);
+        LiveData<RestaurantDetailsResult> restaurantDetailsLiveData = getRestaurantDetailsResultsByIdUseCase.invoke(placeId);
+
         LiveData<List<UserWithFavoriteRestaurant>> userWithFavoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
         LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
 
 
-        // OBSERVERS
+        // OBSERVERS FOR RESTAURANT DETAILS
 
-        workMatesDetailsViewStateMediatorLiveData.addSource(nearbySearchResultsLiveData, nearbySearchResults -> combine(
-                nearbySearchResults,
+        workMatesDetailsViewStateMediatorLiveData.addSource(restaurantLiveData, restaurant -> combine(
+                restaurant,
                 userWithFavoriteRestaurantLiveData.getValue(),
-                restaurantDetailsResultsUseCaseLiveData.getValue()));
+                restaurantDetailsLiveData.getValue()));
 
         workMatesDetailsViewStateMediatorLiveData.addSource(userWithFavoriteRestaurantLiveData, userWithFavoriteRestaurants -> combine(
-                nearbySearchResultsLiveData.getValue(),
+                restaurantLiveData.getValue(),
                 userWithFavoriteRestaurants,
-                restaurantDetailsResultsUseCaseLiveData.getValue()));
+                restaurantDetailsLiveData.getValue()));
 
-        workMatesDetailsViewStateMediatorLiveData.addSource(restaurantDetailsResultsUseCaseLiveData, restaurantDetailsResults -> combine(
-                nearbySearchResultsLiveData.getValue(),
+        workMatesDetailsViewStateMediatorLiveData.addSource(restaurantDetailsLiveData, restaurantDetailsResults -> combine(
+                restaurantLiveData.getValue(),
                 userWithFavoriteRestaurantLiveData.getValue(),
                 restaurantDetailsResults));
 
 
+
+
         // OBSERVERS FOR WORKMATES RECYCLERVIEW
 
-        workmatesLikeThisRestaurantMediatorLiveData.addSource(userWithFavoriteRestaurantLiveData, new Observer<List<UserWithFavoriteRestaurant>>() {
-            @Override
-            public void onChanged(List<UserWithFavoriteRestaurant> userWithFavoriteRestaurants) {
-                mapWorkmates(userWithFavoriteRestaurants, workMatesLiveData.getValue());
 
+        workmatesLikeThisRestaurantMediatorLiveData.addSource(restaurantLiveData, new Observer<RestaurantSearch>() {
+            @Override
+            public void onChanged(RestaurantSearch restaurantSearch) {
+                combineWorkmates(restaurantSearch, userWithFavoriteRestaurantLiveData.getValue(),workMatesLiveData.getValue());
             }
         });
+        workmatesLikeThisRestaurantMediatorLiveData.addSource(userWithFavoriteRestaurantLiveData, userWithFavoriteRestaurants -> combineWorkmates(
+                restaurantLiveData.getValue(),
+                userWithFavoriteRestaurants,
+                workMatesLiveData.getValue()));
+        workmatesLikeThisRestaurantMediatorLiveData.addSource(workMatesLiveData, userModels -> combineWorkmates(
+                restaurantLiveData.getValue(),
+                userWithFavoriteRestaurantLiveData.getValue(),
+                userModels));
 
-        workmatesLikeThisRestaurantMediatorLiveData.addSource(workMatesLiveData, new Observer<List<UserModel>>() {
-            @Override
-            public void onChanged(List<UserModel> userModels) {
-                mapWorkmates(userWithFavoriteRestaurantLiveData.getValue(), userModels);
-
-            }
-        });
     }
 
-    private void mapWorkmates(List<UserWithFavoriteRestaurant> userWithFavoriteRestaurants, List<UserModel> users) {
-        if (userWithFavoriteRestaurants != null && users != null) {
-            List<DetailsWorkmatesViewState> workMatesViewStateList = new ArrayList<>();
-            for (int i = 0; i < userWithFavoriteRestaurants.size(); i++) {
-                if (userWithFavoriteRestaurants.get(i).getRestaurantId().equals(placeId)) {
-                    for (int j = 0; j < users.size(); j++) {
-                        if (users.get(j).getUid().equals(userWithFavoriteRestaurants.get(i).getUserId())) {
-                            String name = users.get(j).getUserName() + " is joining!";
-                            String avatar = users.get(j).getAvatarURL();
-
-                            workMatesViewStateList.add(new DetailsWorkmatesViewState(
-                                    name,
-                                    avatar
-                            ));
-
-                        }
-                    }
-                }
-            }
-            workmatesLikeThisRestaurantMediatorLiveData.setValue(workMatesViewStateList);
-        }
-    }
-
-
-    private void combine(@Nullable NearbySearchResults nearbySearchResults,
+    // COMBINE FIRST MEDIATOR FOR RESTAURANT DETAILS
+    private void combine(@Nullable RestaurantSearch restaurant,
                          @Nullable List<UserWithFavoriteRestaurant> usersWithFavoriteRestaurant,
-                         @Nullable List<RestaurantDetailsResult> restaurantDetailsResults) {
-        if (nearbySearchResults != null && restaurantDetailsResults == null) {
-            workMatesDetailsViewStateMediatorLiveData.setValue(mapWithoutDetails(nearbySearchResults, usersWithFavoriteRestaurant));
-        }else if (nearbySearchResults != null){
-            workMatesDetailsViewStateMediatorLiveData.setValue(map(nearbySearchResults,restaurantDetailsResults ,usersWithFavoriteRestaurant));
+                         @Nullable RestaurantDetailsResult restaurantDetails) {
+        if (restaurant != null && restaurantDetails == null) {
+            workMatesDetailsViewStateMediatorLiveData.setValue(mapWithoutDetails(restaurant, usersWithFavoriteRestaurant));
+        }else if (restaurant != null){
+            workMatesDetailsViewStateMediatorLiveData.setValue(map(restaurant,restaurantDetails ,usersWithFavoriteRestaurant));
         }
     }
 
-    // MAP WITHOUT DETAILS, IT CAN HAPPEN WHEN USER HAS NO NETWORK AVAILABLE
+    // MAP WITHOUT DETAILS, WHEN USER HAS NO LONGER NETWORK AVAILABLE
     // (ASSUME THAT THE GOOGLE DETAILS SERVICE WILL WORK AS LONG AS NEARBY WORKS)
-    private RestaurantDetailsViewState mapWithoutDetails(@NonNull NearbySearchResults nearbySearchResults,
+    private RestaurantDetailsViewState mapWithoutDetails(@NonNull RestaurantSearch restaurant,
                                                          List<UserWithFavoriteRestaurant> usersWithFavoriteRestaurant) {
 
         List<String> restaurantAsFavoriteId = new ArrayList<>();
@@ -127,32 +114,28 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
             }
         }
-
-        for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
-            if (placeId.equals(nearbySearchResults.getResults().get(i).getRestaurantId())) {
-                boolean isFavorite = false;
-                if(restaurantAsFavoriteId.contains(nearbySearchResults.getResults().get(i).getRestaurantId())){
-                    isFavorite = true;
-                }
-                result = new RestaurantDetailsViewState(
-                        nearbySearchResults.getResults().get(i).getRestaurantName(),
-                        nearbySearchResults.getResults().get(i).getRestaurantAddress(),
-                        photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos()),
-                        "",
-                        "",
-                        nearbySearchResults.getResults().get(i).getRestaurantId(),
-                        convertRatingStars(nearbySearchResults.getResults().get(i).getRating()),
-                        isFavorite
-
-                );
-            }
+        boolean isFavorite = false;
+        if(restaurantAsFavoriteId.contains(restaurant.getRestaurantId())){
+            isFavorite = true;
         }
+        result = new RestaurantDetailsViewState(
+                restaurant.getRestaurantName(),
+                restaurant.getRestaurantAddress(),
+                photoReference(restaurant.getRestaurantPhotos()),
+                "",
+                "",
+                restaurant.getRestaurantId(),
+                convertRatingStars(restaurant.getRating()),
+                isFavorite
+
+        );
         return result;
 
     }
 
-    private RestaurantDetailsViewState map(@NonNull NearbySearchResults nearbySearchResults,
-                                           @NonNull List<RestaurantDetailsResult> restaurantDetailsResults,
+    // MAP WITH RESTAURANT DETAILS
+    private RestaurantDetailsViewState map(@NonNull RestaurantSearch restaurant,
+                                           @NonNull RestaurantDetailsResult restaurantDetails,
                                            List<UserWithFavoriteRestaurant> usersWithFavoriteRestaurant) {
 
         List<String> restaurantAsFavoriteId = new ArrayList<>();
@@ -165,40 +148,72 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
             }
         }
+        if (restaurantDetails.getDetailsResult().getFormatted_phone_number() != null) {
+            restaurantPhoneNumber = restaurantDetails.getDetailsResult().getFormatted_phone_number();
 
-        for (int i = 0; i < restaurantDetailsResults.size(); i++) {
-            if (restaurantDetailsResults.get(i).getDetailsResult().getPlaceId().equals(placeId)) {
-                if (restaurantDetailsResults.get(i).getDetailsResult().getFormatted_phone_number() != null) {
-                    restaurantPhoneNumber = restaurantDetailsResults.get(i).getDetailsResult().getFormatted_phone_number();
+        }
+        if (restaurantDetails.getDetailsResult().getWebsite() != null) {
+            restaurantWebsite = restaurantDetails.getDetailsResult().getWebsite();
 
-                }
-                if (restaurantDetailsResults.get(i).getDetailsResult().getWebsite() != null) {
-                    restaurantWebsite = restaurantDetailsResults.get(i).getDetailsResult().getWebsite();;
-
-                }
-            }
         }
 
-        for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
-            if (placeId.equals(nearbySearchResults.getResults().get(i).getRestaurantId())) {
-                boolean isFavorite = false;
-                if(restaurantAsFavoriteId.contains(nearbySearchResults.getResults().get(i).getRestaurantId())){
-                    isFavorite = true;
-                }
-                result = new RestaurantDetailsViewState(
-                        nearbySearchResults.getResults().get(i).getRestaurantName(),
-                        nearbySearchResults.getResults().get(i).getRestaurantAddress(),
-                        photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos()),
-                        restaurantPhoneNumber,
-                        restaurantWebsite,
-                        nearbySearchResults.getResults().get(i).getRestaurantId(),
-                        convertRatingStars(nearbySearchResults.getResults().get(i).getRating()),
-                        isFavorite
-
-                );
-            }
+        boolean isFavorite = false;
+        if (restaurantAsFavoriteId.contains(restaurant.getRestaurantId())) {
+            isFavorite = true;
         }
+        result = new RestaurantDetailsViewState(
+                restaurant.getRestaurantName(),
+                restaurant.getRestaurantAddress(),
+                photoReference(restaurant.getRestaurantPhotos()),
+                restaurantPhoneNumber,
+                restaurantWebsite,
+                restaurant.getRestaurantId(),
+                convertRatingStars(restaurant.getRating()),
+                isFavorite
+
+        );
         return result;
+
+    }
+
+    // COMBINE SECOND MEDIATOR FOR WORKMATES WITH THIS RESTAURANT IN FAVORITE
+    private void combineWorkmates(@Nullable RestaurantSearch restaurant,
+                                  @Nullable List<UserWithFavoriteRestaurant> usersWithFavoriteRestaurant,
+                                  @Nullable List<UserModel> users) {
+
+        if (usersWithFavoriteRestaurant != null && users != null && restaurant != null) {
+            workmatesLikeThisRestaurantMediatorLiveData.setValue(mapWorkmates(
+                    restaurant,
+                    usersWithFavoriteRestaurant,
+                    users));
+        }
+    }
+
+    // MAP THE RECYCLER VIEW ITEMS FOR WORKMATES WHO HAVE THIS ITEM IN FAVORITE
+    private List<DetailsWorkmatesViewState> mapWorkmates(RestaurantSearch restaurant,
+                                                         List<UserWithFavoriteRestaurant> userWithFavoriteRestaurants,
+                                                         List<UserModel> users){
+
+        List<DetailsWorkmatesViewState> workMatesViewStateList = new ArrayList<>();
+
+        for (int i = 0; i < userWithFavoriteRestaurants.size(); i++) {
+            if (userWithFavoriteRestaurants.get(i).getRestaurantId().equals(restaurant.getRestaurantId())) {
+                for (int j = 0; j < users.size(); j++) {
+                    if (users.get(j).getUid().equals(userWithFavoriteRestaurants.get(i).getUserId())) {
+                        String name = users.get(j).getUserName() + " is joining!";
+                        String avatar = users.get(j).getAvatarURL();
+
+                        workMatesViewStateList.add(new DetailsWorkmatesViewState(
+                                name,
+                                avatar
+
+                        ));
+
+                    }
+                }
+            }
+        }
+        return workMatesViewStateList;
 
     }
 
@@ -220,11 +235,6 @@ public class RestaurantDetailsViewModel extends ViewModel {
         // GIVE AN INTEGER (NUMBER ROUNDED TO THE NEAREST INTEGER)
         return Math.round(rating * 3 / 5);
 
-    }
-
-    // GET RESTAURANT TO PARSE HIS DETAILS
-    public void init(String placeId){
-        this.placeId = placeId;
     }
 
     // SAY TO FIRESTORE THIS RESTAURANT IS ON FAVORITE OR NOT
