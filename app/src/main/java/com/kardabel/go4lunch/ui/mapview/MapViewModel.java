@@ -30,7 +30,7 @@ public class MapViewModel extends ViewModel {
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         LiveData<NearbySearchResults> nearbySearchResultsLiveData = getNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
-        LiveData<List<UserWithFavoriteRestaurant>> favoriteRestaurantsLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
+        LiveData<List<UserWithFavoriteRestaurant>> favoriteRestaurantsLiveData = workmatesRepository.getRestaurantsAddedAsFavorite();
 
         // OBSERVERS
 

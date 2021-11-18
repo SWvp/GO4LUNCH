@@ -62,7 +62,7 @@ public class MainActivityViewModel extends ViewModel {
     private void permissionGranted() {
         locationRepository.StartLocationRequest();
         workmatesRepository.getWorkmates();
-        workmatesRepository.getRestaurantsAddAsFavorite();
+        workmatesRepository.getRestaurantsAddedAsFavorite();
 
 
     }

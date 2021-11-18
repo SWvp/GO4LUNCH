@@ -27,16 +27,12 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     private String restaurantId;
     private String restaurantName;
 
-
     private RestaurantDetailsBinding binding;
     private RestaurantDetailsViewModel restaurantDetailsViewModel;
 
-    private RecyclerView recyclerView;
-   // private RecyclerviewWorkmatesBinding bindingRecyclerView;
-
     public static Intent navigate(Context context, String placeId){
         Intent intent = new Intent(context, RestaurantDetailsActivity.class);
-        intent.putExtra(RestaurantDetailsActivity.RESTAURANT_ID, placeId);
+        intent.putExtra(RESTAURANT_ID, placeId);
         return intent;
     }
 
@@ -44,13 +40,11 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = RestaurantDetailsBinding.inflate(getLayoutInflater());
-        //bindingRecyclerView = RecyclerviewWorkmatesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         DetailsRecyclerViewAdapter adapter = new DetailsRecyclerViewAdapter();
 
         binding.detailRecyclerView.setAdapter(adapter);
-        // binding.detailRecyclerView.addItemDecoration(new DividerItemDecoration(RestaurantDetailsActivity.this, DividerItemDecoration.VERTICAL));
         binding.detailRecyclerView.setLayoutManager(new LinearLayoutManager(RestaurantDetailsActivity.this, RecyclerView.VERTICAL,false));
 
         // CONFIGURE VIEWMODEL
@@ -66,38 +60,18 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             @Override
             public void onChanged(RestaurantDetailsViewState details) {
 
-                if (details.isFavorite()) {
-                    binding.detailLikeButton.setImageResource(R.drawable.details_star_full);
-
-                } else {
-                    binding.detailLikeButton.setImageResource(R.drawable.detail_star);
-                }
-
                 restaurantId = details.getDetailsRestaurantId();
                 restaurantName = details.getDetailsRestaurantName();
                 binding.detailRestaurantName.setText(details.getDetailsRestaurantName());
                 binding.detailRestaurantAddress.setText(details.getDetailsRestaurantAddress());
                 binding.detailsRating.setRating((float) details.getRating());
+                binding.detailLikeButton.setImageResource(details.isFavorite());
                 String urlPhoto = RestaurantDetailsViewState.urlPhotoDetails(details);
                 Glide.with(binding.detailPicture.getContext())
                         .load(urlPhoto)
                         .into(binding.detailPicture);
             }
         });
-
-        // CONFIGURE RECYCLERVIEW
-
-        //     bindingRecyclerView.workmateRecyclerView.setAdapter(adapter);
-        //     bindingRecyclerView.workmateRecyclerView.addItemDecoration(new DividerItemDecoration(getApplication(), DividerItemDecoration.VERTICAL));
-        //     bindingRecyclerView.workmateRecyclerView.setLayoutManager(new LinearLayoutManager(getApplication(), RecyclerView.VERTICAL,false));
-
-        //     recyclerView = (RecyclerView) findViewById(R.id.detail_recyclerView);
-
-        //     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        //     recyclerView.setLayoutManager(layoutManager);
-        //     DetailsRecyclerViewAdapter adapter = new DetailsRecyclerViewAdapter();
-        //     recyclerView.setAdapter(adapter);
-
 
         // FEED THE ADAPTER IF NEEDED
         restaurantDetailsViewModel.getWorkmatesLikeThisRestaurant().observe(this, new Observer<List<DetailsWorkmatesViewState>>() {
@@ -107,17 +81,11 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             }
         });
 
-
-
-
         binding.detailLikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 restaurantDetailsViewModel.onFavoriteClick(restaurantId, restaurantName);
             }
         });
-
-
-
     }
  }
