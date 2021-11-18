@@ -7,6 +7,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.model.UserModel;
 import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
 import com.kardabel.go4lunch.pojo.Photo;
@@ -46,7 +47,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
         LiveData<RestaurantSearch> restaurantLiveData = getNearbySearchResultsByIdUseCase.invoke(placeId);
         LiveData<RestaurantDetailsResult> restaurantDetailsLiveData = getRestaurantDetailsResultsByIdUseCase.invoke(placeId);
 
-        LiveData<List<UserWithFavoriteRestaurant>> userWithFavoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
+        LiveData<List<UserWithFavoriteRestaurant>> userWithFavoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddedAsFavorite();
         LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
 
 
@@ -114,9 +115,9 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
             }
         }
-        boolean isFavorite = false;
+        int isFavorite = R.drawable.detail_star;
         if(restaurantAsFavoriteId.contains(restaurant.getRestaurantId())){
-            isFavorite = true;
+            isFavorite = R.drawable.details_star_full;
         }
         result = new RestaurantDetailsViewState(
                 restaurant.getRestaurantName(),
@@ -157,9 +158,9 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
         }
 
-        boolean isFavorite = false;
+        int isFavorite = R.drawable.detail_star;
         if (restaurantAsFavoriteId.contains(restaurant.getRestaurantId())) {
-            isFavorite = true;
+            isFavorite = R.drawable.details_star_full;
         }
         result = new RestaurantDetailsViewState(
                 restaurant.getRestaurantName(),
@@ -239,7 +240,6 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     // SAY TO FIRESTORE THIS RESTAURANT IS ON FAVORITE OR NOT
     public void onFavoriteClick(String restaurantId, String restaurantName){
-        //firestoreUseCase.onFavoriteClick(restaurantId, restaurantName);
         ChangeFavoriteStateUseCase.onFavoriteClick(restaurantId, restaurantName);
 
     }
