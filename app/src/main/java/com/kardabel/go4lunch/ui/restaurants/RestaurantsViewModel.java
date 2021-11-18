@@ -57,7 +57,7 @@ public class RestaurantsViewModel extends ViewModel {
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         LiveData<List<RestaurantDetailsResult>> restaurantsDetailsResultLiveData = getRestaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
         LiveData<NearbySearchResults> nearbySearchResultsLiveData = getNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
-        LiveData<List<UserWithFavoriteRestaurant>> favoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddAsFavorite();
+        LiveData<List<UserWithFavoriteRestaurant>> favoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddedAsFavorite();
 
         // OBSERVERS
 
