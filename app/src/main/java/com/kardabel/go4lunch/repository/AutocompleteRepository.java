@@ -63,35 +63,35 @@ public class AutocompleteRepository {
     }
 
 
-    public void autocomplete(String location,
-                             String input){
+ // public void autocomplete(String location,
+ //                          String input){
 
-        String type = "establishment";
-        String radius = "1000";
-         List<Prediction> list= new ArrayList<>();
+ //     String type = "establishment";
+ //     String radius = "1000";
+ //      List<Prediction> list= new ArrayList<>();
 
-        MutableLiveData<AutocompleteResponse> AutocompleteResultMutableLiveData = new MutableLiveData<>();
+ //     MutableLiveData<AutocompleteResponse> AutocompleteResultMutableLiveData = new MutableLiveData<>();
 
-        googleMapsApi.autocompleteResult(key, type, location, radius, input).enqueue(
-                new Callback<AutocompleteResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<AutocompleteResponse> call, @NonNull Response<AutocompleteResponse> response) {
-                        if (response.body() != null) {
+ //     googleMapsApi.autocompleteResult(key, type, location, radius, input).enqueue(
+ //             new Callback<AutocompleteResponse>() {
+ //                 @Override
+ //                 public void onResponse(@NonNull Call<AutocompleteResponse> call, @NonNull Response<AutocompleteResponse> response) {
+ //                     if (response.body() != null) {
 
-                            list.addAll(response.body().getPredictions());
-                            AutocompleteResultMutableLiveData.setValue(response.body());
+ //                         list.addAll(response.body().getPredictions());
+ //                         AutocompleteResultMutableLiveData.setValue(response.body());
 
-                        }
-                    }
+ //                     }
+ //                 }
 
-                    @Override
-                    public void onFailure(Call<AutocompleteResponse> call, Throwable t) {
-                        t.printStackTrace();
+ //                 @Override
+ //                 public void onFailure(Call<AutocompleteResponse> call, Throwable t) {
+ //                     t.printStackTrace();
 
-                    }
-                });
+ //                 }
+ //             });
 
-    }
+ // }
 
  // public LiveData<AutocompleteResponse> getAUto() throws IOException {
 

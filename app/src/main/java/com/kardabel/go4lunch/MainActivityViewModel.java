@@ -85,7 +85,7 @@ public class MainActivityViewModel extends ViewModel {
 
             String locationAsText = locationLiveData.getValue().getLatitude() + "," + locationLiveData.getValue().getLongitude();
 
-            autocompleteRepository.autocomplete(locationAsText,text);
+       //     autocompleteRepository.autocomplete(locationAsText,text);
 
             LiveData<AutocompleteResponse> autocompleteResult =  autocompleteRepository.getAutocompleteResultListLiveData(locationAsText,text);
        if(autocompleteResult.getValue().getPredictions() != null){
