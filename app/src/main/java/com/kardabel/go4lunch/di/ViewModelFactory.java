@@ -20,6 +20,7 @@ import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
 import com.kardabel.go4lunch.usecase.FirestoreUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsByIdUseCase;
+import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsByIdUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
@@ -47,6 +48,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final GetRestaurantDetailsResultsByIdUseCase getRestaurantDetailsResultsByIdUseCase;
     private final FirestoreUseCase firestoreUseCase;
     private final SearchViewUseCase searchViewUseCase;
+    private final GetPredictionsUseCase getPredictionsUseCase;
 
 
     public static ViewModelFactory getInstance() {
@@ -93,6 +95,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.searchViewUseCase = new SearchViewUseCase(
                 autocompleteRepository,
                 locationRepository);
+        this.getPredictionsUseCase = new GetPredictionsUseCase(
+                locationRepository,
+                autocompleteRepository);
     }
 
 
@@ -118,7 +123,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     application,
                     locationRepository,
                     workmatesRepository,
-                    autocompleteRepository);
+                    getPredictionsUseCase);
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
                     getNearbySearchResultsByIdUseCase,
