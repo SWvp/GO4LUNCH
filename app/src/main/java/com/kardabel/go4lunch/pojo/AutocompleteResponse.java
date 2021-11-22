@@ -15,10 +15,6 @@ public class AutocompleteResponse {
     private String status;
 
 
-    public AutocompleteResponse(List<Prediction> predictions, String status) {
-        this.predictions = predictions;
-        this.status = status;
-    }
 
 
     public List<Prediction> getPredictions() {
@@ -29,4 +25,11 @@ public class AutocompleteResponse {
         return status;
     }
 
+    public void setPredictions(List<Prediction> predictions) {
+        this.predictions = predictions;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

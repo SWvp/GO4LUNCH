@@ -31,4 +31,19 @@ public class Prediction {
         this.types = types;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public List<String> getTypes() {
+        return types;
+    }
 }

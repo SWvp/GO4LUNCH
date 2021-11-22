@@ -2,17 +2,17 @@ package com.kardabel.go4lunch.usecase;
 
 
 import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.repository.SearchViewRepository;
+import com.kardabel.go4lunch.repository.AutocompleteRepository;
 
 public class SearchViewUseCase {
 
-    private final SearchViewRepository searchViewRepository;
+    private final AutocompleteRepository mAutocompleteRepository;
     private final LocationRepository locationRepository;
 
-    public SearchViewUseCase(SearchViewRepository searchViewRepository,
+    public SearchViewUseCase(AutocompleteRepository autocompleteRepository,
                              LocationRepository locationRepository
     ){
-        this.searchViewRepository = searchViewRepository;
+        this.mAutocompleteRepository = autocompleteRepository;
         this.locationRepository = locationRepository;
 
 
