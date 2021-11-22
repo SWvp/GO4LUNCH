@@ -14,16 +14,22 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
-import com.kardabel.go4lunch.pojo.AutocompleteResponse;
+import com.kardabel.go4lunch.pojo.Prediction;
+import com.kardabel.go4lunch.pojo.Predictions;
 import com.kardabel.go4lunch.repository.AutocompleteRepository;
 import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.repository.SearchViewRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
-import com.kardabel.go4lunch.ui.mapview.MapViewState;
+import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewState;
+import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 import com.kardabel.go4lunch.util.PermissionsViewAction;
 import com.kardabel.go4lunch.util.SingleLiveEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivityViewModel extends ViewModel {
+
+    private MediatorLiveData<List<Prediction>> predictionsMediatorLiveData = new MediatorLiveData<>();
 
     private SingleLiveEvent<PermissionsViewAction> actionSingleLiveEvent = new SingleLiveEvent<>();
 
@@ -31,19 +37,19 @@ public class MainActivityViewModel extends ViewModel {
 
     private LocationRepository locationRepository;
     private WorkmatesRepository workmatesRepository;
-    private AutocompleteRepository autocompleteRepository;
+    private GetPredictionsUseCase getPredictionsUseCase;
 
 
     public MainActivityViewModel(
             @NonNull Application application,
             @NonNull LocationRepository locationRepository,
             @NonNull WorkmatesRepository workmatesRepository,
-            @NonNull AutocompleteRepository autocompleteRepository) {
+            @NonNull GetPredictionsUseCase getPredictionsUseCase) {
         super();
         this.application = application;
         this.locationRepository = locationRepository;
         this.workmatesRepository = workmatesRepository;
-        this.autocompleteRepository = autocompleteRepository;
+        this.getPredictionsUseCase = getPredictionsUseCase;
 
     }
 
@@ -79,32 +85,30 @@ public class MainActivityViewModel extends ViewModel {
     }
 
     public void submitSearch(String text){
-        String description;
+        List<Prediction> predictionsList = new ArrayList<>();
 
-        LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
 
-            String locationAsText = locationLiveData.getValue().getLatitude() + "," + locationLiveData.getValue().getLongitude();
-
-       //     autocompleteRepository.autocomplete(locationAsText,text);
-
-            LiveData<AutocompleteResponse> autocompleteResult =  autocompleteRepository.getAutocompleteResultListLiveData(locationAsText,text);
-       if(autocompleteResult.getValue().getPredictions() != null){
-
-           for (int i = 0; i < autocompleteResult.getValue().getPredictions().size(); i++) {
-               description = autocompleteResult.getValue().getPredictions().get(i).getDescription();
-
-           }
-
-       }
+        LiveData<Predictions> predictionsLiveData = getPredictionsUseCase.invoke(text);
 
 
 
-
+        predictionsMediatorLiveData.addSource(predictionsLiveData, new Observer<Predictions>() {
+            @Override
+            public void onChanged(Predictions predictions) {
+                predictionsList.addAll(predictions.getPredictions());
+                predictionsMediatorLiveData.setValue(predictionsList);
+            }
+        });
 
     }
 
     public SingleLiveEvent<PermissionsViewAction> getActionSingleLiveEvent() {
         return actionSingleLiveEvent;
+
+    }
+
+    public LiveData<List<Prediction>> getPredictionsLiveData(){
+        return predictionsMediatorLiveData;
 
     }
 }

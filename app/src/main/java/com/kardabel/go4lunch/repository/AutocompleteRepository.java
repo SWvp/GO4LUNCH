@@ -4,16 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.kardabel.go4lunch.pojo.AutocompleteResponse;
-import com.kardabel.go4lunch.pojo.Prediction;
+import com.kardabel.go4lunch.pojo.Predictions;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,8 +23,8 @@ public class AutocompleteRepository {
     }
 
 
-    public LiveData<AutocompleteResponse> getAutocompleteResultListLiveData(String location,
-                                                                            String input){
+    public LiveData<Predictions> getAutocompleteResultListLiveData(String location,
+                                                                   String input){
 
 
 
@@ -39,12 +32,12 @@ public class AutocompleteRepository {
         String type = "establishment";
         String radius = "1000";
 
-        MutableLiveData<AutocompleteResponse> AutocompleteResultMutableLiveData = new MutableLiveData<>();
+        MutableLiveData<Predictions> AutocompleteResultMutableLiveData = new MutableLiveData<>();
 
             googleMapsApi.autocompleteResult(key, type, location, radius, input).enqueue(
-                    new Callback<AutocompleteResponse>() {
+                    new Callback<Predictions>() {
                         @Override
-                        public void onResponse(@NonNull Call<AutocompleteResponse> call, @NonNull Response<AutocompleteResponse> response) {
+                        public void onResponse(@NonNull Call<Predictions> call, @NonNull Response<Predictions> response) {
                             if (response.body() != null) {
                                 AutocompleteResultMutableLiveData.setValue(response.body());
 
@@ -52,7 +45,7 @@ public class AutocompleteRepository {
                         }
 
                         @Override
-                        public void onFailure(Call<AutocompleteResponse> call, Throwable t) {
+                        public void onFailure(Call<Predictions> call, Throwable t) {
                             t.printStackTrace();
 
                         }

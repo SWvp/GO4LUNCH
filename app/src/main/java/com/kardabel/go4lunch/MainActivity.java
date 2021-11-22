@@ -31,11 +31,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,8 +45,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.manager.UserManager;
+import com.kardabel.go4lunch.pojo.Prediction;
 import com.kardabel.go4lunch.repository.SearchViewRepository;
 import com.kardabel.go4lunch.usecase.SearchViewUseCase;
+import com.kardabel.go4lunch.util.PermissionsViewAction;
+
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView
@@ -95,16 +101,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         NavigationUI.setupWithNavController(navView, navController);
 
         // RECEIVE SINGLE LIVEDATA EVENT FROM VM TO KNOW WHICH ACTION IS REQUIRED
-        mainActivityViewModel.getActionSingleLiveEvent().observe(this, action -> {
-            switch (action){
-                case PERMISSION_GRANTED:
-                    Toast.makeText(MainActivity.this, "Welcome, take a seat, have a lunch!", Toast.LENGTH_LONG).show();
-                    break;
-                case PERMISSION_ASKED:
-                    ActivityCompat.requestPermissions(MainActivity.this,
-                            new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
-                    Toast.makeText(MainActivity.this, "Needed for retrieve your position, thank you", Toast.LENGTH_SHORT).show();
-                    break;
+        mainActivityViewModel.getActionSingleLiveEvent().observe(this, new Observer<PermissionsViewAction>() {
+            @Override
+            public void onChanged(PermissionsViewAction action) {
+                switch (action) {
+                    case PERMISSION_GRANTED:
+                        Toast.makeText(MainActivity.this, "Welcome, take a seat, have a lunch!", Toast.LENGTH_LONG).show();
+                        break;
+                    case PERMISSION_ASKED:
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+                        Toast.makeText(MainActivity.this, "Needed for retrieve your position, thank you", Toast.LENGTH_SHORT).show();
+                        break;
 //             case PERMISSION_DENIED:
 //                 MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
 //                 alertDialogBuilder.setTitle("WARNING");
@@ -112,7 +120,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 //                 alertDialogBuilder.show();
 
 
-  //              break;
+                    //              break;
+                }
+            }
+        });
+
+        mainActivityViewModel.getPredictionsLiveData().observe(this, new Observer<List<Prediction>>() {
+            @Override
+            public void onChanged(List<Prediction> predictions) {
+
             }
         });
 

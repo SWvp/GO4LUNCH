@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class AutocompleteResponse {
+public class Predictions {
 
     @SerializedName("predictions")
     @Expose
