@@ -11,7 +11,7 @@ import com.kardabel.go4lunch.MainActivityViewModel;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.RestaurantDetailsResponseRepository;
 import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
-import com.kardabel.go4lunch.repository.SearchViewRepository;
+import com.kardabel.go4lunch.repository.AutocompleteRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
@@ -39,7 +39,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final NearbySearchResponseRepository nearbySearchResponseRepository;
     private final RestaurantDetailsResponseRepository mRestaurantDetailsResponseRepository;
     private final WorkmatesRepository workmatesRepository;
-    private final SearchViewRepository searchViewRepository;
+    private final AutocompleteRepository autocompleteRepository;
 
     private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase;
     private final GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase;
@@ -74,7 +74,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.nearbySearchResponseRepository = new NearbySearchResponseRepository(googleMapsApi);
         this.mRestaurantDetailsResponseRepository = new RestaurantDetailsResponseRepository(googleMapsApi);
         this.workmatesRepository = new WorkmatesRepository();
-        this.searchViewRepository = new SearchViewRepository(googleMapsApi);
+        this.autocompleteRepository = new AutocompleteRepository(googleMapsApi);
 
         this.getNearbySearchResultsUseCase = new GetNearbySearchResultsUseCase(
                 locationRepository,
@@ -91,7 +91,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         );
         this.firestoreUseCase = new FirestoreUseCase();
         this.searchViewUseCase = new SearchViewUseCase(
-                searchViewRepository,
+                autocompleteRepository,
                 locationRepository);
     }
 
@@ -117,7 +117,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new MainActivityViewModel(
                     application,
                     locationRepository,
-                    workmatesRepository);
+                    workmatesRepository,
+                    autocompleteRepository);
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
                     getNearbySearchResultsByIdUseCase,
