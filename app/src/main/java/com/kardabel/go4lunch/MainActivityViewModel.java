@@ -5,13 +5,21 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import android.app.Activity;
 import android.app.Application;
 import android.content.pm.PackageManager;
+import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+import com.kardabel.go4lunch.pojo.AutocompleteResponse;
+import com.kardabel.go4lunch.repository.AutocompleteRepository;
 import com.kardabel.go4lunch.repository.LocationRepository;
+import com.kardabel.go4lunch.repository.SearchViewRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
+import com.kardabel.go4lunch.ui.mapview.MapViewState;
 import com.kardabel.go4lunch.util.PermissionsViewAction;
 import com.kardabel.go4lunch.util.SingleLiveEvent;
 
@@ -19,19 +27,23 @@ public class MainActivityViewModel extends ViewModel {
 
     private SingleLiveEvent<PermissionsViewAction> actionSingleLiveEvent = new SingleLiveEvent<>();
 
-    private LocationRepository locationRepository;
     private Application application;
 
+    private LocationRepository locationRepository;
     private WorkmatesRepository workmatesRepository;
+    private AutocompleteRepository autocompleteRepository;
+
 
     public MainActivityViewModel(
             @NonNull Application application,
             @NonNull LocationRepository locationRepository,
-            @NonNull WorkmatesRepository workmatesRepository) {
+            @NonNull WorkmatesRepository workmatesRepository,
+            @NonNull AutocompleteRepository autocompleteRepository) {
         super();
         this.application = application;
         this.locationRepository = locationRepository;
         this.workmatesRepository = workmatesRepository;
+        this.autocompleteRepository = autocompleteRepository;
 
     }
 
@@ -63,6 +75,30 @@ public class MainActivityViewModel extends ViewModel {
         locationRepository.StartLocationRequest();
         workmatesRepository.getWorkmates();
         workmatesRepository.getRestaurantsAddedAsFavorite();
+
+    }
+
+    public void submitSearch(String text){
+        String description;
+
+        LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
+
+            String locationAsText = locationLiveData.getValue().getLatitude() + "," + locationLiveData.getValue().getLongitude();
+
+            autocompleteRepository.autocomplete(locationAsText,text);
+
+            LiveData<AutocompleteResponse> autocompleteResult =  autocompleteRepository.getAutocompleteResultListLiveData(locationAsText,text);
+       if(autocompleteResult.getValue().getPredictions() != null){
+
+           for (int i = 0; i < autocompleteResult.getValue().getPredictions().size(); i++) {
+               description = autocompleteResult.getValue().getPredictions().get(i).getDescription();
+
+           }
+
+       }
+
+
+
 
 
     }
