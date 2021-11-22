@@ -3,6 +3,8 @@ package com.kardabel.go4lunch;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 import android.annotation.SuppressLint;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -41,6 +43,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.manager.UserManager;
+import com.kardabel.go4lunch.repository.SearchViewRepository;
 import com.kardabel.go4lunch.usecase.SearchViewUseCase;
 
 
@@ -48,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         .OnNavigationItemSelectedListener {
 
     private MainActivityViewModel mainActivityViewModel;
-    private SearchViewUseCase searchViewUseCase;
 
     private AppBarConfiguration appBarConfiguration;
     private MainActivityBinding binding;
@@ -196,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 
     }
 
+    // SEARCHVIEW
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // INFLATE MENU
@@ -203,27 +206,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         inflater.inflate(R.menu.search_menu, menu);
 
         // GET SEARCHVIEW
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setBackgroundColor(Color.WHITE);
         EditText editText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         editText.setTextColor(Color.BLACK);
         editText.setHintTextColor(Color.GRAY);
+        // ASSUMES CURRENT ACTIVITY IS THE SEARCHABLE ACTIVITY
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
 
- //      searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
- //          @Override
- //          public boolean onQueryTextSubmit(String query) {
- //              //searchViewUseCase.getSearchViewResults(query);
- //              return false;
- //          }
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
- //          @Override
- //          public boolean onQueryTextChange(String newText) {
- //              return false; }
- //      });
- //      // ASSUMES CURRENT ACTIVITY IS THE SEARCHABLE ACTIVITY
- //      searchView.setIconifiedByDefault(false);
-       return true;
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.length() >= 2) {
+                    mainActivityViewModel.submitSearch(newText);
+
+                }
+                return false;
+            }
+        });
+
+        return true;
 
     }
 
