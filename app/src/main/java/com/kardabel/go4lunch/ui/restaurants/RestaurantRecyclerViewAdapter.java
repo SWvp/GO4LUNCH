@@ -3,8 +3,6 @@ package com.kardabel.go4lunch.ui.restaurants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,14 +11,12 @@ import com.bumptech.glide.Glide;
 import com.kardabel.go4lunch.databinding.ItemRestaurantBinding;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantRecyclerViewAdapter.ViewHolder> implements Filterable {
+public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantRecyclerViewAdapter.ViewHolder>  {
 
     private List<RestaurantsViewState> restaurantList = new ArrayList<>();
     private OnRestaurantItemClickListener onRestaurantItemClickListener;
-    private OnSearchViewQueryListener onSearchViewQueryListener;
 
     @NonNull
     @Override
@@ -73,45 +69,45 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
     }
 
-    @Override
-    public Filter getFilter() {
-        return filter;
+//  @Override
+//  public Filter getFilter() {
+//      return filter;
 
-    }
+//  }
 
-    // FILTER RESTAURANTS ITEM WITH SEARCHVIEW QUERY
-    Filter filter = new Filter() {
+// // FILTER RESTAURANTS ITEM WITH SEARCHVIEW QUERY
+// Filter filter = new Filter() {
 
-        // RUN ON BACKGROUND THREAD
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            List<RestaurantsViewState> filteredList = new ArrayList<>();
+//     // RUN ON BACKGROUND THREAD
+//     @Override
+//     protected FilterResults performFiltering(CharSequence constraint) {
+//         List<RestaurantsViewState> filteredList = new ArrayList<>();
 
-            if(constraint.toString().isEmpty()){
-                filteredList.addAll(restaurantList);
-            } else{
-                for (RestaurantsViewState restaurant : restaurantList){
-                    if (restaurant.getName().toLowerCase().contains(constraint.toString().toLowerCase())){
-                        filteredList.add(restaurant);
+//         if(constraint.toString().isEmpty()){
+//             filteredList.addAll(restaurantList);
+//         } else{
+//             for (RestaurantsViewState restaurant : restaurantList){
+//                 if (restaurant.getName().toLowerCase().contains(constraint.toString().toLowerCase())){
+//                     filteredList.add(restaurant);
 
-                    }
-                }
-            }
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-            return filterResults;
+//                 }
+//             }
+//         }
+//         FilterResults filterResults = new FilterResults();
+//         filterResults.values = filteredList;
+//         return filterResults;
 
-        }
+//     }
 
-        // RUN ON UI THREAD
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            restaurantList.clear();
-            restaurantList.addAll((Collection<? extends RestaurantsViewState>) results.values);
-            notifyDataSetChanged();
+//     // RUN ON UI THREAD
+//     @Override
+//     protected void publishResults(CharSequence constraint, FilterResults results) {
+//         restaurantList.clear();
+//         restaurantList.addAll((Collection<? extends RestaurantsViewState>) results.values);
+//         notifyDataSetChanged();
 
-        }
-    };
+//     }
+// };
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ItemRestaurantBinding viewHolderBinding;
@@ -146,8 +142,4 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
     }
 
-    public interface OnSearchViewQueryListener{
-        void onSearchViewQuery (String newText);
-
-    }
-}
+   }
