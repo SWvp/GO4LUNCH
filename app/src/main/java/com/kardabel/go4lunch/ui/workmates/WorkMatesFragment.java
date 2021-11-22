@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kardabel.go4lunch.databinding.RecyclerviewWorkmatesBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
+import com.kardabel.go4lunch.ui.chat.ChatActivity;
 
 import java.util.List;
 
@@ -52,6 +53,13 @@ public class WorkMatesFragment extends Fragment {
             @Override
             public void onChanged(List<WorkMatesViewState> workMatesViewStates) {
                 adapter.setWorkmatesListData(workMatesViewStates);
+            }
+        });
+
+        adapter.setOnItemClickListener(new WorkMatesRecyclerViewAdapter.OnWorkmateItemClickListener() {
+            @Override
+            public void onWorkmateItemClick(WorkMatesViewState workMatesViewState) {
+                startActivity(ChatActivity.navigate(requireContext(), workMatesViewState.getWorkmateId()));
             }
         });
     }

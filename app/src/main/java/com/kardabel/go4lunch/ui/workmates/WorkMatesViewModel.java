@@ -50,12 +50,14 @@ public class WorkMatesViewModel extends ViewModel {
 
             String description = users.get(i).getUserName();
             String avatar = users.get(i).getAvatarURL();
+            String workmateId = users.get(i).getUid();
             String restaurant = "";
 
             workMatesViewStateList.add(new WorkMatesViewState(
                     description + restaurant,
                     avatar,
                     restaurant,
+                    workmateId,
                     false
             ));
         }
@@ -72,12 +74,14 @@ public class WorkMatesViewModel extends ViewModel {
 
             String description = users.get(i).getUserName();
             String avatar = users.get(i).getAvatarURL();
+            String workmateId = users.get(i).getUid();
             String restaurant = userChoice(userId, usersWithRestaurant);
 
             workMatesViewStateList.add(new WorkMatesViewState(
                     description + restaurant,
                     avatar,
                     restaurant,
+                    workmateId,
                     isUserHasDecided(userId, usersWithRestaurant)
             ));
         }

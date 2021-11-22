@@ -7,13 +7,15 @@ public class WorkMatesViewState {
     private final String workmateDescription;
     private final String workmatePhoto;
     private final String workmateRestaurant;
+    private final String workmateId;
     private boolean gotRestaurant;
 
-    public WorkMatesViewState(String workmateDescription, String workmatePhoto, String workmateRestaurant, boolean gotRestaurant) {
+    public WorkMatesViewState(String workmateDescription, String workmatePhoto, String workmateRestaurant,String workmateId, boolean gotRestaurant) {
         this.workmateDescription = workmateDescription;
         this.workmatePhoto = workmatePhoto;
         this.workmateRestaurant = workmateRestaurant;
         this.gotRestaurant = gotRestaurant;
+        this.workmateId = workmateId;
     }
 
     public String getWorkmateDescription() {
@@ -28,6 +30,8 @@ public class WorkMatesViewState {
         return workmateRestaurant;
     }
 
+    public String getWorkmateId() { return workmateId; }
+
     public boolean isUserHasDecided() {
         return gotRestaurant;
     }
@@ -37,25 +41,22 @@ public class WorkMatesViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WorkMatesViewState that = (WorkMatesViewState) o;
-        return Objects.equals(workmateDescription, that.workmateDescription)
-                && Objects.equals(workmatePhoto, that.workmatePhoto)
-                && Objects.equals(workmateRestaurant, that.workmateRestaurant);
+        return gotRestaurant == that.gotRestaurant && Objects.equals(workmateDescription, that.workmateDescription) && Objects.equals(workmatePhoto, that.workmatePhoto) && Objects.equals(workmateRestaurant, that.workmateRestaurant) && Objects.equals(workmateId, that.workmateId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                workmateDescription,
-                workmatePhoto,
-                workmateRestaurant);
+        return Objects.hash(workmateDescription, workmatePhoto, workmateRestaurant, workmateId, gotRestaurant);
     }
 
     @Override
     public String toString() {
         return "WorkMatesViewState{" +
-                "workmateName='" + workmateDescription + '\'' +
+                "workmateDescription='" + workmateDescription + '\'' +
                 ", workmatePhoto='" + workmatePhoto + '\'' +
                 ", workmateRestaurant='" + workmateRestaurant + '\'' +
+                ", workmateId='" + workmateId + '\'' +
+                ", gotRestaurant=" + gotRestaurant +
                 '}';
     }
 }

@@ -10,11 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.kardabel.go4lunch.databinding.ItemWorkmateBinding;
+import com.kardabel.go4lunch.ui.restaurants.RestaurantRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMatesRecyclerViewAdapter.ViewHolder> {
+
+    private OnWorkmateItemClickListener onWorkmateItemClickListener;
 
     private List<WorkMatesViewState> workmatesList = new ArrayList<>();
 
@@ -68,5 +71,16 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
             viewHolderBinding = itemView;
 
         }
+    }
+
+    public void setOnItemClickListener(OnWorkmateItemClickListener onWorkmateItemClickListener){
+        this.onWorkmateItemClickListener = onWorkmateItemClickListener;
+
+    }
+
+    // WHEN USER CLICK ON A WORKMATE ITEM TO DISPLAY RESTAURANT DETAILS
+    public interface OnWorkmateItemClickListener{
+        void onWorkmateItemClick (WorkMatesViewState workMatesViewState);
+
     }
 }
