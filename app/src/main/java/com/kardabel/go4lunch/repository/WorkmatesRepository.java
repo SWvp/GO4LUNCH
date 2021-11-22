@@ -9,6 +9,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.kardabel.go4lunch.model.UserModel;
 import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
+import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ public class WorkmatesRepository {
         // WITH SET, WE ENSURE THERE IS NO DUPLICATE, FOR EXAMPLE WHEN ANOTHER USER CHANGE NAME FIELD
         Set<UserModel> workmates = new HashSet<>();
 
+        String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
+
         // TODO : order by "is restaurant been chosen"
         db.collection("users")
                 .orderBy("userName")
@@ -36,14 +39,18 @@ public class WorkmatesRepository {
                         Log.e("Firestore error", error.getMessage());
                         return;
                     }
-                    for(DocumentChange document : value.getDocumentChanges()){
-                        if(
-                                document.getType() == DocumentChange.Type.ADDED ||
-                                document.getType() == DocumentChange.Type.MODIFIED){
+                    for (DocumentChange document : value.getDocumentChanges()) {
+                        UserModel usermodel = document.getDocument().toObject(UserModel.class);
 
-                            workmates.add(document.getDocument().toObject(UserModel.class));
+                        if (!userId.equals(usermodel.getUid())) {
+                            if (document.getType() == DocumentChange.Type.ADDED ||
+                                document.getType() == DocumentChange.Type.MODIFIED) {
 
+                                workmates.add(document.getDocument().toObject(UserModel.class));
+
+                            }
                         }
+
                     }
                     List<UserModel> workmatesList = new ArrayList<>(workmates);
                     userModelMutableLiveData.setValue(workmatesList);
