@@ -27,25 +27,23 @@ public class GetNearbySearchResultsByIdUseCase {
     }
 
 
-
     public LiveData<RestaurantSearch> invoke(String placeId) {
         return Transformations.switchMap(locationRepository.getLocationLiveData(), new Function<Location, LiveData<RestaurantSearch>>() {
             @Override
             public LiveData<RestaurantSearch> apply(Location input) {
                 String locationAsText = input.getLatitude() + "," + input.getLongitude();
                 return Transformations.map(nearbySearchResponseRepository.getRestaurantListLiveData("restaurant", locationAsText, "1000"), new Function<NearbySearchResults, RestaurantSearch>() {
-                            @Override
-                            public RestaurantSearch apply(NearbySearchResults nearbySearchResults) {
-                                for (RestaurantSearch restaurantSearch : nearbySearchResults.getResults()) {
-                                    if (restaurantSearch.getRestaurantId().equals(placeId)) {
-                                        return restaurantSearch;
+                    @Override
+                    public RestaurantSearch apply(NearbySearchResults nearbySearchResults) {
+                        for (RestaurantSearch restaurantSearch : nearbySearchResults.getResults()) {
+                            if (restaurantSearch.getRestaurantId().equals(placeId)) {
+                                return restaurantSearch;
 
-                                    }
-                                }
-                                return null;
                             }
                         }
-                );
+                        return null;
+                    }
+                });
             }
         });
     }
