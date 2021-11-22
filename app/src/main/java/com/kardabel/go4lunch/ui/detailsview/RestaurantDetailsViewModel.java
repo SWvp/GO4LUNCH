@@ -149,8 +149,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
             }
         }
-        if (restaurantDetails.getDetailsResult().getFormatted_phone_number() != null) {
-            restaurantPhoneNumber = restaurantDetails.getDetailsResult().getFormatted_phone_number();
+        if (restaurantDetails.getDetailsResult().getFormattedPhoneNumber() != null) {
+            restaurantPhoneNumber = restaurantDetails.getDetailsResult().getFormattedPhoneNumber();
 
         }
         if (restaurantDetails.getDetailsResult().getWebsite() != null) {
