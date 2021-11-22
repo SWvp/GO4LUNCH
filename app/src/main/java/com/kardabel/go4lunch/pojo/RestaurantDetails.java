@@ -17,7 +17,7 @@ public class RestaurantDetails {
 
     @SerializedName("formatted_phone_number")
     @Expose
-    private String formatted_phone_number;
+    private String formattedPhoneNumber;
 
     @SerializedName("website")
     @Expose
@@ -25,11 +25,11 @@ public class RestaurantDetails {
 
     public RestaurantDetails(String placeId,
                              OpeningHours openingHours,
-                             String formatted_phone_number,
+                             String formattedPhoneNumber,
                              String website) {
         this.placeId = placeId;
         this.openingHours = openingHours;
-        this.formatted_phone_number = formatted_phone_number;
+        this.formattedPhoneNumber = formattedPhoneNumber;
         this.website = website;
     }
 
@@ -37,7 +37,7 @@ public class RestaurantDetails {
 
     public OpeningHours getOpeningHours() { return openingHours; }
 
-    public String getFormatted_phone_number() { return formatted_phone_number; }
+    public String getFormattedPhoneNumber() { return formattedPhoneNumber; }
 
     public String getWebsite() { return website; }
 
@@ -48,7 +48,7 @@ public class RestaurantDetails {
         RestaurantDetails that = (RestaurantDetails) o;
         return Objects.equals(placeId, that.placeId) &&
                 Objects.equals(openingHours, that.openingHours) &&
-                Objects.equals(formatted_phone_number, that.formatted_phone_number) &&
+                Objects.equals(formattedPhoneNumber, that.formattedPhoneNumber) &&
                 Objects.equals(website, that.website);
 
     }
@@ -58,7 +58,7 @@ public class RestaurantDetails {
         return Objects.hash(
                 placeId,
                 openingHours,
-                formatted_phone_number,
+                formattedPhoneNumber,
                 website);
 
     }
@@ -68,7 +68,7 @@ public class RestaurantDetails {
         return "RestaurantDetails{" +
                 "placeId='" + placeId + '\'' +
                 ", openingHours=" + openingHours +
-                ", formatted_phone_number='" + formatted_phone_number + '\'' +
+                ", formatted_phone_number='" + formattedPhoneNumber + '\'' +
                 ", website='" + website + '\'' +
                 '}';
 
