@@ -3,6 +3,7 @@ package com.kardabel.go4lunch.ui.workmates;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -48,6 +49,14 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
                 .load(workMate.getWorkmatePhoto())
                 .circleCrop()
                 .into(holder.viewHolderBinding.itemWorkmateAvatar);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onWorkmateItemClickListener.onWorkmateItemClick(workMate);
+
+            }
+        });
 
     }
 
