@@ -96,7 +96,9 @@ public class MapViewModelTest {
                         new OpeningHours(false, null),
                         2,
                         25,
-                        false
+                        false,
+                        "",
+                        ""
                 )
         );
         restaurants.add(
@@ -109,7 +111,9 @@ public class MapViewModelTest {
                         new OpeningHours(false, null),
                         2,
                         25,
-                        false
+                        false,
+                        "",
+                        ""
                 )
         );
         return restaurants;
