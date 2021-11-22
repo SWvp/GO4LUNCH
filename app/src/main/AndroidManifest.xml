@@ -45,6 +45,11 @@
         <activity
             android:name=".ui.detailsview.RestaurantDetailsActivity"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ui.chat.ChatActivity"
+            android:parentActivityName=".MainActivity" />
+
+
 
         <activity android:name=".SearchableActivity" >
             <intent-filter>

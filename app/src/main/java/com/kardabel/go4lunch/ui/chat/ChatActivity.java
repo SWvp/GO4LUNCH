@@ -17,7 +17,7 @@ public class ChatActivity extends AppCompatActivity {
     private ChatActivityBinding binding;
 
     public static Intent navigate(Context context, String workmateId){
-        Intent intent = new Intent(context, RestaurantDetailsActivity.class);
+        Intent intent = new Intent(context, ChatActivity.class);
         intent.putExtra(WORMATE_ID, workmateId);
         return intent;
     }

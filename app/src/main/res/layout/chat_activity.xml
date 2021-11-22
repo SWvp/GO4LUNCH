@@ -4,12 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/orange">
+    android:background="@color/orange"
+    android:fitsSystemWindows="true">
 
     <ImageButton
+        android:id="@+id/imageButton"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:src="@drawable/back_arrow"/>
+        android:src="@drawable/back_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/avatar"
@@ -66,10 +70,8 @@
         android:id="@+id/activity_chat_send_button"
         android:layout_width="38dp"
         android:layout_height="35dp"
-        android:layout_gravity="center_vertical"
         android:background="@android:color/transparent"
         android:padding="8dp"
-        android:scaleType="fitCenter"
         android:src="@drawable/ic_baseline_send_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
