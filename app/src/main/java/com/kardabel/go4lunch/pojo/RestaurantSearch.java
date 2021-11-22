@@ -46,6 +46,14 @@ public class RestaurantSearch {
     @Expose
     private boolean permanentlyClosed;
 
+    @SerializedName("formatted_phone_number")
+    @Expose
+    private String formattedPhoneNumber;
+
+    @SerializedName("website")
+    @Expose
+    private String website;
+
     public RestaurantSearch(){
 
     }
@@ -63,7 +71,9 @@ public class RestaurantSearch {
                             OpeningHours openingHours,
                             double rating,
                             int totalRatings,
-                            boolean permanentlyClosed) {
+                            boolean permanentlyClosed,
+                            String formattedPhoneNumber,
+                            String website) {
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.restaurantAddress = restaurantAddress;
@@ -73,6 +83,8 @@ public class RestaurantSearch {
         this.rating = rating;
         this.totalRatings = totalRatings;
         this.permanentlyClosed = permanentlyClosed;
+        this.formattedPhoneNumber = formattedPhoneNumber;
+        this.website = website;
 
     }
 
@@ -98,6 +110,10 @@ public class RestaurantSearch {
 
     public int getTotalRatings() { return totalRatings; }
 
+    public String getFormattedPhoneNumber() { return formattedPhoneNumber; }
+
+    public String getWebsite() { return website; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -111,7 +127,9 @@ public class RestaurantSearch {
                 Objects.equals(restaurantAddress, that.restaurantAddress) &&
                 Objects.equals(restaurantPhotos, that.restaurantPhotos) &&
                 Objects.equals(restaurantGeometry, that.restaurantGeometry) &&
-                Objects.equals(openingHours, that.openingHours);
+                Objects.equals(openingHours, that.openingHours) &&
+                Objects.equals(formattedPhoneNumber, that.formattedPhoneNumber) &&
+                Objects.equals(website, that.website);
     }
 
     @Override
@@ -125,13 +143,15 @@ public class RestaurantSearch {
                 openingHours,
                 rating,
                 totalRatings,
-                permanentlyClosed);
+                permanentlyClosed,
+                formattedPhoneNumber,
+                website);
     }
 
     @Override
     public String toString() {
         return "RestaurantSearch{" +
-                "placeId='" + restaurantId + '\'' +
+                "restaurantId='" + restaurantId + '\'' +
                 ", restaurantName='" + restaurantName + '\'' +
                 ", restaurantAddress='" + restaurantAddress + '\'' +
                 ", restaurantPhotos=" + restaurantPhotos +
@@ -140,6 +160,8 @@ public class RestaurantSearch {
                 ", rating=" + rating +
                 ", totalRatings=" + totalRatings +
                 ", permanentlyClosed=" + permanentlyClosed +
+                ", formattedPhoneNumber='" + formattedPhoneNumber + '\'' +
+                ", website='" + website + '\'' +
                 '}';
     }
 }
