@@ -22,9 +22,6 @@
             app:layout_scrollFlags="scroll">
 
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/detail_picture"
@@ -36,74 +33,12 @@
                     app:layout_collapseMode="parallax" />
 
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/details_restaurant_info"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
 
-                    android:background="@color/orange"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
-
-                    <TextView
-                        android:id="@+id/detail_restaurant_name"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:text="@string/restaurant_name"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <RatingBar
-                        android:id="@+id/details_rating"
-                        style="?android:attr/ratingBarStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="4dp"
-                        android:numStars="3"
-                        android:progressBackgroundTint="@color/fui_transparent"
-                        android:progressTint="@color/rating_star_gold"
-                        app:layout_constraintStart_toEndOf="@id/detail_restaurant_name"
-                        app:layout_constraintTop_toTopOf="@+id/detail_restaurant_name" />
-
-                    <TextView
-                        android:id="@+id/detail_restaurant_address"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginBottom="20dp"
-                        android:text="@string/restaurant_address"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/detail_restaurant_name" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_favorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:baselineAlignBottom="false"
-        android:background="@color/white"
-        android:src="@drawable/fab_detail"
-        app:fabSize="normal"
-        android:layout_marginEnd="16dp"
-        android:layout_gravity="end|bottom"
-        android:clickable="true"
-        android:focusable="true" />
+
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -114,20 +49,71 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/details_restaurant_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:background="@color/orange"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/detail_restaurant_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/restaurant_name"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <RatingBar
+                    android:id="@+id/details_rating"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
+                    android:numStars="3"
+                    android:progressBackgroundTint="@color/fui_transparent"
+                    android:progressTint="@color/rating_star_gold"
+                    app:layout_constraintStart_toEndOf="@id/detail_restaurant_name"
+                    app:layout_constraintTop_toTopOf="@+id/detail_restaurant_name" />
+
+                <TextView
+                    android:id="@+id/detail_restaurant_address"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="@string/restaurant_address"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/detail_restaurant_name" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/call_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="48dp"
+                android:layout_marginTop="16dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:text="@string/call_button"
                 android:textColor="@color/orange"
                 app:drawableTopCompat="@drawable/call_icon"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/details_restaurant_info" />
 
             <ImageButton
                 android:id="@+id/detail_like_button"
@@ -156,7 +142,7 @@
                 android:id="@+id/web_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="32dp"
+                android:layout_marginEnd="48dp"
                 android:text="@string/web_icon"
                 android:textColor="@color/orange"
                 app:layout_constraintBottom_toBottomOf="@+id/call_icon"
@@ -177,4 +163,18 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:baselineAlignBottom="false"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/fab_detail"
+        app:fabSize="normal"
+        android:layout_marginEnd="16dp"
+        app:layout_anchor="@id/detail_appBar"
+        app:layout_anchorGravity="end|bottom"
+        android:clickable="true"
+        android:focusable="true" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
