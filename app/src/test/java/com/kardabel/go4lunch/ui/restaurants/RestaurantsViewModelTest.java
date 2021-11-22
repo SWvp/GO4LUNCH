@@ -688,7 +688,10 @@ public class RestaurantsViewModelTest {
                         new OpeningHours(true, null),
                         2,
                         25,
-                        false
+                        false,
+                        firstNumber,
+                        firstSite
+
                 )
         );
         restaurants.add(
@@ -701,7 +704,9 @@ public class RestaurantsViewModelTest {
                         new OpeningHours(true, null),
                         4,
                         25,
-                        false
+                        false,
+                        secondNumber,
+                        secondSite
                 )
         );
         return restaurants;
@@ -720,7 +725,9 @@ public class RestaurantsViewModelTest {
                         new OpeningHours(true, null),
                         2,
                         25,
-                        true
+                        true,
+                        firstNumber,
+                        firstSite
                 )
         );
         restaurants.add(
@@ -733,7 +740,9 @@ public class RestaurantsViewModelTest {
                         new OpeningHours(true, null),
                         4,
                         25,
-                        true
+                        true,
+                        secondNumber,
+                        secondSite
                 )
         );
         return restaurants;
@@ -752,7 +761,9 @@ public class RestaurantsViewModelTest {
                         new OpeningHours(true, null),
                         4,
                         25,
-                        true
+                        true,
+                        firstNumber,
+                        firstSite
                 )
         );
         restaurants.add(
@@ -765,7 +776,9 @@ public class RestaurantsViewModelTest {
                         new OpeningHours(true, null),
                         1,
                         25,
-                        true
+                        true,
+                        secondNumber,
+                        secondSite
                 )
         );
         return restaurants;
@@ -784,7 +797,9 @@ public class RestaurantsViewModelTest {
                         new OpeningHours(true, null),
                         4,
                         25,
-                        true
+                        true,
+                        firstNumber,
+                        firstSite
                 )
         );
         restaurants.add(
@@ -797,7 +812,9 @@ public class RestaurantsViewModelTest {
                         new OpeningHours(true, null),
                         1,
                         25,
-                        true
+                        true,
+                        secondNumber,
+                        secondSite
                 )
         );
         return restaurants;
@@ -816,7 +833,9 @@ public class RestaurantsViewModelTest {
                         new OpeningHours(true, null),
                         2,
                         25,
-                        false
+                        false,
+                        firstNumber,
+                        firstSite
                 )
         );
         restaurants.add(
@@ -829,7 +848,9 @@ public class RestaurantsViewModelTest {
                         new OpeningHours(false, null),
                         4,
                         25,
-                        false
+                        false,
+                        secondNumber,
+                        secondSite
                 )
         );
         return restaurants;
