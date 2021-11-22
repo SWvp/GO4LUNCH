@@ -1,6 +1,6 @@
 package com.kardabel.go4lunch.retrofit;
 
-import com.kardabel.go4lunch.pojo.AutocompleteResponse;
+import com.kardabel.go4lunch.pojo.Predictions;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.SearchViewResult;
@@ -40,7 +40,7 @@ public interface GoogleMapsApi {
 
 
     @GET("maps/api/place/autocomplete/json")
-    Call<AutocompleteResponse> autocompleteResult(
+    Call<Predictions> autocompleteResult(
             @Query("key") String key,
             @Query("type") String type,
             @Query("location") String location,
