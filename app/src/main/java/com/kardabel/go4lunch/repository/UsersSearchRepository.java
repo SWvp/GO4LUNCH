@@ -1,6 +1,7 @@
 package com.kardabel.go4lunch.repository;
 
 
+import android.location.Location;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -18,26 +19,26 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SearchViewRepository {
+public class UsersSearchRepository {
 
     private final GoogleMapsApi googleMapsApi;
     private final String key = "AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8";
-    private static final String FIELDS = "formatted_phone_number,opening_hours,website,place_id";
+    private static final String FIELDS = "place_id, name, vicinity, photos, geometry, opening_hours, rating, user_rating_total, permanently_closed, formatted_phone_number, website, formatted_phone_number,opening_hours,website,place_id";
+    private final MutableLiveData<SearchViewResult> searchViewResultLiveData = new MutableLiveData<>();
 
     private final Map<String, SearchViewResult> cache = new HashMap<>(2000);
 
-    public SearchViewRepository(GoogleMapsApi googleMapsApi) {
+    public UsersSearchRepository(GoogleMapsApi googleMapsApi) {
         this.googleMapsApi = googleMapsApi;
     }
 
-    public LiveData<SearchViewResult> getSearchViewLiveData(String place_id) {
+    public void usersSearch(String place_id) {
 
-        MutableLiveData<SearchViewResult> searchViewResultLiveData = new MutableLiveData<>();
         SearchViewResult searchViewResult = cache.get(place_id);
         if (searchViewResult != null) {
             searchViewResultLiveData.setValue(searchViewResult);
         } else {
-            Call<SearchViewResult> call = googleMapsApi.searchViewResult(key, place_id);
+            Call<SearchViewResult> call = googleMapsApi.searchViewResult(key, place_id, FIELDS);
             call.enqueue(new Callback<SearchViewResult>() {
                 @Override
                 public void onResponse(@NonNull Call<SearchViewResult> call,
@@ -58,7 +59,9 @@ public class SearchViewRepository {
                 }
             });
         }
-        return searchViewResultLiveData;
+    }
 
+    public LiveData<SearchViewResult> getUsersSearchLiveData() {
+        return searchViewResultLiveData;
     }
 }
