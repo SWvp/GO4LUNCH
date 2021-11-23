@@ -8,10 +8,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.kardabel.go4lunch.MainApplication;
 import com.kardabel.go4lunch.MainActivityViewModel;
+import com.kardabel.go4lunch.SearchableViewModel;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.RestaurantDetailsResponseRepository;
 import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 import com.kardabel.go4lunch.repository.AutocompleteRepository;
+import com.kardabel.go4lunch.repository.UsersSearchRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
@@ -24,6 +26,7 @@ import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsByIdUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetUsersSearchUseCase;
 import com.kardabel.go4lunch.usecase.SearchViewUseCase;
 
 import java.time.Clock;
@@ -41,6 +44,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final RestaurantDetailsResponseRepository mRestaurantDetailsResponseRepository;
     private final WorkmatesRepository workmatesRepository;
     private final AutocompleteRepository autocompleteRepository;
+    private final UsersSearchRepository usersSearchRepository;
 
     private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase;
     private final GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase;
@@ -49,6 +53,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final FirestoreUseCase firestoreUseCase;
     private final SearchViewUseCase searchViewUseCase;
     private final GetPredictionsUseCase getPredictionsUseCase;
+    private final GetUsersSearchUseCase getUsersSearchUseCase;
 
 
     public static ViewModelFactory getInstance() {
@@ -77,6 +82,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.mRestaurantDetailsResponseRepository = new RestaurantDetailsResponseRepository(googleMapsApi);
         this.workmatesRepository = new WorkmatesRepository();
         this.autocompleteRepository = new AutocompleteRepository(googleMapsApi);
+        this.usersSearchRepository = new UsersSearchRepository(googleMapsApi);
 
         this.getNearbySearchResultsUseCase = new GetNearbySearchResultsUseCase(
                 locationRepository,
@@ -98,6 +104,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.getPredictionsUseCase = new GetPredictionsUseCase(
                 locationRepository,
                 autocompleteRepository);
+        this.getUsersSearchUseCase = new GetUsersSearchUseCase(usersSearchRepository);
     }
 
 
@@ -112,6 +119,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     getNearbySearchResultsUseCase,
                     getRestaurantDetailsResultsUseCase,
                     workmatesRepository,
+                    usersSearchRepository,
                     Clock.systemDefaultZone());
         } else if (modelClass.isAssignableFrom(MapViewModel.class)) {
             return (T) new MapViewModel(
@@ -132,6 +140,10 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         } else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
             return (T) new WorkMatesViewModel(
                     workmatesRepository
+            );
+        } else if (modelClass.isAssignableFrom(SearchableViewModel.class)) {
+            return (T) new SearchableViewModel(
+                    usersSearchRepository
             );
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
