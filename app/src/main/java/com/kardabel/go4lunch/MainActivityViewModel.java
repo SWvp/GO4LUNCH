@@ -5,21 +5,17 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import android.app.Activity;
 import android.app.Application;
 import android.content.pm.PackageManager;
-import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.pojo.Prediction;
 import com.kardabel.go4lunch.pojo.Predictions;
-import com.kardabel.go4lunch.repository.AutocompleteRepository;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
-import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewState;
 import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 import com.kardabel.go4lunch.util.PermissionsViewAction;
 import com.kardabel.go4lunch.util.SingleLiveEvent;
@@ -29,15 +25,15 @@ import java.util.List;
 
 public class MainActivityViewModel extends ViewModel {
 
-    private MediatorLiveData<List<Prediction>> predictionsMediatorLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<List<PredictionsViewState>> predictionsMediatorLiveData = new MediatorLiveData<>();
 
-    private SingleLiveEvent<PermissionsViewAction> actionSingleLiveEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<PermissionsViewAction> actionSingleLiveEvent = new SingleLiveEvent<>();
 
-    private Application application;
+    private final Application application;
 
-    private LocationRepository locationRepository;
-    private WorkmatesRepository workmatesRepository;
-    private GetPredictionsUseCase getPredictionsUseCase;
+    private final LocationRepository locationRepository;
+    private final WorkmatesRepository workmatesRepository;
+    private final GetPredictionsUseCase getPredictionsUseCase;
 
 
     public MainActivityViewModel(
@@ -53,13 +49,13 @@ public class MainActivityViewModel extends ViewModel {
 
     }
 
+    // CHECK PERMISSIONS
     public void checkPermission(Activity activity) {
         if (ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_GRANTED);
             permissionGranted();
 
         }
-
   //    else if(ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
   //        actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_ASKED);
 
@@ -69,7 +65,6 @@ public class MainActivityViewModel extends ViewModel {
  //      actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
 
  //  }
-
         else {
             actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_ASKED);
 
@@ -84,21 +79,37 @@ public class MainActivityViewModel extends ViewModel {
 
     }
 
-    public void submitSearch(String text){
-        List<Prediction> predictionsList = new ArrayList<>();
+    // WHEN CLICKING ON SEARCHVIEW (AFTER 2 CHARS)
+    public void submitSearch(String text) {
 
+        if (text.length() >= 1) {
+            LiveData<Predictions> predictionsLiveData = getPredictionsUseCase.invoke(text);
 
-        LiveData<Predictions> predictionsLiveData = getPredictionsUseCase.invoke(text);
+            // TODO: observe and retrieve the distance to calculate the distance from user
 
+            predictionsMediatorLiveData.addSource(predictionsLiveData, predictions -> combine(predictions));
 
+        }
+    }
 
-        predictionsMediatorLiveData.addSource(predictionsLiveData, new Observer<Predictions>() {
-            @Override
-            public void onChanged(Predictions predictions) {
-                predictionsList.addAll(predictions.getPredictions());
-                predictionsMediatorLiveData.setValue(predictionsList);
-            }
-        });
+    private void combine(Predictions predictions) {
+        if(predictions!= null){
+            predictionsMediatorLiveData.setValue(map(predictions));
+        }
+    }
+
+    private List<PredictionsViewState> map(Predictions predictions) {
+
+        List<PredictionsViewState> predictionsList = new ArrayList<>();
+
+        for (Prediction prediction: predictions.getPredictions()) {
+            predictionsList.add(new PredictionsViewState(
+                    prediction.getDescription(),
+                    prediction.getPlaceId()
+            ));
+        }
+
+        return predictionsList;
 
     }
 
@@ -107,7 +118,7 @@ public class MainActivityViewModel extends ViewModel {
 
     }
 
-    public LiveData<List<Prediction>> getPredictionsLiveData(){
+    public LiveData<List<PredictionsViewState>> getPredictionsLiveData(){
         return predictionsMediatorLiveData;
 
     }
