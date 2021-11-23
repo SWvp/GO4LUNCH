@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 
 public class SearchableActivity extends Activity {
 
+    private SearchableViewModel searchableViewModel;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +27,8 @@ public class SearchableActivity extends Activity {
     }
 
     private void doMySearch(String query) {
+
+        searchableViewModel.getSearch(query);
 
     }
 }
