@@ -30,14 +30,9 @@ public interface GoogleMapsApi {
     @GET("maps/api/place/details/json")
     Call<SearchViewResult> searchViewResult(
             @Query("key") String key,
-            @Query("place_id") String place_id
+            @Query("place_id") String place_id,
+            @Query("fields") String fields
     );
-
-
-
-
-
-
 
     @GET("maps/api/place/autocomplete/json")
     Call<Predictions> autocompleteResult(
