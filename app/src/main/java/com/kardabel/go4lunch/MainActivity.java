@@ -19,10 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,17 +34,19 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
+import com.kardabel.go4lunch.databinding.RecyclerviewPredictionsBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.manager.UserManager;
-import com.kardabel.go4lunch.pojo.Prediction;
-import com.kardabel.go4lunch.repository.SearchViewRepository;
-import com.kardabel.go4lunch.usecase.SearchViewUseCase;
-import com.kardabel.go4lunch.util.PermissionsViewAction;
+import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 
 import java.util.List;
 
@@ -63,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private final UserManager userManager = UserManager.getInstance();
+    private PredictionsAdapter adapter;
+
+    private RecyclerviewPredictionsBinding recyclerviewPredictionsBinding;
 
     private static final int LOCATION_PERMISSION_CODE = 100;
 
@@ -101,18 +102,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         NavigationUI.setupWithNavController(navView, navController);
 
         // RECEIVE SINGLE LIVEDATA EVENT FROM VM TO KNOW WHICH ACTION IS REQUIRED
-        mainActivityViewModel.getActionSingleLiveEvent().observe(this, new Observer<PermissionsViewAction>() {
-            @Override
-            public void onChanged(PermissionsViewAction action) {
-                switch (action) {
-                    case PERMISSION_GRANTED:
-                        Toast.makeText(MainActivity.this, "Welcome, take a seat, have a lunch!", Toast.LENGTH_LONG).show();
-                        break;
-                    case PERMISSION_ASKED:
-                        ActivityCompat.requestPermissions(MainActivity.this,
-                                new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
-                        Toast.makeText(MainActivity.this, "Needed for retrieve your position, thank you", Toast.LENGTH_SHORT).show();
-                        break;
+        mainActivityViewModel.getActionSingleLiveEvent().observe(this, action -> {
+            switch (action) {
+                case PERMISSION_GRANTED:
+                    Toast.makeText(MainActivity.this, "Welcome, take a seat, have a lunch!", Toast.LENGTH_LONG).show();
+                    break;
+                case PERMISSION_ASKED:
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+                    Toast.makeText(MainActivity.this, "Needed for retrieve your position, thank you", Toast.LENGTH_SHORT).show();
+                    break;
 //             case PERMISSION_DENIED:
 //                 MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
 //                 alertDialogBuilder.setTitle("WARNING");
@@ -120,14 +119,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 //                 alertDialogBuilder.show();
 
 
-                    //              break;
-                }
+                //              break;
             }
         });
 
-        mainActivityViewModel.getPredictionsLiveData().observe(this, new Observer<List<Prediction>>() {
+        // UPDATE ITEM ADAPTER FOR SEARCHVIEW
+
+        adapter = new PredictionsAdapter();
+        //recyclerviewPredictionsBinding.predictionsRecyclerView.setAdapter(adapter);
+        //recyclerviewPredictionsBinding.predictionsRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, RecyclerView.VERTICAL,false));
+
+
+        mainActivityViewModel.getPredictionsLiveData().observe(this, new Observer<List<PredictionsViewState>>() {
             @Override
-            public void onChanged(List<Prediction> predictions) {
+            public void onChanged(List<PredictionsViewState> predictions) {
+                adapter.setPredictionsItemList(predictions, MainActivity.this);
 
             }
         });
@@ -135,11 +141,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         updateUIWhenCreating();
     }
 
+    // HERE WE UPDATE INTERFACE WITH USERS INFORMATION
     private void updateUIWhenCreating() {
         View header = binding.navigationView.getHeaderView(0);
-        ImageView profilePicture = (ImageView) header.findViewById(R.id.header_picture);
-        TextView profileUsername = (TextView) header.findViewById(R.id.header_name);
-        TextView profileUserEmail = (TextView) header.findViewById(R.id.header_email);
+        ImageView profilePicture = header.findViewById(R.id.header_picture);
+        TextView profileUsername = header.findViewById(R.id.header_name);
+        TextView profileUserEmail = header.findViewById(R.id.header_email);
 
         FirebaseUser currentUser = userManager.getCurrentUser();
         if (currentUser != null) {
@@ -184,7 +191,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
                 break;
 
         }
-
         this.drawerLayout.closeDrawer(GravityCompat.START);
         return true;
 
@@ -211,6 +217,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView
     private void configureNavigationView() {
         NavigationView navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this,
+                R.id.nav_host_fragment_activity_main);
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
+                || super.onSupportNavigateUp();
 
     }
 
@@ -241,24 +256,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.length() >= 2) {
-                    mainActivityViewModel.submitSearch(newText);
-
-                }
+                mainActivityViewModel.submitSearch(newText);
                 return false;
             }
         });
 
         return true;
-
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this,
-                R.id.nav_host_fragment_activity_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
 
     }
 
@@ -269,5 +272,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         super.onResume();
         mainActivityViewModel.checkPermission(this);
     }
-
 }
