@@ -9,7 +9,8 @@ public class GetRestaurantDetailsResultsByIdUseCase {
 
     private  final RestaurantDetailsResponseRepository restaurantDetailsResponseRepository;
 
-    public GetRestaurantDetailsResultsByIdUseCase(RestaurantDetailsResponseRepository restaurantDetailsResponseRepository){
+    public GetRestaurantDetailsResultsByIdUseCase(
+            RestaurantDetailsResponseRepository restaurantDetailsResponseRepository){
 
         this.restaurantDetailsResponseRepository = restaurantDetailsResponseRepository;
     }
