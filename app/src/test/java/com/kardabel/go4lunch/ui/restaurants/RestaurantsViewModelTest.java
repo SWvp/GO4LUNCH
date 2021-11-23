@@ -23,10 +23,12 @@ import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.pojo.RestaurantLatLngLiteral;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
+import com.kardabel.go4lunch.repository.UsersSearchRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetUsersSearchUseCase;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -53,9 +55,10 @@ public class RestaurantsViewModelTest {
 
     private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
     private final WorkmatesRepository workmatesRepository = Mockito.mock(WorkmatesRepository.class);
+    private final UsersSearchRepository usersSearchRepository = Mockito.mock(UsersSearchRepository.class);
 
-    private final GetNearbySearchResultsUseCase mGetNearbySearchResultsUseCase = Mockito.mock(GetNearbySearchResultsUseCase.class);
-    private final GetRestaurantDetailsResultsUseCase mGetRestaurantDetailsResultsUseCase = Mockito.mock(GetRestaurantDetailsResultsUseCase.class);
+    private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase = Mockito.mock(GetNearbySearchResultsUseCase.class);
+    private final GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase = Mockito.mock(GetRestaurantDetailsResultsUseCase.class);
 
     private final Location location = Mockito.mock(Location.class);
     private final Application application = Mockito.mock(Application.class);
@@ -121,8 +124,8 @@ public class RestaurantsViewModelTest {
 
 
         Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
-        Mockito.doReturn(nearbySearchResultsMutableLiveData).when(mGetNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
-        Mockito.doReturn(restaurantDetailsResultsUseCaseMutableLiveData).when(mGetRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
+        Mockito.doReturn(nearbySearchResultsMutableLiveData).when(getNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+        Mockito.doReturn(restaurantDetailsResultsUseCaseMutableLiveData).when(getRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
 
 
         // SET LIVEDATA VALUES
@@ -167,9 +170,10 @@ public class RestaurantsViewModelTest {
         restaurantsViewModel = new RestaurantsViewModel(
                 application,
                 locationRepository,
-                mGetNearbySearchResultsUseCase,
-                mGetRestaurantDetailsResultsUseCase,
+                getNearbySearchResultsUseCase,
+                getRestaurantDetailsResultsUseCase,
                 workmatesRepository,
+                usersSearchRepository,
                 clock);
     }
 
@@ -181,9 +185,9 @@ public class RestaurantsViewModelTest {
             assertEquals(getDefaultRestaurantViewState(), restaurantsWrapperViewState);
 
             verify(locationRepository).getLocationLiveData();
-            verify(mGetNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
-            verify(mGetRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
-            verifyNoMoreInteractions(locationRepository, mGetNearbySearchResultsUseCase, mGetRestaurantDetailsResultsUseCase);
+            verify(getNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+            verify(getRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
+            verifyNoMoreInteractions(locationRepository, getNearbySearchResultsUseCase, getRestaurantDetailsResultsUseCase);
         });
     }
 
@@ -233,9 +237,9 @@ public class RestaurantsViewModelTest {
             assertEquals(getRestaurantsClosingSoon(), restaurantsWrapperViewState);
 
             verify(locationRepository).getLocationLiveData();
-            verify(mGetNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
-            verify(mGetRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
-            verifyNoMoreInteractions(locationRepository, mGetNearbySearchResultsUseCase, mGetRestaurantDetailsResultsUseCase);
+            verify(getNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+            verify(getRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
+            verifyNoMoreInteractions(locationRepository, getNearbySearchResultsUseCase, getRestaurantDetailsResultsUseCase);
         });
 
     }
@@ -490,9 +494,10 @@ public class RestaurantsViewModelTest {
         restaurantsViewModel = new RestaurantsViewModel(
                 application,
                 locationRepository,
-                mGetNearbySearchResultsUseCase,
-                mGetRestaurantDetailsResultsUseCase,
+                getNearbySearchResultsUseCase,
+                getRestaurantDetailsResultsUseCase,
                 workmatesRepository,
+                usersSearchRepository,
                 clockNewMonth);
 
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
@@ -546,9 +551,10 @@ public class RestaurantsViewModelTest {
         restaurantsViewModel = new RestaurantsViewModel(
                 application,
                 locationRepository,
-                mGetNearbySearchResultsUseCase,
-                mGetRestaurantDetailsResultsUseCase,
+                getNearbySearchResultsUseCase,
+                getRestaurantDetailsResultsUseCase,
                 workmatesRepository,
+                usersSearchRepository,
                 clockNewYear);
 
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
