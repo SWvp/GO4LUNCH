@@ -41,8 +41,11 @@ public class DetailsRecyclerViewAdapter extends RecyclerView.Adapter<DetailsRecy
 
     @Override
     public int getItemCount() {
-        if(workmatesList == null){ return 0; }
-        else{return workmatesList.size();}
+        if(workmatesList == null){
+            return 0;
+        } else{
+            return workmatesList.size();
+        }
 
     }
 
