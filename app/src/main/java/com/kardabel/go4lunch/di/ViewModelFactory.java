@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.kardabel.go4lunch.MainApplication;
 import com.kardabel.go4lunch.MainActivityViewModel;
-import com.kardabel.go4lunch.SearchableViewModel;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.RestaurantDetailsResponseRepository;
 import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
@@ -140,10 +139,6 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         } else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
             return (T) new WorkMatesViewModel(
                     workmatesRepository
-            );
-        } else if (modelClass.isAssignableFrom(SearchableViewModel.class)) {
-            return (T) new SearchableViewModel(
-                    usersSearchRepository
             );
         }
         throw new IllegalArgumentException("Unknown ViewModel class");

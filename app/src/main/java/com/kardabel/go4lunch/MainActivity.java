@@ -43,16 +43,15 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
-import com.kardabel.go4lunch.databinding.RecyclerviewPredictionsBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.manager.UserManager;
-import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView
-        .OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        PredictionsAdapter.OnPredictionItemClickedListener {
 
     private MainActivityViewModel mainActivityViewModel;
 
@@ -62,8 +61,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
     private DrawerLayout drawerLayout;
     private final UserManager userManager = UserManager.getInstance();
     private PredictionsAdapter adapter;
-
-    private RecyclerviewPredictionsBinding recyclerviewPredictionsBinding;
 
     private static final int LOCATION_PERMISSION_CODE = 100;
 
@@ -125,15 +122,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 
         // UPDATE ITEM ADAPTER FOR SEARCHVIEW
 
-        adapter = new PredictionsAdapter();
-        //recyclerviewPredictionsBinding.predictionsRecyclerView.setAdapter(adapter);
-        //recyclerviewPredictionsBinding.predictionsRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, RecyclerView.VERTICAL,false));
-
+        adapter = new PredictionsAdapter(this);
+        RecyclerView recyclerView = findViewById(R.id.predictions_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
 
         mainActivityViewModel.getPredictionsLiveData().observe(this, new Observer<List<PredictionsViewState>>() {
             @Override
             public void onChanged(List<PredictionsViewState> predictions) {
-                adapter.setPredictionsItemList(predictions, MainActivity.this);
+                adapter.submitList(predictions);
 
             }
         });
@@ -237,7 +234,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         inflater.inflate(R.menu.search_menu, menu);
 
         // GET SEARCHVIEW
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setBackgroundColor(Color.WHITE);
@@ -245,7 +241,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         editText.setTextColor(Color.BLACK);
         editText.setHintTextColor(Color.GRAY);
         // ASSUMES CURRENT ACTIVITY IS THE SEARCHABLE ACTIVITY
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -260,8 +255,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView
                 return false;
             }
         });
-
         return true;
+
+    }
+
+    // WHEN A PREDICTION IS CHOSE BY USER
+    @Override
+    public void onPredictionItemClicked(String predictionText) {
 
     }
 

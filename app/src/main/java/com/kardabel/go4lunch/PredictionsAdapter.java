@@ -7,54 +7,101 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.AsyncDifferConfig;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class PredictionsAdapter extends BaseAdapter {
+public class PredictionsAdapter extends
+        ListAdapter<PredictionsViewState,
+        PredictionsAdapter.ViewHolder> {
 
-    private List<PredictionsViewState> predictions= new ArrayList<>();
-    private Context context;
+    @NonNull
+    private final OnPredictionItemClickedListener listener;
 
+    public PredictionsAdapter(@NonNull OnPredictionItemClickedListener listener) {
+        super(new PredictionsAdapterDiffCallBack());
+        this.listener = listener;
 
+    }
+
+    @NonNull
     @Override
-    public int getCount() {
-        if(predictions == null){ return 0; }
-        else{ return predictions.size(); }
+    public ViewHolder onCreateViewHolder(
+            @NonNull ViewGroup parent,
+            int viewType) {
+        return new ViewHolder(LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_prediction, parent, false)
+        );
     }
 
     @Override
-    public Object getItem(int position) {
+    public void onBindViewHolder(
+            @NonNull ViewHolder holder,
+            int position) {
+        holder.bind(getItem(position), listener);
 
-        return predictions.get(position);
     }
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
 
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).
-                    inflate(R.layout.item_prediction, parent, false);
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        private final ViewGroup layout;
+        private final TextView predictionText;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            layout = itemView.findViewById(R.id.prediction_item);
+            predictionText = itemView.findViewById(R.id.prediction_text);
         }
 
-        PredictionsViewState currentPrediction = (PredictionsViewState) getItem(position);
+        public void bind(
+                @NonNull final PredictionsViewState item,
+                @NonNull final OnPredictionItemClickedListener listener) {
 
-        TextView restaurantName = convertView.findViewById(R.id.restaurant_name);
-        restaurantName.setText(currentPrediction.getPredictionDescription());
+            predictionText.setText(item.getPredictionDescription());
 
-        return convertView;
+            layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onPredictionItemClicked(item.getPredictionDescription());
 
-
+                }
+            });
+        }
     }
 
-    // SET THE ADAPTER WITH PREDICTIONS LIST RETRIEVE FROM THE VIEW STATE
-    public void setPredictionsItemList(List<PredictionsViewState> predictions, Context context) {
-        this.predictions = predictions;
-        this.context = context;
+
+
+    // THIS CLASS ALLOW TO VERIFY THE LIST SUBMIT BY ACTIVITY, IF OLDER, THE LIST IS UPDATED BY NEW ONE
+    private static class PredictionsAdapterDiffCallBack extends DiffUtil.ItemCallback<PredictionsViewState>{
+
+        @Override
+        public boolean areItemsTheSame(
+                @NonNull PredictionsViewState oldItem,
+                @NonNull PredictionsViewState newItem) {
+            return false;
+        }
+
+        @Override
+        public boolean areContentsTheSame(
+                @NonNull PredictionsViewState oldItem,
+                @NonNull PredictionsViewState newItem) {
+            return false;
+        }
+    }
+
+
+
+    public interface OnPredictionItemClickedListener{
+        void onPredictionItemClicked(String predictionText);
+
     }
 }

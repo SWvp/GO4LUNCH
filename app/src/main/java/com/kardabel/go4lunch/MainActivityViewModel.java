@@ -79,17 +79,17 @@ public class MainActivityViewModel extends ViewModel {
 
     }
 
-    // WHEN CLICKING ON SEARCHVIEW (AFTER 2 CHARS)
+    // WHEN CLICKING ON SEARCHVIEW
     public void submitSearch(String text) {
 
-        if (text.length() >= 1) {
+
             LiveData<Predictions> predictionsLiveData = getPredictionsUseCase.invoke(text);
 
             // TODO: observe and retrieve the distance to calculate the distance from user
 
             predictionsMediatorLiveData.addSource(predictionsLiveData, predictions -> combine(predictions));
 
-        }
+
     }
 
     private void combine(Predictions predictions) {
@@ -98,6 +98,7 @@ public class MainActivityViewModel extends ViewModel {
         }
     }
 
+    // MAP THE PREDICTIONS RESULT TO VIEW STATE
     private List<PredictionsViewState> map(Predictions predictions) {
 
         List<PredictionsViewState> predictionsList = new ArrayList<>();
