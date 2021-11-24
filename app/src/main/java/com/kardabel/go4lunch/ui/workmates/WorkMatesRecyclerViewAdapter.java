@@ -37,11 +37,11 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
 
         WorkMatesViewState workMate = workmatesList.get(position);
 
-        if(!workMate.isUserHasDecided()){
+        if (!workMate.isUserHasDecided()) {
             holder.viewHolderBinding.itemWorkmateDescription.setText(workMate.getWorkmateDescription());
             holder.viewHolderBinding.itemWorkmateDescription.setTextColor(Color.GRAY);
             holder.viewHolderBinding.itemWorkmateDescription.setTypeface(null, Typeface.ITALIC);
-        }else{
+        } else {
             holder.viewHolderBinding.itemWorkmateDescription.setText(workMate.getWorkmateDescription());
         }
 
@@ -57,17 +57,19 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
 
             }
         });
-
     }
 
     @Override
     public int getItemCount() {
-        if(workmatesList == null){ return 0; }
-        else{return workmatesList.size();}
+        if (workmatesList == null) {
+            return 0;
+        } else {
+            return workmatesList.size();
 
+        }
     }
 
-    public void setWorkmatesListData(List<WorkMatesViewState> workmatesList){
+    public void setWorkmatesListData(List<WorkMatesViewState> workmatesList) {
         this.workmatesList = workmatesList;
         notifyDataSetChanged();
 
@@ -75,6 +77,7 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ItemWorkmateBinding viewHolderBinding;
+
         public ViewHolder(@NonNull ItemWorkmateBinding itemView) {
             super(itemView.getRoot());
             viewHolderBinding = itemView;
@@ -82,14 +85,14 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
         }
     }
 
-    public void setOnItemClickListener(OnWorkmateItemClickListener onWorkmateItemClickListener){
+    public void setOnItemClickListener(OnWorkmateItemClickListener onWorkmateItemClickListener) {
         this.onWorkmateItemClickListener = onWorkmateItemClickListener;
 
     }
 
     // WHEN USER CLICK ON A WORKMATE ITEM TO DISPLAY RESTAURANT DETAILS
-    public interface OnWorkmateItemClickListener{
-        void onWorkmateItemClick (WorkMatesViewState workMatesViewState);
+    public interface OnWorkmateItemClickListener {
+        void onWorkmateItemClick(WorkMatesViewState workMatesViewState);
 
     }
 }

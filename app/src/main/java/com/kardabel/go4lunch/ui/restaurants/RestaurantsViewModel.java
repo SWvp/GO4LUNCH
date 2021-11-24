@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.R;
@@ -24,7 +23,6 @@ import com.kardabel.go4lunch.repository.UsersSearchRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
-import com.kardabel.go4lunch.usecase.GetUsersSearchUseCase;
 import com.kardabel.go4lunch.util.OpeningHoursColorViewAction;
 import com.kardabel.go4lunch.util.SingleLiveEvent;
 
@@ -40,7 +38,7 @@ public class RestaurantsViewModel extends ViewModel {
 
     private final MediatorLiveData<RestaurantsWrapperViewState> restaurantsWrapperViewStateMediatorLiveData = new MediatorLiveData<>();
 
-    private SingleLiveEvent<OpeningHoursColorViewAction> actionSingleLiveEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<OpeningHoursColorViewAction> actionSingleLiveEvent = new SingleLiveEvent<>();
 
     private final Application application;
     private final Clock clock;
@@ -48,14 +46,14 @@ public class RestaurantsViewModel extends ViewModel {
     //private static final String googleMapApiKey = BuildConfig.
 
     public RestaurantsViewModel(
-                                @NonNull Application application,
-                                @NonNull LocationRepository locationRepository,
-                                @NonNull GetNearbySearchResultsUseCase getNearbySearchResultsUseCase,
-                                @NonNull GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase,
-                                @NonNull WorkmatesRepository workmatesRepository,
-                                @NonNull UsersSearchRepository usersSearchRepository,
-                                @NonNull Clock clock
-    ){
+            @NonNull Application application,
+            @NonNull LocationRepository locationRepository,
+            @NonNull GetNearbySearchResultsUseCase getNearbySearchResultsUseCase,
+            @NonNull GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase,
+            @NonNull WorkmatesRepository workmatesRepository,
+            @NonNull UsersSearchRepository usersSearchRepository,
+            @NonNull Clock clock
+    ) {
 
         this.clock = clock;
         this.application = application;
@@ -115,19 +113,19 @@ public class RestaurantsViewModel extends ViewModel {
                          @Nullable List<UserWithFavoriteRestaurant> favoriteRestaurants,
                          @Nullable SearchViewResult searchViewResult) {
 
-        if(searchViewResult != null){
+        if (searchViewResult != null) {
             restaurantsWrapperViewStateMediatorLiveData.setValue(mapUsersSearch(
                     searchViewResult,
                     location,
                     favoriteRestaurants));
 
-        }else if(restaurantDetailsResults == null && nearbySearchResults != null){
-              restaurantsWrapperViewStateMediatorLiveData.setValue(map(
-                      location,
-                      nearbySearchResults,
-                      favoriteRestaurants));
+        } else if (restaurantDetailsResults == null && nearbySearchResults != null) {
+            restaurantsWrapperViewStateMediatorLiveData.setValue(map(
+                    location,
+                    nearbySearchResults,
+                    favoriteRestaurants));
 
-        }else if(restaurantDetailsResults != null && nearbySearchResults != null){
+        } else if (restaurantDetailsResults != null && nearbySearchResults != null) {
             restaurantsWrapperViewStateMediatorLiveData.setValue(mapWithDetails(
                     location,
                     nearbySearchResults,
@@ -145,27 +143,27 @@ public class RestaurantsViewModel extends ViewModel {
 
         List<RestaurantsViewState> restaurantList = new ArrayList<>();
 
-                        String name = searchViewResult.getSearchViewResult().getRestaurantName();
-                        String address = searchViewResult.getSearchViewResult().getRestaurantAddress();
-                        String photo = photoReference(searchViewResult.getSearchViewResult().getRestaurantPhotos());
-                        String distance = distance(
-                                location,
-                                searchViewResult.getSearchViewResult().getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
-                                searchViewResult.getSearchViewResult().getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
-                        String openingHours = getOpeningText(searchViewResult.getSearchViewResult().getOpeningHours(), searchViewResult.getSearchViewResult().isPermanentlyClosed());
-                        double rating = convertRatingStars(searchViewResult.getSearchViewResult().getRating());
-                        String restaurantId = searchViewResult.getSearchViewResult().getRestaurantId();
-                        String like = like(restaurantId,favoriteRestaurants);
+        String name = searchViewResult.getSearchViewResult().getRestaurantName();
+        String address = searchViewResult.getSearchViewResult().getRestaurantAddress();
+        String photo = photoReference(searchViewResult.getSearchViewResult().getRestaurantPhotos());
+        String distance = distance(
+                location,
+                searchViewResult.getSearchViewResult().getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
+                searchViewResult.getSearchViewResult().getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
+        String openingHours = getOpeningText(searchViewResult.getSearchViewResult().getOpeningHours(), searchViewResult.getSearchViewResult().isPermanentlyClosed());
+        double rating = convertRatingStars(searchViewResult.getSearchViewResult().getRating());
+        String restaurantId = searchViewResult.getSearchViewResult().getRestaurantId();
+        String like = like(restaurantId, favoriteRestaurants);
 
-                        restaurantList.add(new RestaurantsViewState(
-                                name,
-                                address,
-                                photo,
-                                distance,
-                                openingHours,
-                                rating,
-                                restaurantId,
-                                like));
+        restaurantList.add(new RestaurantsViewState(
+                name,
+                address,
+                photo,
+                distance,
+                openingHours,
+                rating,
+                restaurantId,
+                like));
 
         return new RestaurantsWrapperViewState(restaurantList);
 
@@ -175,11 +173,11 @@ public class RestaurantsViewModel extends ViewModel {
     private RestaurantsWrapperViewState map(
             Location location,
             NearbySearchResults nearbySearchResults,
-            List<UserWithFavoriteRestaurant> favoriteRestaurants){
+            List<UserWithFavoriteRestaurant> favoriteRestaurants) {
 
         List<RestaurantsViewState> restaurantList = new ArrayList<>();
 
-        for (int i = 0; i < nearbySearchResults.getResults().size(); i++){
+        for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
             String name = nearbySearchResults.getResults().get(i).getRestaurantName();
             String address = nearbySearchResults.getResults().get(i).getRestaurantAddress();
             String photo = photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos());
@@ -190,7 +188,7 @@ public class RestaurantsViewModel extends ViewModel {
             String openingHours = OpeningHoursWithoutDetails(nearbySearchResults.getResults().get(i).getOpeningHours());
             double rating = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
             String restaurantId = nearbySearchResults.getResults().get(i).getRestaurantId();
-            String like = like(restaurantId,favoriteRestaurants);
+            String like = like(restaurantId, favoriteRestaurants);
 
             restaurantList.add(new RestaurantsViewState(
                     name,
@@ -231,7 +229,7 @@ public class RestaurantsViewModel extends ViewModel {
                         String openingHours = getOpeningText(restaurantDetailsResults.get(i).getDetailsResult().getOpeningHours(), place.isPermanentlyClosed());
                         double rating = convertRatingStars(place.getRating());
                         String restaurantId = place.getRestaurantId();
-                        String like = like(restaurantId,favoriteRestaurants);
+                        String like = like(restaurantId, favoriteRestaurants);
 
                         restaurantList.add(new RestaurantsViewState(
                                 name,
@@ -256,17 +254,17 @@ public class RestaurantsViewModel extends ViewModel {
     private String like(String restaurantId, List<UserWithFavoriteRestaurant> favoriteRestaurants) {
         int likes = 0;
         String likeAsString;
-        if(favoriteRestaurants!= null){
+        if (favoriteRestaurants != null) {
             for (int i = 0; i < favoriteRestaurants.size(); i++) {
-                if(favoriteRestaurants.get(i).getRestaurantId().equals(restaurantId)){
+                if (favoriteRestaurants.get(i).getRestaurantId().equals(restaurantId)) {
                     likes += 1;
                 }
             }
         }
 
-        if(likes != 0){
+        if (likes != 0) {
             likeAsString = "(" + likes + ")";
-        }else{
+        } else {
             likeAsString = "";
         }
 
@@ -275,25 +273,25 @@ public class RestaurantsViewModel extends ViewModel {
     }
 
     // SEARCH FOR A PHOTO IN THE LIST PROVIDED BY NEARBY PLACES
-    private String photoReference(List<Photo> photoList){
+    private String photoReference(List<Photo> photoList) {
         String result = null;
-        if (photoList != null){
-            for (Photo photo : photoList){
-                if (!photo.getPhotoReference().isEmpty()){
+        if (photoList != null) {
+            for (Photo photo : photoList) {
+                if (!photo.getPhotoReference().isEmpty()) {
                     result = photo.getPhotoReference();
 
                 }
             }
         }
-        if(photoList == null){
-            result =  application.getString(R.string.photo_unavailable);
+        if (photoList == null) {
+            result = application.getString(R.string.photo_unavailable);
         }
         return result;
 
     }
 
     // GET MESSAGE FOR THE OPENING HOUR FIELD IN CASE THERE IS NO DETAILS INFORMATION
-    private String OpeningHoursWithoutDetails(OpeningHours openingHours){
+    private String OpeningHoursWithoutDetails(OpeningHours openingHours) {
         String openStatus;
         if (openingHours != null) {
             if (openingHours.getOpenNow()) {
@@ -387,18 +385,18 @@ public class RestaurantsViewModel extends ViewModel {
 
     // GET LOCATION DISTANCE FROM USER TO RESTAURANT
     @NonNull
-    private String distance(Location userLocation, double lat, double lng){
-        if (userLocation != null){
+    private String distance(Location userLocation, double lat, double lng) {
+        if (userLocation != null) {
             float[] results = new float[1];
             Location.distanceBetween(
                     userLocation.getLatitude(),
                     userLocation.getLongitude(),
                     lat,
                     lng,
-                    results );
-            return String.valueOf((int)results[0]);
+                    results);
+            return String.valueOf((int) results[0]);
 
-        }else {
+        } else {
             return application.getString(R.string.distance_unavailable);
 
         }
@@ -419,29 +417,30 @@ public class RestaurantsViewModel extends ViewModel {
         } else return hourToConsider.isBefore(selectedHour);
     }
 
-    private int getCurrentNumericDay(){
+    private int getCurrentNumericDay() {
         LocalDateTime currentDate = LocalDateTime.now(clock);
         int dayOfWeek = currentDate.getDayOfWeek().getValue();
         // CONVERT SUNDAY TO 0 (NEEDED TO GET SAME DAY AS OPENING HOURS)
-        if(dayOfWeek == 7){
+        if (dayOfWeek == 7) {
             dayOfWeek = 0;
         }
 
-        return dayOfWeek; }
+        return dayOfWeek;
+    }
 
-    private int currentYear(){
+    private int currentYear() {
         LocalDate currentDate = LocalDate.now(clock);
         return currentDate.getYear();
 
     }
 
-    private int currentMonth(){
+    private int currentMonth() {
         LocalDate currentDate = LocalDate.now(clock);
         return currentDate.getMonthValue();
 
     }
 
-    private int getCurrentDayOfMonth(){
+    private int getCurrentDayOfMonth() {
         LocalDate currentDate = LocalDate.now(clock);
         return currentDate.getDayOfMonth();
 
@@ -459,23 +458,23 @@ public class RestaurantsViewModel extends ViewModel {
     //////// CONVERTERS FOR DATE AND TIME ////////
 
     // CONVERT CLOSE HOUR TO READABLE UK HOUR
-    private String getReadableHour(LocalDateTime selectedHour){
+    private String getReadableHour(LocalDateTime selectedHour) {
         String minReadable;
         String meridian;
         int hour = selectedHour.getHour();
         int minutes = selectedHour.getMinute();
 
-        if(hour > 12){
+        if (hour > 12) {
             hour = hour - 12;
             meridian = application.getString(R.string.pm);
-        }else{
+        } else {
             meridian = application.getString(R.string.am);
         }
-        if(minutes == 0){
+        if (minutes == 0) {
             minReadable = application.getString(R.string.dot);
-        }else if(minutes < 10){
+        } else if (minutes < 10) {
             minReadable = application.getString(R.string.two_dots_for_minutes) + minutes;
-        }else {
+        } else {
             minReadable = application.getString(R.string.two_dots) + minutes;
         }
         return " " + hour + minReadable + meridian;
@@ -484,19 +483,19 @@ public class RestaurantsViewModel extends ViewModel {
 
     // IF THE NEXT OPENING IS NOT TODAY
     private String getReadableDay(LocalDateTime selectedOpeningDateTime) {
-        if(selectedOpeningDateTime.getDayOfWeek() != LocalDateTime.now(clock).getDayOfWeek()){
+        if (selectedOpeningDateTime.getDayOfWeek() != LocalDateTime.now(clock).getDayOfWeek()) {
             String str;
-            if(selectedOpeningDateTime.getDayOfWeek().getValue() == LocalDateTime.now(clock).getDayOfWeek().getValue() + 1){
+            if (selectedOpeningDateTime.getDayOfWeek().getValue() == LocalDateTime.now(clock).getDayOfWeek().getValue() + 1) {
                 str = application.getString(R.string.tomorrow);
 
-            }else{
-                 str = selectedOpeningDateTime.getDayOfWeek().toString().toLowerCase(Locale.ROOT);
+            } else {
+                str = selectedOpeningDateTime.getDayOfWeek().toString().toLowerCase(Locale.ROOT);
             }
 
 
-            return " " + str.substring(0,1).toUpperCase() + str.substring(1);
+            return " " + str.substring(0, 1).toUpperCase() + str.substring(1);
 
-        }else{
+        } else {
             return "";
         }
     }
