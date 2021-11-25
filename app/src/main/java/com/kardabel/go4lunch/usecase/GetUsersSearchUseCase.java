@@ -8,22 +8,21 @@ import com.kardabel.go4lunch.repository.UsersSearchRepository;
 
 public class GetUsersSearchUseCase {
 
-    private UsersSearchRepository usersSearchRepository;
+//  private UsersSearchRepository usersSearchRepository;
 
-    public GetUsersSearchUseCase(
-            UsersSearchRepository usersSearchRepository){
+//  public GetUsersSearchUseCase(
+//          UsersSearchRepository usersSearchRepository){
 
-        this.usersSearchRepository = usersSearchRepository;
-    }
+//      this.usersSearchRepository = usersSearchRepository;
+//  }
 
 
-    public LiveData<SearchViewResult> invoke() {
+//  public LiveData<SearchViewResult> invoke() {
 
-        // TODO : switchmap
+//
+//      return usersSearchRepository.getUsersSearchLiveData();
 
-        return usersSearchRepository.getUsersSearchLiveData();
-
-    }
+//  }
 
 
 }

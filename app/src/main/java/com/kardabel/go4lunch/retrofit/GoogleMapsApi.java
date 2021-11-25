@@ -26,14 +26,6 @@ public interface GoogleMapsApi {
             @Query("fields") String fields
     );
 
-    // Todo: make a better google price with more defined fields
-    @GET("maps/api/place/details/json")
-    Call<SearchViewResult> searchViewResult(
-            @Query("key") String key,
-            @Query("place_id") String place_id,
-            @Query("fields") String fields
-    );
-
     @GET("maps/api/place/autocomplete/json")
     Call<Predictions> autocompleteResult(
             @Query("key") String key,
