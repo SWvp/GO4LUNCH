@@ -71,7 +71,7 @@ public class PredictionsAdapter extends
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onPredictionItemClicked(item.getPredictionDescription());
+                    listener.onPredictionItemClicked(item.getPredictionName());
 
                 }
             });

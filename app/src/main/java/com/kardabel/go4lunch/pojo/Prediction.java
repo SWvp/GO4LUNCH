@@ -10,25 +10,20 @@ public class Prediction {
     @SerializedName("description")
     @Expose
     private String description;
+    @SerializedName("structured_formatting")
+    @Expose
+    private PlaceAutocompleteStructuredFormat structuredFormatting;
     @SerializedName("place_id")
     @Expose
     private String placeId;
-    @SerializedName("reference")
-    @Expose
-    private String reference;
-    @SerializedName("types")
-    @Expose
-    private List<String> types = null;
+
 
 
     public Prediction(String description,
                       String placeId,
-                      String reference,
-                      List<String> types) {
+                      PlaceAutocompleteStructuredFormat structuredFormatting) {
         this.description = description;
         this.placeId = placeId;
-        this.reference = reference;
-        this.types = types;
     }
 
     public String getDescription() {
@@ -39,11 +34,5 @@ public class Prediction {
         return placeId;
     }
 
-    public String getReference() {
-        return reference;
-    }
-
-    public List<String> getTypes() {
-        return types;
-    }
+    public PlaceAutocompleteStructuredFormat getStructuredFormatting() { return structuredFormatting; }
 }
