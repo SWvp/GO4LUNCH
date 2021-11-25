@@ -52,8 +52,6 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final FirestoreUseCase firestoreUseCase;
     private final SearchViewUseCase searchViewUseCase;
     private final GetPredictionsUseCase getPredictionsUseCase;
-    private final GetUsersSearchUseCase getUsersSearchUseCase;
-
 
     public static ViewModelFactory getInstance() {
         if (factory == null) {
@@ -81,7 +79,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.mRestaurantDetailsResponseRepository = new RestaurantDetailsResponseRepository(googleMapsApi);
         this.workmatesRepository = new WorkmatesRepository();
         this.autocompleteRepository = new AutocompleteRepository(googleMapsApi);
-        this.usersSearchRepository = new UsersSearchRepository(googleMapsApi);
+        this.usersSearchRepository = new UsersSearchRepository();
 
         this.getNearbySearchResultsUseCase = new GetNearbySearchResultsUseCase(
                 locationRepository,
@@ -103,7 +101,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.getPredictionsUseCase = new GetPredictionsUseCase(
                 locationRepository,
                 autocompleteRepository);
-        this.getUsersSearchUseCase = new GetUsersSearchUseCase(usersSearchRepository);
+        //this.getUsersSearchUseCase = new GetUsersSearchUseCase(usersSearchRepository);
     }
 
 
@@ -130,7 +128,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     application,
                     locationRepository,
                     workmatesRepository,
-                    getPredictionsUseCase);
+                    getPredictionsUseCase,
+                    usersSearchRepository);
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
                     getNearbySearchResultsByIdUseCase,
