@@ -3,8 +3,6 @@ package com.kardabel.go4lunch;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 import android.annotation.SuppressLint;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -27,7 +25,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -46,6 +43,7 @@ import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.manager.UserManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -102,12 +100,18 @@ public class MainActivity extends AppCompatActivity implements
         mainActivityViewModel.getActionSingleLiveEvent().observe(this, action -> {
             switch (action) {
                 case PERMISSION_GRANTED:
-                    Toast.makeText(MainActivity.this, "Welcome, take a seat, have a lunch!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(
+                            MainActivity.this,
+                            "Welcome, take a seat, have a lunch!",
+                            Toast.LENGTH_LONG).show();
                     break;
                 case PERMISSION_ASKED:
                     ActivityCompat.requestPermissions(MainActivity.this,
                             new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
-                    Toast.makeText(MainActivity.this, "Needed for retrieve your position, thank you", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(
+                            MainActivity.this,
+                            "Needed for retrieve your position, thank you",
+                            Toast.LENGTH_SHORT).show();
                     break;
 //             case PERMISSION_DENIED:
 //                 MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
@@ -119,22 +123,7 @@ public class MainActivity extends AppCompatActivity implements
                 //              break;
             }
         });
-
-        // UPDATE ITEM ADAPTER FOR SEARCHVIEW
-
-        adapter = new PredictionsAdapter(this);
-        RecyclerView recyclerView = findViewById(R.id.predictions_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-
-        mainActivityViewModel.getPredictionsLiveData().observe(this, new Observer<List<PredictionsViewState>>() {
-            @Override
-            public void onChanged(List<PredictionsViewState> predictions) {
-                adapter.submitList(predictions);
-
-            }
-        });
-
+        configureRecyclerView();
         updateUIWhenCreating();
     }
 
@@ -167,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    // WHEN USER CLICK ON HIS PERSONAL MENU, IN DRAWER
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -193,14 +183,12 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    // 1 - Configure Toolbar
     private void configureToolBar() {
         this.toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
     }
 
-    // 2 - Configure Drawer Layout
     private void configureDrawerLayout() {
         this.drawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout,
@@ -210,7 +198,6 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    // 3 - Configure NavigationView
     private void configureNavigationView() {
         NavigationView navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -226,12 +213,24 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    // SEARCHVIEW
+    // UPDATE ITEM ADAPTER FOR SEARCHVIEW
+    private void configureRecyclerView() {
+        adapter = new PredictionsAdapter(this);
+        RecyclerView recyclerView = findViewById(R.id.predictions_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+
+        mainActivityViewModel.getPredictionsLiveData().observe(this, predictions -> adapter.submitList(predictions));
+    }
+
+    // CREATE AND CONFIGURE SEARCHVIEW
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // INFLATE MENU
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.search_menu, menu);
+
+        MenuItem item = menu.findItem(R.id.search);
 
         // GET SEARCHVIEW
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
@@ -240,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements
         EditText editText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         editText.setTextColor(Color.BLACK);
         editText.setHintTextColor(Color.GRAY);
-        // ASSUMES CURRENT ACTIVITY IS THE SEARCHABLE ACTIVITY
+
         searchView.setIconifiedByDefault(false);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -251,18 +250,40 @@ public class MainActivity extends AppCompatActivity implements
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mainActivityViewModel.submitSearch(newText);
+                mainActivityViewModel.retrievePredictions(newText);
                 return false;
+            }
+        });
+
+        // WHEN USER LEAVES THE SEARCHVIEW, UPDATE CURRENT VIEW AND CLOSE THE SEARCHVIEW
+        item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                mainActivityViewModel.usersChoice("");
+                return true;
             }
         });
         return true;
 
     }
 
-    // WHEN A PREDICTION IS CHOSE BY USER
+    // WHEN A PREDICTION IS CHOSEN BY USER
     @Override
     public void onPredictionItemClicked(String predictionText) {
+        mainActivityViewModel.usersChoice(predictionText);
+        initAutocomplete();
 
+    }
+
+    // CLEAR THE AUTOCOMPLETE ADAPTER WITH EMPTY LIST WHEN USER FINISHED HIS RESEARCH
+    private void initAutocomplete() {
+        List<PredictionsViewState> emptyList = new ArrayList<>();
+        adapter.submitList(emptyList);
     }
 
     // WHEN VIEW IS ON RESUME CHECK THE PERMISSION STATE IN VIEWMODEL (AND PASSED THE ACTIVITY
