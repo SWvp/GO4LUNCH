@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModel;
 import com.kardabel.go4lunch.pojo.Prediction;
 import com.kardabel.go4lunch.pojo.Predictions;
 import com.kardabel.go4lunch.repository.LocationRepository;
+import com.kardabel.go4lunch.repository.UsersSearchRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 import com.kardabel.go4lunch.util.PermissionsViewAction;
@@ -34,18 +35,25 @@ public class MainActivityViewModel extends ViewModel {
     private final LocationRepository locationRepository;
     private final WorkmatesRepository workmatesRepository;
     private final GetPredictionsUseCase getPredictionsUseCase;
+    private final UsersSearchRepository usersSearchRepository;
 
 
     public MainActivityViewModel(
             @NonNull Application application,
             @NonNull LocationRepository locationRepository,
             @NonNull WorkmatesRepository workmatesRepository,
-            @NonNull GetPredictionsUseCase getPredictionsUseCase) {
+            @NonNull GetPredictionsUseCase getPredictionsUseCase,
+            @NonNull UsersSearchRepository usersSearchRepository
+
+
+            ) {
         super();
         this.application = application;
         this.locationRepository = locationRepository;
         this.workmatesRepository = workmatesRepository;
         this.getPredictionsUseCase = getPredictionsUseCase;
+        this.usersSearchRepository = usersSearchRepository;
+
 
     }
 
@@ -80,7 +88,7 @@ public class MainActivityViewModel extends ViewModel {
     }
 
     // WHEN CLICKING ON SEARCHVIEW
-    public void submitSearch(String text) {
+    public void retrievePredictions(String text) {
 
 
             LiveData<Predictions> predictionsLiveData = getPredictionsUseCase.invoke(text);
@@ -106,11 +114,17 @@ public class MainActivityViewModel extends ViewModel {
         for (Prediction prediction: predictions.getPredictions()) {
             predictionsList.add(new PredictionsViewState(
                     prediction.getDescription(),
-                    prediction.getPlaceId()
+                    prediction.getPlaceId(),
+                    prediction.getStructuredFormatting().getName()
             ));
         }
 
         return predictionsList;
+
+    }
+
+    public void usersChoice(String predictionText) {
+        usersSearchRepository.usersSearch(predictionText);
 
     }
 
