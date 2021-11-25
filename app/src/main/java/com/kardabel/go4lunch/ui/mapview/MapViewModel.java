@@ -9,7 +9,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
+import com.kardabel.go4lunch.model.WorkmateWithFavoriteRestaurant;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
@@ -30,7 +30,7 @@ public class MapViewModel extends ViewModel {
 
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         LiveData<NearbySearchResults> nearbySearchResultsLiveData = getNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
-        LiveData<List<UserWithFavoriteRestaurant>> favoriteRestaurantsLiveData = workmatesRepository.getRestaurantsAddedAsFavorite();
+        LiveData<List<WorkmateWithFavoriteRestaurant>> favoriteRestaurantsLiveData = workmatesRepository.getWorkmatesWithFavoriteRestaurant();
 
         // OBSERVERS
 
@@ -51,21 +51,21 @@ public class MapViewModel extends ViewModel {
 
     private void combine(@Nullable NearbySearchResults nearbySearchResults,
                          @Nullable Location location,
-                         @Nullable List<UserWithFavoriteRestaurant> userWithFavoriteRestaurant) {
+                         @Nullable List<WorkmateWithFavoriteRestaurant> workmateWithFavoriteRestaurant) {
         if (nearbySearchResults != null && location != null) {
-            mapViewStatePoiMediatorLiveData.setValue(map(nearbySearchResults, location, userWithFavoriteRestaurant));
+            mapViewStatePoiMediatorLiveData.setValue(map(nearbySearchResults, location, workmateWithFavoriteRestaurant));
         }
 
 
     }
 
-    private MapViewState map(NearbySearchResults nearbySearchResults, Location location, List<UserWithFavoriteRestaurant> userWithFavoriteRestaurant){
+    private MapViewState map(NearbySearchResults nearbySearchResults, Location location, List<WorkmateWithFavoriteRestaurant> workmateWithFavoriteRestaurant){
         List<Poi> poiList = new ArrayList<>();
         List<String> restaurantAsFavoriteId = new ArrayList<>();
 
-        if (userWithFavoriteRestaurant != null) {
-            for (int i = 0; i < userWithFavoriteRestaurant.size(); i++) {
-                restaurantAsFavoriteId.add(userWithFavoriteRestaurant.get(i).getRestaurantId());
+        if (workmateWithFavoriteRestaurant != null) {
+            for (int i = 0; i < workmateWithFavoriteRestaurant.size(); i++) {
+                restaurantAsFavoriteId.add(workmateWithFavoriteRestaurant.get(i).getRestaurantId());
 
             }
         }
@@ -77,7 +77,7 @@ public class MapViewModel extends ViewModel {
             String poiAddress = nearbySearchResults.getResults().get(i).getRestaurantAddress();
             LatLng latLng = new LatLng(nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
                     nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
-            if(userWithFavoriteRestaurant != null && restaurantAsFavoriteId.contains(poiPlaceId)){
+            if(workmateWithFavoriteRestaurant != null && restaurantAsFavoriteId.contains(poiPlaceId)){
                 isFavorite = true;
             }
 

@@ -10,7 +10,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.R;
-import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
+import com.kardabel.go4lunch.model.WorkmateWithFavoriteRestaurant;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.OpeningHours;
 import com.kardabel.go4lunch.pojo.Periods;
@@ -61,7 +61,7 @@ public class RestaurantsViewModel extends ViewModel {
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         LiveData<NearbySearchResults> nearbySearchResultsLiveData = getNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
         LiveData<List<RestaurantDetailsResult>> restaurantsDetailsResultLiveData = getRestaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
-        LiveData<List<UserWithFavoriteRestaurant>> favoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddedAsFavorite();
+        LiveData<List<WorkmateWithFavoriteRestaurant>> favoriteRestaurantLiveData = workmatesRepository.getWorkmatesWithFavoriteRestaurant();
         LiveData<SearchViewResult> searchViewResultLiveData = usersSearchRepository.getUsersSearchLiveData();
 
         // OBSERVERS
@@ -110,7 +110,7 @@ public class RestaurantsViewModel extends ViewModel {
     private void combine(@Nullable NearbySearchResults nearbySearchResults,
                          @Nullable List<RestaurantDetailsResult> restaurantDetailsResults,
                          @Nullable Location location,
-                         @Nullable List<UserWithFavoriteRestaurant> favoriteRestaurants,
+                         @Nullable List<WorkmateWithFavoriteRestaurant> favoriteRestaurants,
                          @Nullable SearchViewResult searchViewResult) {
 
         if (searchViewResult != null) {
@@ -139,7 +139,7 @@ public class RestaurantsViewModel extends ViewModel {
     private RestaurantsWrapperViewState mapUsersSearch(
             SearchViewResult searchViewResult,
             Location location,
-            List<UserWithFavoriteRestaurant> favoriteRestaurants) {
+            List<WorkmateWithFavoriteRestaurant> favoriteRestaurants) {
 
         List<RestaurantsViewState> restaurantList = new ArrayList<>();
 
@@ -173,7 +173,7 @@ public class RestaurantsViewModel extends ViewModel {
     private RestaurantsWrapperViewState map(
             Location location,
             NearbySearchResults nearbySearchResults,
-            List<UserWithFavoriteRestaurant> favoriteRestaurants) {
+            List<WorkmateWithFavoriteRestaurant> favoriteRestaurants) {
 
         List<RestaurantsViewState> restaurantList = new ArrayList<>();
 
@@ -210,7 +210,7 @@ public class RestaurantsViewModel extends ViewModel {
             Location location,
             NearbySearchResults nearbySearchResults,
             List<RestaurantDetailsResult> restaurantDetailsResults,
-            List<UserWithFavoriteRestaurant> favoriteRestaurants) {
+            List<WorkmateWithFavoriteRestaurant> favoriteRestaurants) {
 
         List<RestaurantsViewState> restaurantList = new ArrayList<>();
 
@@ -251,7 +251,7 @@ public class RestaurantsViewModel extends ViewModel {
     }
 
     // WORKMATES WHO ALREADY LIKES THIS RESTAURANT
-    private String like(String restaurantId, List<UserWithFavoriteRestaurant> favoriteRestaurants) {
+    private String like(String restaurantId, List<WorkmateWithFavoriteRestaurant> favoriteRestaurants) {
         int likes = 0;
         String likeAsString;
         if (favoriteRestaurants != null) {

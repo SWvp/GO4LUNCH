@@ -27,13 +27,6 @@ public class ChangeFavoriteStateUseCase {
 
         String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
 
-        Map<String, Object> restaurant = new HashMap<>();
-        restaurant.put("restaurant name", restaurantName);
-        restaurant.put("restaurant id", placeId);
-
-        Map<String, Object> user = new HashMap<>();
-        user.put("user id", userId);
-
         Map<String, Object> userGotRestaurant = new HashMap<>();
         userGotRestaurant.put("restaurantId", placeId);
         userGotRestaurant.put("restaurantName", restaurantName);

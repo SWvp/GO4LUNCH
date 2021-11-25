@@ -7,7 +7,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.model.UserModel;
-import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
+import com.kardabel.go4lunch.model.WorkmateWithFavoriteRestaurant;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class WorkMatesViewModel extends ViewModel {
 
 
         LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
-        LiveData<List<UserWithFavoriteRestaurant>> favoriteRestaurantsLiveData = workmatesRepository.getRestaurantsAddedAsFavorite();
+        LiveData<List<WorkmateWithFavoriteRestaurant>> favoriteRestaurantsLiveData = workmatesRepository.getWorkmatesWithFavoriteRestaurant();
 
         // OBSERVERS
 
@@ -31,7 +31,7 @@ public class WorkMatesViewModel extends ViewModel {
         workMatesViewStateMediatorLiveData.addSource(favoriteRestaurantsLiveData, usersWithRestaurant -> combine(workMatesLiveData.getValue(), usersWithRestaurant));
     }
 
-    private void combine(List<UserModel> users, List<UserWithFavoriteRestaurant> usersWithRestaurant) {
+    private void combine(List<UserModel> users, List<WorkmateWithFavoriteRestaurant> usersWithRestaurant) {
 
         if (usersWithRestaurant != null) {
             workMatesViewStateMediatorLiveData.setValue(mapWithFavorites(users, usersWithRestaurant));
@@ -66,7 +66,7 @@ public class WorkMatesViewModel extends ViewModel {
     }
 
     private List<WorkMatesViewState> mapWithFavorites(List<UserModel> users,
-                                                      List<UserWithFavoriteRestaurant> usersWithRestaurant) {
+                                                      List<WorkmateWithFavoriteRestaurant> usersWithRestaurant) {
         List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
 
         for (int i = 0; i < users.size(); i++) {
@@ -90,7 +90,7 @@ public class WorkMatesViewModel extends ViewModel {
     }
 
     private boolean isUserHasDecided(String userId,
-                                     List<UserWithFavoriteRestaurant> usersWithRestaurant) {
+                                     List<WorkmateWithFavoriteRestaurant> usersWithRestaurant) {
         boolean state = false;
 
         for (int i = 0; i < usersWithRestaurant.size(); i++) {
@@ -104,7 +104,7 @@ public class WorkMatesViewModel extends ViewModel {
     }
 
     private String userChoice(@NonNull String userId,
-                              @NonNull List<UserWithFavoriteRestaurant> usersWithRestaurant) {
+                              @NonNull List<WorkmateWithFavoriteRestaurant> usersWithRestaurant) {
         String restaurantName = " hasn't decided yet";
 
         for (int i = 0; i < usersWithRestaurant.size(); i++) {

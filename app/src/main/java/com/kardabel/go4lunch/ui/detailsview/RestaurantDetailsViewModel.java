@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.model.UserModel;
-import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
+import com.kardabel.go4lunch.model.WorkmateWithFavoriteRestaurant;
 import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
@@ -47,7 +47,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
         LiveData<RestaurantSearch> restaurantLiveData = getNearbySearchResultsByIdUseCase.invoke(placeId);
         LiveData<RestaurantDetailsResult> restaurantDetailsLiveData = getRestaurantDetailsResultsByIdUseCase.invoke(placeId);
 
-        LiveData<List<UserWithFavoriteRestaurant>> userWithFavoriteRestaurantLiveData = workmatesRepository.getRestaurantsAddedAsFavorite();
+        LiveData<List<WorkmateWithFavoriteRestaurant>> userWithFavoriteRestaurantLiveData = workmatesRepository.getWorkmatesWithFavoriteRestaurant();
         LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
 
 
@@ -93,7 +93,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     // COMBINE FIRST MEDIATOR FOR RESTAURANT DETAILS
     private void combine(@Nullable RestaurantSearch restaurant,
-                         @Nullable List<UserWithFavoriteRestaurant> usersWithFavoriteRestaurant,
+                         @Nullable List<WorkmateWithFavoriteRestaurant> usersWithFavoriteRestaurant,
                          @Nullable RestaurantDetailsResult restaurantDetails) {
         if (restaurant != null && restaurantDetails == null) {
             workMatesDetailsViewStateMediatorLiveData.setValue(mapWithoutDetails(restaurant, usersWithFavoriteRestaurant));
@@ -105,7 +105,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     // MAP WITHOUT DETAILS, WHEN USER HAS NO LONGER NETWORK AVAILABLE
     // (ASSUME THAT THE GOOGLE DETAILS SERVICE WILL WORK AS LONG AS NEARBY WORKS)
     private RestaurantDetailsViewState mapWithoutDetails(@NonNull RestaurantSearch restaurant,
-                                                         List<UserWithFavoriteRestaurant> usersWithFavoriteRestaurant) {
+                                                         List<WorkmateWithFavoriteRestaurant> usersWithFavoriteRestaurant) {
 
         List<String> restaurantAsFavoriteId = new ArrayList<>();
 
@@ -137,7 +137,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
     // MAP WITH RESTAURANT DETAILS
     private RestaurantDetailsViewState map(@NonNull RestaurantSearch restaurant,
                                            @NonNull RestaurantDetailsResult restaurantDetails,
-                                           List<UserWithFavoriteRestaurant> usersWithFavoriteRestaurant) {
+                                           List<WorkmateWithFavoriteRestaurant> usersWithFavoriteRestaurant) {
 
         List<String> restaurantAsFavoriteId = new ArrayList<>();
         String restaurantPhoneNumber = "";
@@ -158,9 +158,11 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
         }
 
-        int isFavorite = R.drawable.detail_star;
+        int isFavorite;
         if (restaurantAsFavoriteId.contains(restaurant.getRestaurantId())) {
             isFavorite = R.drawable.details_star_full;
+        }else{
+            isFavorite = R.drawable.detail_star;
         }
         result = new RestaurantDetailsViewState(
                 restaurant.getRestaurantName(),
@@ -179,7 +181,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     // COMBINE SECOND MEDIATOR FOR WORKMATES WITH THIS RESTAURANT IN FAVORITE
     private void combineWorkmates(@Nullable RestaurantSearch restaurant,
-                                  @Nullable List<UserWithFavoriteRestaurant> usersWithFavoriteRestaurant,
+                                  @Nullable List<WorkmateWithFavoriteRestaurant> usersWithFavoriteRestaurant,
                                   @Nullable List<UserModel> users) {
 
         if (usersWithFavoriteRestaurant != null && users != null && restaurant != null) {
@@ -192,15 +194,15 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     // MAP THE RECYCLER VIEW ITEMS FOR WORKMATES WHO HAVE THIS ITEM IN FAVORITE
     private List<DetailsWorkmatesViewState> mapWorkmates(RestaurantSearch restaurant,
-                                                         List<UserWithFavoriteRestaurant> userWithFavoriteRestaurants,
+                                                         List<WorkmateWithFavoriteRestaurant> workmateWithFavoriteRestaurants,
                                                          List<UserModel> users){
 
         List<DetailsWorkmatesViewState> workMatesViewStateList = new ArrayList<>();
 
-        for (int i = 0; i < userWithFavoriteRestaurants.size(); i++) {
-            if (userWithFavoriteRestaurants.get(i).getRestaurantId().equals(restaurant.getRestaurantId())) {
+        for (int i = 0; i < workmateWithFavoriteRestaurants.size(); i++) {
+            if (workmateWithFavoriteRestaurants.get(i).getRestaurantId().equals(restaurant.getRestaurantId())) {
                 for (int j = 0; j < users.size(); j++) {
-                    if (users.get(j).getUid().equals(userWithFavoriteRestaurants.get(i).getUserId())) {
+                    if (users.get(j).getUid().equals(workmateWithFavoriteRestaurants.get(i).getUserId())) {
                         String name = users.get(j).getUserName() + " is joining!";
                         String avatar = users.get(j).getAvatarURL();
 
