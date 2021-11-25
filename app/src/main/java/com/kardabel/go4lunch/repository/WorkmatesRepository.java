@@ -2,13 +2,17 @@ package com.kardabel.go4lunch.repository;
 
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.kardabel.go4lunch.model.UserModel;
-import com.kardabel.go4lunch.model.UserWithFavoriteRestaurant;
+import com.kardabel.go4lunch.model.WorkmateWithFavoriteRestaurant;
 import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 
 import java.time.LocalDate;
@@ -35,7 +39,7 @@ public class WorkmatesRepository {
                 .orderBy("userName")
                 .addSnapshotListener((value, error) -> {
 
-                    if(error != null){
+                    if (error != null) {
                         Log.e("Firestore error", error.getMessage());
                         return;
                     }
@@ -44,7 +48,7 @@ public class WorkmatesRepository {
 
                         if (!userId.equals(usermodel.getUid())) {
                             if (document.getType() == DocumentChange.Type.ADDED ||
-                                document.getType() == DocumentChange.Type.MODIFIED) {
+                                    document.getType() == DocumentChange.Type.MODIFIED) {
 
                                 workmates.add(document.getDocument().toObject(UserModel.class));
 
@@ -61,30 +65,33 @@ public class WorkmatesRepository {
 
 
     // GET WORMATES WHO DECIDED WHERE THEY WOULD EAT
-    public LiveData<List<UserWithFavoriteRestaurant>> getRestaurantsAddedAsFavorite() {
+    public LiveData<List<WorkmateWithFavoriteRestaurant>> getWorkmatesWithFavoriteRestaurant() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        MutableLiveData<List<UserWithFavoriteRestaurant>> userModelMutableLiveData = new MutableLiveData<>();
-        List<UserWithFavoriteRestaurant> userWithRestaurant = new ArrayList<>();
+        MutableLiveData<List<WorkmateWithFavoriteRestaurant>> userModelMutableLiveData = new MutableLiveData<>();
 
         LocalDate today = LocalDate.now();
 
         db.collection(today.toString())
-                .addSnapshotListener((value, error) -> {
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
 
-                    if(error != null){
-                        Log.e("no favorite today", error.getMessage());
-                        return;
-                    }
-                    for(DocumentChange document : value.getDocumentChanges()){
-                        if(
-                                document.getType() == DocumentChange.Type.ADDED ||
-                                document.getType() == DocumentChange.Type.MODIFIED){
-
-                            userWithRestaurant.add(document.getDocument().toObject(UserWithFavoriteRestaurant.class));
-
+                        if (error != null) {
+                            Log.e("no favorite today", error.getMessage());
+                            return;
                         }
+                        List<WorkmateWithFavoriteRestaurant> userWithRestaurant = new ArrayList<>();
+
+                        for (DocumentChange document : value.getDocumentChanges()) {
+                            if (document.getType() == DocumentChange.Type.ADDED ||
+                                            document.getType() == DocumentChange.Type.MODIFIED) {
+
+                                userWithRestaurant.add(document.getDocument().toObject(WorkmateWithFavoriteRestaurant.class));
+
+                            }
+                        }
+                        userModelMutableLiveData.setValue(userWithRestaurant);
                     }
-                    userModelMutableLiveData.setValue(userWithRestaurant);
                 });
         return userModelMutableLiveData;
     }
