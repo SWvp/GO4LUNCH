@@ -17,6 +17,7 @@ import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantLatLngLiteral;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
+import com.kardabel.go4lunch.repository.UsersSearchRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
@@ -42,6 +43,7 @@ public class MapViewModelTest {
     private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
     private final GetNearbySearchResultsUseCase mGetNearbySearchResultsUseCase = Mockito.mock(GetNearbySearchResultsUseCase.class);
     private final WorkmatesRepository workmateRepository = Mockito.mock(WorkmatesRepository.class);
+    private final UsersSearchRepository usersSearchRepository = Mockito.mock(UsersSearchRepository.class);
 
     private final Location location = Mockito.mock(Location.class);
 
@@ -67,7 +69,8 @@ public class MapViewModelTest {
         mMapViewModel = new MapViewModel(
                 locationRepository,
                 mGetNearbySearchResultsUseCase,
-                workmateRepository);
+                workmateRepository,
+                usersSearchRepository);
     }
 
     @Test
