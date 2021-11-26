@@ -42,6 +42,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
             MapViewModel mapViewModel = new ViewModelProvider(this, listViewModelFactory).get(MapViewModel.class);
 
             mapViewModel.getMapViewStateLiveData().observe(this, mapViewState -> {
+                googleMap.clear();
 
                 // MOVE THE CAMERA TO THE USER LOCATION
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapViewState.getLatLng(), mapViewState.getZoom()));
