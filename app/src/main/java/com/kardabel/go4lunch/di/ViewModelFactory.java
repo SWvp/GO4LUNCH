@@ -122,7 +122,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new MapViewModel(
                     locationRepository,
                     getNearbySearchResultsUseCase,
-                    workmatesRepository);
+                    workmatesRepository,
+                    usersSearchRepository);
         } else if (modelClass.isAssignableFrom(MainActivityViewModel.class)) {
             return (T) new MainActivityViewModel(
                     application,
