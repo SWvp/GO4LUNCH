@@ -19,7 +19,7 @@ import java.util.List;
 
 public class PredictionsAdapter extends
         ListAdapter<PredictionsViewState,
-        PredictionsAdapter.ViewHolder> {
+                PredictionsAdapter.ViewHolder> {
 
     @NonNull
     private final OnPredictionItemClickedListener listener;
@@ -36,7 +36,7 @@ public class PredictionsAdapter extends
             @NonNull ViewGroup parent,
             int viewType) {
         return new ViewHolder(LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_prediction, parent, false)
+                .inflate(R.layout.item_prediction, parent, false)
         );
     }
 
@@ -47,7 +47,6 @@ public class PredictionsAdapter extends
         holder.bind(getItem(position), listener);
 
     }
-
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -79,9 +78,8 @@ public class PredictionsAdapter extends
     }
 
 
-
     // THIS CLASS ALLOW TO VERIFY THE LIST SUBMIT BY ACTIVITY, IF OLDER, THE LIST IS UPDATED BY NEW ONE
-    private static class PredictionsAdapterDiffCallBack extends DiffUtil.ItemCallback<PredictionsViewState>{
+    private static class PredictionsAdapterDiffCallBack extends DiffUtil.ItemCallback<PredictionsViewState> {
 
         @Override
         public boolean areItemsTheSame(
@@ -98,9 +96,7 @@ public class PredictionsAdapter extends
         }
     }
 
-
-
-    public interface OnPredictionItemClickedListener{
+    public interface OnPredictionItemClickedListener {
         void onPredictionItemClicked(String predictionText);
 
     }

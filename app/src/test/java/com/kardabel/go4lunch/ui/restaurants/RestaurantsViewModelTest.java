@@ -193,7 +193,7 @@ public class RestaurantsViewModelTest {
     ////////// OPENING HOURS TESTS ///////////
 
     @Test
-    public void before_One_Hour_Closing_Time_Should_Display_Closing_Soon(){
+    public void before_One_Hour_Closing_Time_Should_Display_Closing_Soon() {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
@@ -244,7 +244,7 @@ public class RestaurantsViewModelTest {
     }
 
     @Test
-    public void never_Closing_Should_Display_H24(){
+    public void never_Closing_Should_Display_H24() {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
@@ -255,7 +255,7 @@ public class RestaurantsViewModelTest {
                                         new Periods(
                                                 new Close(3, "0000"),
                                                 new Open(3, "0000"))
-                                        )
+                                )
                         ),
                         firstNumber,
                         firstSite
@@ -268,7 +268,7 @@ public class RestaurantsViewModelTest {
                                         new Periods(
                                                 new Close(3, "1800"),
                                                 new Open(3, "1800"))
-                                        )
+                                )
                         ),
                         secondNumber,
                         secondSite
@@ -283,7 +283,7 @@ public class RestaurantsViewModelTest {
     }
 
     @Test
-    public void permanently_Closed_Should_Display_This_Status(){
+    public void permanently_Closed_Should_Display_This_Status() {
         // GIVEN
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getPermanentlyClosedRestaurants()));
         // WHEN
@@ -295,7 +295,7 @@ public class RestaurantsViewModelTest {
     }
 
     @Test
-    public void after_Closing_Time_Should_Display_Closed_Until(){
+    public void after_Closing_Time_Should_Display_Closed_Until() {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
@@ -342,7 +342,7 @@ public class RestaurantsViewModelTest {
     }
 
     @Test
-    public void without_Periods_List_But_With_OpenNow_Should_Display_Open(){
+    public void without_Periods_List_But_With_OpenNow_Should_Display_Open() {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
@@ -368,7 +368,7 @@ public class RestaurantsViewModelTest {
     }
 
     @Test
-    public void without_Periods_List_But_With_ClosedNow_Should_Display_Closed(){
+    public void without_Periods_List_But_With_ClosedNow_Should_Display_Closed() {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
@@ -394,7 +394,7 @@ public class RestaurantsViewModelTest {
     }
 
     @Test
-    public void restaurant_Closed_Until_More_Than_Tomorrow_Should_Display_Closed_Until_Next_Opening_Day(){
+    public void restaurant_Closed_Until_More_Than_Tomorrow_Should_Display_Closed_Until_Next_Opening_Day() {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
@@ -441,7 +441,7 @@ public class RestaurantsViewModelTest {
     }
 
     @Test
-    public void restaurant_Closed_Until_Tomorrow_Should_Display_Closed_Until_Tomorrow(){
+    public void restaurant_Closed_Until_Tomorrow_Should_Display_Closed_Until_Tomorrow() {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
@@ -488,7 +488,7 @@ public class RestaurantsViewModelTest {
     }
 
     @Test
-    public void last_Day_Goes_To_Next_Month(){
+    public void last_Day_Goes_To_Next_Month() {
         // GIVEN
         restaurantsViewModel = new RestaurantsViewModel(
                 application,
@@ -545,7 +545,7 @@ public class RestaurantsViewModelTest {
     }
 
     @Test
-    public void last_Day_Goes_To_Next_Year(){
+    public void last_Day_Goes_To_Next_Year() {
         // GIVEN
         restaurantsViewModel = new RestaurantsViewModel(
                 application,
@@ -602,9 +602,9 @@ public class RestaurantsViewModelTest {
     }
 
     @Test
-    public void details_Unavailable_should_Display_Nearby_Results(){
+    public void details_Unavailable_should_Display_Nearby_Results() {
         // GIVEN
-         restaurantDetailsResultsUseCaseMutableLiveData.setValue(null);
+        restaurantDetailsResultsUseCaseMutableLiveData.setValue(null);
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getNearbyWithoutDetailsRestaurants()));
 
         // WHEN
@@ -620,7 +620,7 @@ public class RestaurantsViewModelTest {
     ////////// RATING STARS TESTS ///////////
 
     @Test
-    public void get_Rating_Should_Display_Stars(){
+    public void get_Rating_Should_Display_Stars() {
         // GIVEN
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getRatingStars()));
         // WHEN
@@ -632,10 +632,10 @@ public class RestaurantsViewModelTest {
 
     }
 
-      /////////// RESTAURANTS LIST TEST ///////////
+    /////////// RESTAURANTS LIST TEST ///////////
 
     @Test
-    public void whenDetailsListIsEmptyShouldDisplayNearbyList(){
+    public void whenDetailsListIsEmptyShouldDisplayNearbyList() {
         // GIVEN
         // WHEN
         // THEN
@@ -644,18 +644,18 @@ public class RestaurantsViewModelTest {
 
     /////////// PHOTO TESTS ///////////
 
-  @Test
-  public void whenPhotoListIsNullShouldDisplayPhotoUnavailable(){
-      // GIVEN
-      nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getNullPhoto()));
-      // WHEN
-      LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
-          // THEN
-          assertEquals(getNullPhotoViewState(), restaurantsWrapperViewState);
+    @Test
+    public void whenPhotoListIsNullShouldDisplayPhotoUnavailable() {
+        // GIVEN
+        nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getNullPhoto()));
+        // WHEN
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+            // THEN
+            assertEquals(getNullPhotoViewState(), restaurantsWrapperViewState);
 
-      });
+        });
 
-  }
+    }
 
     // VAL FOR TESTING //
 
@@ -671,7 +671,7 @@ public class RestaurantsViewModelTest {
     String secondSite = "Second_Website";
     String photo = "photo";
     String distance = "0";
-    String openH24= "Open 24/7";
+    String openH24 = "Open 24/7";
     String open = "Open";
     String closed = "Closed";
     String closingSoon = "Closing soon";
@@ -682,7 +682,7 @@ public class RestaurantsViewModelTest {
     // region IN
 
     private List<RestaurantSearch> getDefaultRestaurants() {
-               List<RestaurantSearch> restaurants = new ArrayList<>();
+        List<RestaurantSearch> restaurants = new ArrayList<>();
         restaurants.add(
                 new RestaurantSearch(
                         firstPlaceId,
@@ -875,12 +875,11 @@ public class RestaurantsViewModelTest {
     }
 
 
-
     private List<RestaurantDetailsResult> getDefaultRestaurantsDetails(RestaurantDetails... restaurantDetails) {
 
         List<RestaurantDetailsResult> results = new ArrayList<>();
 
-        for(RestaurantDetails restaurantDetail : restaurantDetails){
+        for (RestaurantDetails restaurantDetail : restaurantDetails) {
             results.add(new RestaurantDetailsResult(restaurantDetail));
 
         }
@@ -907,7 +906,7 @@ public class RestaurantsViewModelTest {
 
     // region OUT
 
-    private RestaurantsWrapperViewState getDefaultRestaurantViewState(){
+    private RestaurantsWrapperViewState getDefaultRestaurantViewState() {
         return new RestaurantsWrapperViewState(getRestaurantsResults());
 
     }
@@ -939,7 +938,7 @@ public class RestaurantsViewModelTest {
         );
     }
 
-    private RestaurantsWrapperViewState getRestaurantsClosingSoon(){
+    private RestaurantsWrapperViewState getRestaurantsClosingSoon() {
         return new RestaurantsWrapperViewState(getRestaurantsClosingSoonResults());
 
     }
@@ -971,7 +970,7 @@ public class RestaurantsViewModelTest {
         );
     }
 
-    private RestaurantsWrapperViewState getRestaurantsClosed(){
+    private RestaurantsWrapperViewState getRestaurantsClosed() {
         return new RestaurantsWrapperViewState(getRestaurantsClosedResults());
 
     }
@@ -1004,8 +1003,7 @@ public class RestaurantsViewModelTest {
     }
 
 
-
-    private RestaurantsWrapperViewState getPermanentlyOpenRestaurant(){
+    private RestaurantsWrapperViewState getPermanentlyOpenRestaurant() {
         return new RestaurantsWrapperViewState(getPermanentlyOpenRestaurantsResults());
 
     }
@@ -1037,7 +1035,7 @@ public class RestaurantsViewModelTest {
         );
     }
 
-    private RestaurantsWrapperViewState getPermanentlyClosedRestaurantsViewState(){
+    private RestaurantsWrapperViewState getPermanentlyClosedRestaurantsViewState() {
         return new RestaurantsWrapperViewState(getPermanentlyClosedRestaurantsResults());
 
     }
@@ -1069,7 +1067,7 @@ public class RestaurantsViewModelTest {
         );
     }
 
-    private RestaurantsWrapperViewState getOpenRestaurantsViewState(){
+    private RestaurantsWrapperViewState getOpenRestaurantsViewState() {
         return new RestaurantsWrapperViewState(getOpenNowRestaurantsResults());
 
     }
@@ -1101,7 +1099,7 @@ public class RestaurantsViewModelTest {
         );
     }
 
-    private RestaurantsWrapperViewState getClosedRestaurantsViewState(){
+    private RestaurantsWrapperViewState getClosedRestaurantsViewState() {
         return new RestaurantsWrapperViewState(getClosedNowRestaurantsResults());
 
     }
@@ -1133,7 +1131,7 @@ public class RestaurantsViewModelTest {
         );
     }
 
-    private RestaurantsWrapperViewState getClosedUntilNextDayRestaurantsViewState(){
+    private RestaurantsWrapperViewState getClosedUntilNextDayRestaurantsViewState() {
         return new RestaurantsWrapperViewState(getClosedUntilNextDayRestaurantsResults());
 
     }
@@ -1165,7 +1163,7 @@ public class RestaurantsViewModelTest {
         );
     }
 
-    private RestaurantsWrapperViewState getClosedUntilTomorrowRestaurantsViewState(){
+    private RestaurantsWrapperViewState getClosedUntilTomorrowRestaurantsViewState() {
         return new RestaurantsWrapperViewState(getClosedUntilTomorrowRestaurantsResults());
 
     }
@@ -1197,7 +1195,7 @@ public class RestaurantsViewModelTest {
         );
     }
 
-    private RestaurantsWrapperViewState getRatingRestaurantsViewState(){
+    private RestaurantsWrapperViewState getRatingRestaurantsViewState() {
         return new RestaurantsWrapperViewState(getRatingRestaurantsResults());
 
     }
@@ -1229,7 +1227,7 @@ public class RestaurantsViewModelTest {
         );
     }
 
-    private RestaurantsWrapperViewState getNullPhotoViewState(){
+    private RestaurantsWrapperViewState getNullPhotoViewState() {
         return new RestaurantsWrapperViewState(getNullPhotoRestaurantsResults());
 
     }
@@ -1356,7 +1354,6 @@ public class RestaurantsViewModelTest {
 
         );
     }
-
 
 
     // endregion

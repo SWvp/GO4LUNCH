@@ -20,7 +20,7 @@
         <!--GOOGLE MAP API-->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8"/>
+            android:value="@string/google_map_key"/>
 
         <!--FACEBOOK API-->
         <meta-data

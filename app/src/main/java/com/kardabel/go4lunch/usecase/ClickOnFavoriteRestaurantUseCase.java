@@ -47,24 +47,5 @@ public class ClickOnFavoriteRestaurantUseCase {
                         }
                     }
                 });
-
-  //  assert userId != null;
-  //  getDayCollection()
-  //          .document(userId)
-  //          .get()
-  //          .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-  //              @Override
-  //              public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-  //                  if (task.isSuccessful()) {
-  //                      if (task.getResult().get) {
-  //                          task.getResult().getReference().delete();
-  //                      } else {
-  //                          task.getResult().getReference().set(favoriteRestaurant);
-  //                      }
-  //                  }
-  //
-  //              }
-  //          });
-
     }
 }

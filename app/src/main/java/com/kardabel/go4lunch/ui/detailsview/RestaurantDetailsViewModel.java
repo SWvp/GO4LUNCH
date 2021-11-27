@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.ui.detailsview;
 
+import android.app.Application;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -30,6 +32,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private final MediatorLiveData<List<DetailsWorkmatesViewState>> workmatesLikeThisRestaurantMediatorLiveData = new MediatorLiveData<>();
     private RestaurantDetailsViewState result;
     @NonNull
+    private final Application application;
+    @NonNull
     private final GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase;
     @NonNull
     private final GetRestaurantDetailsResultsByIdUseCase getRestaurantDetailsResultsByIdUseCase;
@@ -41,11 +45,14 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository;
 
 
-    public RestaurantDetailsViewModel(@NonNull GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase,
+    public RestaurantDetailsViewModel(@NonNull Application application,
+                                      @NonNull GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase,
                                       @NonNull GetRestaurantDetailsResultsByIdUseCase getRestaurantDetailsResultsByIdUseCase,
                                       @NonNull WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository,
                                       @NonNull WorkmatesRepository workmatesRepository,
                                       @NonNull FavoriteRestaurantsRepository favoriteRestaurantsRepository) {
+
+        this.application = application;
         this.getNearbySearchResultsByIdUseCase = getNearbySearchResultsByIdUseCase;
         this.getRestaurantDetailsResultsByIdUseCase = getRestaurantDetailsResultsByIdUseCase;
         this.workmatesWhoMadeRestaurantChoiceRepository = workmatesWhoMadeRestaurantChoiceRepository;
@@ -151,7 +158,11 @@ public class RestaurantDetailsViewModel extends ViewModel {
         result = new RestaurantDetailsViewState(
                 restaurant.getRestaurantName(),
                 restaurant.getRestaurantAddress(),
-                photoReference(restaurant.getRestaurantPhotos()),
+                application.getString(R.string.api_url)
+                        + application.getString(R.string.photo_reference)
+                        + photoReference(restaurant.getRestaurantPhotos())
+                        + application.getString(R.string.and_key)
+                        + application.getString(R.string.google_map_key),
                 "",
                 "",
                 restaurant.getRestaurantId(),
@@ -207,7 +218,11 @@ public class RestaurantDetailsViewModel extends ViewModel {
         result = new RestaurantDetailsViewState(
                 restaurant.getRestaurantName(),
                 restaurant.getRestaurantAddress(),
-                photoReference(restaurant.getRestaurantPhotos()),
+                application.getString(R.string.api_url)
+                        + application.getString(R.string.photo_reference)
+                        + photoReference(restaurant.getRestaurantPhotos())
+                        + application.getString(R.string.and_key)
+                        + application.getString(R.string.google_map_key),
                 restaurantPhoneNumber,
                 restaurantWebsite,
                 restaurant.getRestaurantId(),
@@ -254,7 +269,11 @@ public class RestaurantDetailsViewModel extends ViewModel {
         result = new RestaurantDetailsViewState(
                 restaurant.getRestaurantName(),
                 restaurant.getRestaurantAddress(),
-                photoReference(restaurant.getRestaurantPhotos()),
+                application.getString(R.string.api_url)
+                        + application.getString(R.string.photo_reference)
+                        + photoReference(restaurant.getRestaurantPhotos())
+                        + application.getString(R.string.and_key)
+                        + application.getString(R.string.google_map_key),
                 restaurantPhoneNumber,
                 restaurantWebsite,
                 restaurant.getRestaurantId(),
@@ -318,7 +337,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
                 }
             }
         }
-        return null;
+        return application.getString(R.string.photo_unavailable);
 
     }
 

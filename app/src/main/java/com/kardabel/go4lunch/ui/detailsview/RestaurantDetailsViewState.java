@@ -4,10 +4,6 @@ import androidx.annotation.DrawableRes;
 
 public class RestaurantDetailsViewState {
 
-    private static final String API_URL = "https://maps.googleapis.com/maps/api/place/";
-    private static final String PHOTO_REFERENCE ="photo?maxwidth=300&photo_reference=";
-    private static final String API_KEY ="AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8";
-
     private final String detailsRestaurantName;
     private final String detailsRestaurantAddress;
     private final String detailsPhoto;
@@ -59,12 +55,5 @@ public class RestaurantDetailsViewState {
 
     public int getDetailLikeButton() { return detailLikeButton; }
 
-    public static String urlPhotoDetails(RestaurantDetailsViewState restaurantDetailsViewState) {
-        if (restaurantDetailsViewState.getDetailsPhoto() != null) {
-            String photoReference = restaurantDetailsViewState.getDetailsPhoto();
-            return API_URL + PHOTO_REFERENCE + photoReference + "&key=" + API_KEY;
-        }
-        return "";
-    }
 
 }

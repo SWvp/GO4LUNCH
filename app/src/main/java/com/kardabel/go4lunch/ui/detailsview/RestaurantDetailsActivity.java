@@ -62,9 +62,8 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
                 binding.detailRestaurantName.setText(details.getDetailsRestaurantName());
                 binding.detailRestaurantAddress.setText(details.getDetailsRestaurantAddress());
-                String urlPhoto = RestaurantDetailsViewState.urlPhotoDetails(details);
                 Glide.with(binding.detailPicture.getContext())
-                        .load(urlPhoto)
+                        .load(details.getDetailsPhoto())
                         .into(binding.detailPicture);
                 //number
                 //website

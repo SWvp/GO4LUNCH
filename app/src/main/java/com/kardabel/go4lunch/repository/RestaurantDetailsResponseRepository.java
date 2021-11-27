@@ -1,11 +1,13 @@
 package com.kardabel.go4lunch.repository;
 
+import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 
@@ -19,18 +21,22 @@ import retrofit2.Response;
 public class RestaurantDetailsResponseRepository {
 
     private final GoogleMapsApi googleMapsApi;
-    private final String key = "AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8";
-    private static final String FIELDS = "formatted_phone_number,opening_hours,website,place_id";
+    private final  Application application;
 
     private final Map<String, RestaurantDetailsResult> cache = new HashMap<>(2000);
 
-    public RestaurantDetailsResponseRepository(GoogleMapsApi googleMapsApi) {
+    public RestaurantDetailsResponseRepository(GoogleMapsApi googleMapsApi, Application application) {
         this.googleMapsApi = googleMapsApi;
+        this.application = application;
     }
 
     public LiveData<RestaurantDetailsResult> getRestaurantDetailsLiveData(String place_id) {
 
+        String key = application.getString(R.string.google_map_key);
+        String FIELDS = application.getString(R.string.restaurant_details_fields);
+
         MutableLiveData<RestaurantDetailsResult> placeDetailsResultMutableLiveData = new MutableLiveData<>();
+
         RestaurantDetailsResult restaurantDetailsResult = cache.get(place_id);
         if (restaurantDetailsResult != null) {
             placeDetailsResultMutableLiveData.setValue(restaurantDetailsResult);

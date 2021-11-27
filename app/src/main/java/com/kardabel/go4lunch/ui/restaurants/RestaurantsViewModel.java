@@ -151,7 +151,12 @@ public class RestaurantsViewModel extends ViewModel {
             if (nearbySearchResults.getResults().get(i).getRestaurantName().contains(usersSearch)) {
                 String name = nearbySearchResults.getResults().get(i).getRestaurantName();
                 String address = nearbySearchResults.getResults().get(i).getRestaurantAddress();
-                String photo = photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos());
+                String photo =
+                        application.getString(R.string.api_url)
+                                + application.getString(R.string.photo_reference)
+                                + photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos())
+                                + application.getString(R.string.and_key)
+                                + application.getString(R.string.google_map_key);
                 String distance = distance(
                         location,
                         nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
@@ -186,7 +191,12 @@ public class RestaurantsViewModel extends ViewModel {
         for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
             String name = nearbySearchResults.getResults().get(i).getRestaurantName();
             String address = nearbySearchResults.getResults().get(i).getRestaurantAddress();
-            String photo = photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos());
+            String photo =
+                    application.getString(R.string.api_url)
+                            + application.getString(R.string.photo_reference)
+                            + photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos())
+                            + application.getString(R.string.and_key)
+                            + application.getString(R.string.google_map_key);
             String distance = distance(
                     location,
                     nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
@@ -227,7 +237,12 @@ public class RestaurantsViewModel extends ViewModel {
 
                         String name = place.getRestaurantName();
                         String address = place.getRestaurantAddress();
-                        String photo = photoReference(place.getRestaurantPhotos());
+                        String photo =
+                                application.getString(R.string.api_url)
+                                        + application.getString(R.string.photo_reference)
+                                        + photoReference(place.getRestaurantPhotos())
+                                        + application.getString(R.string.and_key)
+                                        + application.getString(R.string.google_map_key);
                         String distance = distance(
                                 location,
                                 place.getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),

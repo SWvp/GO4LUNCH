@@ -26,7 +26,6 @@ public class WorkmatesRepository {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
 
-
     // GET WORKMATES FROM FIRESTORE DATABASE
     public LiveData<List<UserModel>> getWorkmates() {
         MutableLiveData<List<UserModel>> userModelMutableLiveData = new MutableLiveData<>();
@@ -54,7 +53,6 @@ public class WorkmatesRepository {
 
                             }
                         }
-
                     }
                     List<UserModel> workmatesList = new ArrayList<>(workmates);
                     userModelMutableLiveData.setValue(workmatesList);

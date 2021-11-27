@@ -16,7 +16,9 @@ public class PredictionsViewState {
         this.predictionName = predictionName;
     }
 
-    public String getPredictionDescription() { return predictionDescription; }
+    public String getPredictionDescription() {
+        return predictionDescription;
+    }
 
     public String getPredictionPlaceId() { return predictionPlaceId; }
 

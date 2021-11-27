@@ -68,11 +68,16 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         GoogleMapsApi googleMapsApi = retrofit.create(GoogleMapsApi.class);
-        NearbySearchResponseRepository nearbySearchResponseRepository = new NearbySearchResponseRepository(googleMapsApi);
-        RestaurantDetailsResponseRepository restaurantDetailsResponseRepository = new RestaurantDetailsResponseRepository(googleMapsApi);
-        AutocompleteRepository autocompleteRepository = new AutocompleteRepository(googleMapsApi);
-
         this.application = MainApplication.getApplication();
+        NearbySearchResponseRepository nearbySearchResponseRepository = new NearbySearchResponseRepository(
+                googleMapsApi,
+                application);
+        RestaurantDetailsResponseRepository restaurantDetailsResponseRepository = new RestaurantDetailsResponseRepository(
+                googleMapsApi,
+                application);
+        AutocompleteRepository autocompleteRepository = new AutocompleteRepository(
+                googleMapsApi,
+                application);
         this.locationRepository = new LocationRepository();
         this.workmatesRepository = new WorkmatesRepository();
         this.usersSearchRepository = new UsersSearchRepository();
@@ -128,6 +133,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     workmatesWhoMadeRestaurantChoiceRepository);
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
+                    application,
                     getNearbySearchResultsByIdUseCase,
                     getRestaurantDetailsResultsByIdUseCase,
                     workmatesWhoMadeRestaurantChoiceRepository,

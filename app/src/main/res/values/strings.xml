@@ -7,6 +7,9 @@
     <string name="title_2">SETTINGS</string>
     <string name="title_3">LOGOUT</string>
 
+    <!-- GOOGLE MAP API KEY -->
+    <string name="google_map_key">1234</string>
+
     <!-- USED IN AUTHENTICATION -->
     <string name="button_login_text_logged">Display profile</string>
     <string name="button_login_text_not_logged">Connexion</string>
@@ -63,6 +66,23 @@
     <string name="restaurant_name">Restaurant name</string>
     <string name="restaurant_address">Restaurant address</string>
     <string name="web_icon">Web icon</string>
+
+    <!-- AUTOCOMPLETE REPOSITORY -->
+    <string name="autocomplete_type">establishment</string>
+
+    <!-- RESTAURANT DETAILS RESULT REPOSITORY -->
+    <string name="restaurant_details_fields">formatted_phone_number,opening_hours,website,place_id</string>
+
+    <!-- RADIUS -->
+    <string name="radius">1000</string>
+
+    <!-- PHOTO -->
+    <string name="api_url">https://maps.googleapis.com/maps/api/place/</string>
+    <string name="photo_reference">photo?maxwidth=300&amp;photo_reference=</string>
+    <string name="and_key">&amp;key=</string>
+
+
+
 
 
 

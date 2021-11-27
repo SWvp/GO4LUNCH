@@ -67,23 +67,23 @@ public class AuthenticationActivity extends BaseActivity<AuthentificationBinding
     }
 
     // Update Login Button when activity is resuming
-    private void updateLoginButton(){
+    private void updateLoginButton() {
         binding.loginButton.setText(userManager.isCurrentUserLogged() ? getString(R.string.button_login_text_logged) : getString(R.string.button_login_text_not_logged));
     }
 
-    private void setupListeners(){
+    private void setupListeners() {
         // Login/Profile Button
         binding.loginButton.setOnClickListener(view -> {
-            if(userManager.isCurrentUserLogged()){
+            if (userManager.isCurrentUserLogged()) {
                 startProfileActivity();
-            }else{
+            } else {
                 startSignInActivity();
             }
         });
     }
 
     // Launching Profile Activity
-    private void startProfileActivity(){
+    private void startProfileActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
@@ -94,7 +94,6 @@ public class AuthenticationActivity extends BaseActivity<AuthentificationBinding
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
                 new AuthUI.IdpConfig.FacebookBuilder().build());
-
 
 
         // Launch activity
@@ -118,12 +117,12 @@ public class AuthenticationActivity extends BaseActivity<AuthentificationBinding
 
 
     // Show Snack Bar with a message
-    private void showSnackBar( String message){
+    private void showSnackBar(String message) {
         Snackbar.make(binding.authenticationLayout, message, Snackbar.LENGTH_SHORT).show();
     }
 
     // Method that handles response after SignIn Activity close
-    private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data){
+    private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data) {
 
         IdpResponse response = IdpResponse.fromResultIntent(data);
 
@@ -136,8 +135,8 @@ public class AuthenticationActivity extends BaseActivity<AuthentificationBinding
                 // ERRORS
                 if (response == null) {
                     showSnackBar(getString(R.string.error_authentication_canceled));
-                } else if (response.getError()!= null) {
-                    if(response.getError().getErrorCode() == ErrorCodes.NO_NETWORK){
+                } else if (response.getError() != null) {
+                    if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
                         showSnackBar(getString(R.string.error_no_internet));
                     } else if (response.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
                         showSnackBar(getString(R.string.error_unknown_error));

@@ -65,15 +65,15 @@ public class MainActivityViewModel extends ViewModel {
             permissionGranted();
 
         }
-  //    else if(ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
-  //        actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_ASKED);
+        //    else if(ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
+        //        actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_ASKED);
 
-  //    }
+        //    }
 
- //  else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, ACCESS_FINE_LOCATION)) {
- //      actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
+        //  else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, ACCESS_FINE_LOCATION)) {
+        //      actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
 
- //  }
+        //  }
         else {
             actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_ASKED);
 
@@ -92,17 +92,17 @@ public class MainActivityViewModel extends ViewModel {
     public void retrievePredictions(String text) {
 
 
-            LiveData<Predictions> predictionsLiveData = getPredictionsUseCase.invoke(text);
+        LiveData<Predictions> predictionsLiveData = getPredictionsUseCase.invoke(text);
 
-            // TODO: observe and retrieve the distance to calculate the distance from user
+        // TODO: observe and retrieve the distance to calculate the distance from user
 
-            predictionsMediatorLiveData.addSource(predictionsLiveData, predictions -> combine(predictions));
+        predictionsMediatorLiveData.addSource(predictionsLiveData, predictions -> combine(predictions));
 
 
     }
 
     private void combine(Predictions predictions) {
-        if(predictions!= null){
+        if (predictions != null) {
             predictionsMediatorLiveData.setValue(map(predictions));
         }
     }
@@ -112,7 +112,7 @@ public class MainActivityViewModel extends ViewModel {
 
         List<PredictionsViewState> predictionsList = new ArrayList<>();
 
-        for (Prediction prediction: predictions.getPredictions()) {
+        for (Prediction prediction : predictions.getPredictions()) {
             predictionsList.add(new PredictionsViewState(
                     prediction.getDescription(),
                     prediction.getPlaceId(),
@@ -134,7 +134,7 @@ public class MainActivityViewModel extends ViewModel {
 
     }
 
-    public LiveData<List<PredictionsViewState>> getPredictionsLiveData(){
+    public LiveData<List<PredictionsViewState>> getPredictionsLiveData() {
         return predictionsMediatorLiveData;
 
     }

@@ -17,7 +17,7 @@ import java.util.List;
 public class GetRestaurantDetailsResultsUseCase {
 
     private final MediatorLiveData<List<RestaurantDetailsResult>> placeDetailsMediatorLiveData = new MediatorLiveData<>();
-    private final MediatorLiveData<RestaurantDetailsResult> mPlaceDetailsResultMediatorLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<RestaurantDetailsResult> placeDetailsResultMediatorLiveData = new MediatorLiveData<>();
     private final List<RestaurantDetailsResult> mListRestaurantDetailsResults = new ArrayList<>();
     public LiveData<NearbySearchResults> nearbySearchResultsLiveData;
     private final RestaurantDetailsResponseRepository mRestaurantDetailsResponseRepository;
@@ -28,30 +28,42 @@ public class GetRestaurantDetailsResultsUseCase {
         this.mRestaurantDetailsResponseRepository = restaurantDetailsResponseRepository;
 
 
-       nearbySearchResultsLiveData = Transformations.switchMap(locationRepository.getLocationLiveData(), input -> {
-           String locationAsText = input.getLatitude() + "," + input.getLongitude();
-           return nearbySearchResponseRepository.getRestaurantListLiveData(
-                   "restaurant",
-                   locationAsText,
-                   "1000");
+        nearbySearchResultsLiveData = Transformations.switchMap(locationRepository.getLocationLiveData(), input -> {
+            String locationAsText = input.getLatitude() + "," + input.getLongitude();
+            return nearbySearchResponseRepository.getRestaurantListLiveData(
+                    "restaurant",
+                    locationAsText,
+                    "1000");
 
-       });
+        });
 
-        placeDetailsMediatorLiveData.addSource(nearbySearchResultsLiveData, nearbySearchResults -> combine(nearbySearchResults, mPlaceDetailsResultMediatorLiveData.getValue()));
+        placeDetailsMediatorLiveData.addSource(
+                nearbySearchResultsLiveData,
+                nearbySearchResults -> combine(
+                        nearbySearchResults,
+                        placeDetailsResultMediatorLiveData.getValue()));
 
-        placeDetailsMediatorLiveData.addSource(mPlaceDetailsResultMediatorLiveData, restaurantDetailsResult -> combine(nearbySearchResultsLiveData.getValue(), restaurantDetailsResult));
+        placeDetailsMediatorLiveData.addSource(
+                placeDetailsResultMediatorLiveData,
+                restaurantDetailsResult -> combine(
+                        nearbySearchResultsLiveData.getValue(),
+                        restaurantDetailsResult));
     }
 
-    private void combine(NearbySearchResults nearbySearchResults, @Nullable RestaurantDetailsResult restaurantDetailsResult) {
+    private void combine(
+            @Nullable NearbySearchResults nearbySearchResults,
+            @Nullable RestaurantDetailsResult restaurantDetailsResult) {
         if (nearbySearchResults != null) {
             for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
                 String placeId = nearbySearchResults.getResults().get(i).getRestaurantId();
-                if(!mListRestaurantDetailsResults.contains(restaurantDetailsResult) || restaurantDetailsResult == null){
-                    mPlaceDetailsResultMediatorLiveData.addSource(mRestaurantDetailsResponseRepository.getRestaurantDetailsLiveData(placeId), restaurantDetailsResult1 -> {
-                        mListRestaurantDetailsResults.add(restaurantDetailsResult1);
-                        mPlaceDetailsResultMediatorLiveData.setValue(restaurantDetailsResult1);
+                if (!mListRestaurantDetailsResults.contains(restaurantDetailsResult) || restaurantDetailsResult == null) {
+                    placeDetailsResultMediatorLiveData.addSource(
+                            mRestaurantDetailsResponseRepository.getRestaurantDetailsLiveData(placeId),
+                            restaurantDetailsResult1 -> {
+                                mListRestaurantDetailsResults.add(restaurantDetailsResult1);
+                                placeDetailsResultMediatorLiveData.setValue(restaurantDetailsResult1);
 
-                    });
+                            });
                 }
             }
             placeDetailsMediatorLiveData.setValue(mListRestaurantDetailsResults);
@@ -59,7 +71,7 @@ public class GetRestaurantDetailsResultsUseCase {
         }
     }
 
-    public LiveData <List<RestaurantDetailsResult>> getPlaceDetailsResultLiveData() {
+    public LiveData<List<RestaurantDetailsResult>> getPlaceDetailsResultLiveData() {
         return placeDetailsMediatorLiveData;
     }
 

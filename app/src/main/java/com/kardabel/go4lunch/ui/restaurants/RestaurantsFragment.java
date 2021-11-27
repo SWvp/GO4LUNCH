@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,13 +20,11 @@ import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 
 public class RestaurantsFragment extends Fragment {
 
-    private RestaurantsViewModel mRestaurantsViewModel;
     private RecyclerviewRestaurantsBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = RecyclerviewRestaurantsBinding.inflate(inflater, container, false);
-        View view = binding.getRoot();
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -43,27 +40,13 @@ public class RestaurantsFragment extends Fragment {
 
         // INJECTION OF RESTAURANT VIEWMODEL
         ViewModelFactory restaurantsViewModelFactory = ViewModelFactory.getInstance();
-        mRestaurantsViewModel =
-                new ViewModelProvider(this, restaurantsViewModelFactory).get(RestaurantsViewModel.class);
+        RestaurantsViewModel restaurantsViewModel = new ViewModelProvider(this, restaurantsViewModelFactory).get(RestaurantsViewModel.class);
 
         // CONFIGURE RECYCLERVIEW
-        mRestaurantsViewModel.getRestaurantsViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<RestaurantsWrapperViewState>() {
-            @Override
-            public void onChanged(RestaurantsWrapperViewState restaurantsWrapperViewState) {
-                adapter.setRestaurantListData(restaurantsWrapperViewState.getItemRestaurant());
-
-            }
-        });
+        restaurantsViewModel.getRestaurantsViewStateLiveData().observe(getViewLifecycleOwner(), restaurantsWrapperViewState -> adapter.setRestaurantListData(restaurantsWrapperViewState.getItemRestaurant()));
 
         // ON ITEM CLICK, GO TO DETAILS
-        adapter.setOnItemClickListener(new RestaurantRecyclerViewAdapter.OnRestaurantItemClickListener() {
-            @Override
-            public void onRestaurantItemClick(RestaurantsViewState restaurantsViewState) {
-
-                startActivity(RestaurantDetailsActivity.navigate(requireContext(), restaurantsViewState.getPlaceId()));
-
-            }
-        });
+        adapter.setOnItemClickListener(restaurantsViewState -> startActivity(RestaurantDetailsActivity.navigate(requireContext(), restaurantsViewState.getPlaceId())));
     }
 
     @Override
