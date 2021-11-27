@@ -1,15 +1,15 @@
 package com.kardabel.go4lunch.model;
 
-public class WorkmateWithFavoriteRestaurant {
+public class WorkmateWhoMadeRestaurantChoice {
 
     private String restaurantId;
     private String restaurantName;
     private String userId;
 
-    public WorkmateWithFavoriteRestaurant() {
+    public WorkmateWhoMadeRestaurantChoice() {
     }
 
-    public WorkmateWithFavoriteRestaurant(String restaurantId, String restaurantName, String userId) {
+    public WorkmateWhoMadeRestaurantChoice(String restaurantId, String restaurantName, String userId) {
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.userId = userId;

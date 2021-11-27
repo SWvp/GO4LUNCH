@@ -9,13 +9,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.kardabel.go4lunch.R;
-import com.kardabel.go4lunch.databinding.RecyclerviewWorkmatesBinding;
 import com.kardabel.go4lunch.databinding.RestaurantDetailsBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 
@@ -60,16 +57,20 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             @Override
             public void onChanged(RestaurantDetailsViewState details) {
 
-                restaurantId = details.getDetailsRestaurantId();
                 restaurantName = details.getDetailsRestaurantName();
+                restaurantId = details.getDetailsRestaurantId();
+
                 binding.detailRestaurantName.setText(details.getDetailsRestaurantName());
                 binding.detailRestaurantAddress.setText(details.getDetailsRestaurantAddress());
-                binding.detailsRating.setRating((float) details.getRating());
-                binding.detailLikeButton.setImageResource(details.isFavorite());
                 String urlPhoto = RestaurantDetailsViewState.urlPhotoDetails(details);
                 Glide.with(binding.detailPicture.getContext())
                         .load(urlPhoto)
                         .into(binding.detailPicture);
+                //number
+                //website
+                binding.detailsRating.setRating((float) details.getRating());
+                binding.choseRestaurantButton.setImageResource(details.getChoseRestaurantButton());
+                binding.detailLikeButton.setImageResource(details.getDetailLikeButton());
             }
         });
 
@@ -81,10 +82,17 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             }
         });
 
+        binding.choseRestaurantButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                restaurantDetailsViewModel.onChoseRestaurantButtonClick(restaurantId, restaurantName);
+            }
+        });
+
         binding.detailLikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                restaurantDetailsViewModel.onFavoriteClick(restaurantId, restaurantName);
+                restaurantDetailsViewModel.onFavoriteIconClick(restaurantId, restaurantName);
             }
         });
     }

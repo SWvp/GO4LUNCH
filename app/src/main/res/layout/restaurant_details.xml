@@ -119,7 +119,7 @@
                 android:id="@+id/detail_like_button"
                 android:layout_width="29dp"
                 android:layout_height="28dp"
-                android:background="@drawable/detail_star"
+                android:background="@drawable/detail_favorite_star_empty"
                 app:layout_constraintEnd_toStartOf="@+id/web_icon"
                 app:layout_constraintStart_toEndOf="@+id/call_icon"
                 app:layout_constraintTop_toTopOf="@+id/call_icon"
@@ -165,12 +165,13 @@
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_favorite"
+        android:id="@+id/chose_restaurant_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:baselineAlignBottom="false"
         android:backgroundTint="@color/white"
-        android:src="@drawable/fab_detail"
+        android:background="@color/colorAccent"
+        android:src="@drawable/hasnt_decided"
         app:fabSize="normal"
         android:layout_marginEnd="16dp"
         app:layout_anchor="@id/detail_appBar"

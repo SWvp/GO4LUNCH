@@ -12,7 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.kardabel.go4lunch.model.UserModel;
-import com.kardabel.go4lunch.model.WorkmateWithFavoriteRestaurant;
+import com.kardabel.go4lunch.model.WorkmateWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 
 import java.time.LocalDate;
@@ -23,16 +23,16 @@ import java.util.Set;
 
 public class WorkmatesRepository {
 
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
+
 
     // GET WORKMATES FROM FIRESTORE DATABASE
     public LiveData<List<UserModel>> getWorkmates() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         MutableLiveData<List<UserModel>> userModelMutableLiveData = new MutableLiveData<>();
 
         // WITH SET, WE ENSURE THERE IS NO DUPLICATE, FOR EXAMPLE WHEN ANOTHER USER CHANGE NAME FIELD
         Set<UserModel> workmates = new HashSet<>();
-
-        String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
 
         // TODO : order by "is restaurant been chosen"
         db.collection("users")
@@ -59,39 +59,6 @@ public class WorkmatesRepository {
                     List<UserModel> workmatesList = new ArrayList<>(workmates);
                     userModelMutableLiveData.setValue(workmatesList);
 
-                });
-        return userModelMutableLiveData;
-    }
-
-
-    // GET WORMATES WHO DECIDED WHERE THEY WOULD EAT
-    public LiveData<List<WorkmateWithFavoriteRestaurant>> getWorkmatesWithFavoriteRestaurant() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        MutableLiveData<List<WorkmateWithFavoriteRestaurant>> userModelMutableLiveData = new MutableLiveData<>();
-
-        LocalDate today = LocalDate.now();
-
-        db.collection(today.toString())
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-
-                        if (error != null) {
-                            Log.e("no favorite today", error.getMessage());
-                            return;
-                        }
-                        List<WorkmateWithFavoriteRestaurant> userWithRestaurant = new ArrayList<>();
-
-                        for (DocumentChange document : value.getDocumentChanges()) {
-                            if (document.getType() == DocumentChange.Type.ADDED ||
-                                            document.getType() == DocumentChange.Type.MODIFIED) {
-
-                                userWithRestaurant.add(document.getDocument().toObject(WorkmateWithFavoriteRestaurant.class));
-
-                            }
-                        }
-                        userModelMutableLiveData.setValue(userWithRestaurant);
-                    }
                 });
         return userModelMutableLiveData;
     }

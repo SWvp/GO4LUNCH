@@ -17,6 +17,7 @@ import com.kardabel.go4lunch.pojo.Predictions;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UsersSearchRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
+import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 import com.kardabel.go4lunch.util.PermissionsViewAction;
 import com.kardabel.go4lunch.util.SingleLiveEvent;
@@ -36,6 +37,7 @@ public class MainActivityViewModel extends ViewModel {
     private final WorkmatesRepository workmatesRepository;
     private final GetPredictionsUseCase getPredictionsUseCase;
     private final UsersSearchRepository usersSearchRepository;
+    private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository;
 
 
     public MainActivityViewModel(
@@ -43,16 +45,15 @@ public class MainActivityViewModel extends ViewModel {
             @NonNull LocationRepository locationRepository,
             @NonNull WorkmatesRepository workmatesRepository,
             @NonNull GetPredictionsUseCase getPredictionsUseCase,
-            @NonNull UsersSearchRepository usersSearchRepository
-
-
-            ) {
+            @NonNull UsersSearchRepository usersSearchRepository,
+            @NonNull WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository) {
         super();
         this.application = application;
         this.locationRepository = locationRepository;
         this.workmatesRepository = workmatesRepository;
         this.getPredictionsUseCase = getPredictionsUseCase;
         this.usersSearchRepository = usersSearchRepository;
+        this.workmatesWhoMadeRestaurantChoiceRepository = workmatesWhoMadeRestaurantChoiceRepository;
 
 
     }
@@ -83,7 +84,7 @@ public class MainActivityViewModel extends ViewModel {
     private void permissionGranted() {
         locationRepository.StartLocationRequest();
         workmatesRepository.getWorkmates();
-        workmatesRepository.getWorkmatesWithFavoriteRestaurant();
+        workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
 
     }
 

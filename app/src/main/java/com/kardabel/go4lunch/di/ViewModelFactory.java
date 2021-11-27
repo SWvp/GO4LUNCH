@@ -6,27 +6,26 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.kardabel.go4lunch.MainApplication;
 import com.kardabel.go4lunch.MainActivityViewModel;
-import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.repository.RestaurantDetailsResponseRepository;
-import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
+import com.kardabel.go4lunch.MainApplication;
 import com.kardabel.go4lunch.repository.AutocompleteRepository;
+import com.kardabel.go4lunch.repository.FavoriteRestaurantsRepository;
+import com.kardabel.go4lunch.repository.LocationRepository;
+import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
+import com.kardabel.go4lunch.repository.RestaurantDetailsResponseRepository;
 import com.kardabel.go4lunch.repository.UsersSearchRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
+import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
-import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
+import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
-import com.kardabel.go4lunch.usecase.FirestoreUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsByIdUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsByIdUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
-import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
-import com.kardabel.go4lunch.usecase.GetUsersSearchUseCase;
-import com.kardabel.go4lunch.usecase.SearchViewUseCase;
 
 import java.time.Clock;
 
@@ -39,18 +38,15 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final Application application;
 
     private final LocationRepository locationRepository;
-    private final NearbySearchResponseRepository nearbySearchResponseRepository;
-    private final RestaurantDetailsResponseRepository mRestaurantDetailsResponseRepository;
     private final WorkmatesRepository workmatesRepository;
-    private final AutocompleteRepository autocompleteRepository;
     private final UsersSearchRepository usersSearchRepository;
+    private final FavoriteRestaurantsRepository favoriteRestaurantsRepository;
+    private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository;
 
     private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase;
     private final GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase;
     private final GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase;
     private final GetRestaurantDetailsResultsByIdUseCase getRestaurantDetailsResultsByIdUseCase;
-    private final FirestoreUseCase firestoreUseCase;
-    private final SearchViewUseCase searchViewUseCase;
     private final GetPredictionsUseCase getPredictionsUseCase;
 
     public static ViewModelFactory getInstance() {
@@ -72,14 +68,16 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         GoogleMapsApi googleMapsApi = retrofit.create(GoogleMapsApi.class);
-        this.application = MainApplication.getApplication();
+        NearbySearchResponseRepository nearbySearchResponseRepository = new NearbySearchResponseRepository(googleMapsApi);
+        RestaurantDetailsResponseRepository restaurantDetailsResponseRepository = new RestaurantDetailsResponseRepository(googleMapsApi);
+        AutocompleteRepository autocompleteRepository = new AutocompleteRepository(googleMapsApi);
 
+        this.application = MainApplication.getApplication();
         this.locationRepository = new LocationRepository();
-        this.nearbySearchResponseRepository = new NearbySearchResponseRepository(googleMapsApi);
-        this.mRestaurantDetailsResponseRepository = new RestaurantDetailsResponseRepository(googleMapsApi);
         this.workmatesRepository = new WorkmatesRepository();
-        this.autocompleteRepository = new AutocompleteRepository(googleMapsApi);
         this.usersSearchRepository = new UsersSearchRepository();
+        this.favoriteRestaurantsRepository = new FavoriteRestaurantsRepository();
+        this.workmatesWhoMadeRestaurantChoiceRepository = new WorkmatesWhoMadeRestaurantChoiceRepository();
 
         this.getNearbySearchResultsUseCase = new GetNearbySearchResultsUseCase(
                 locationRepository,
@@ -90,14 +88,10 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.getRestaurantDetailsResultsUseCase = new GetRestaurantDetailsResultsUseCase(
                 locationRepository,
                 nearbySearchResponseRepository,
-                mRestaurantDetailsResponseRepository);
+                restaurantDetailsResponseRepository);
         this.getRestaurantDetailsResultsByIdUseCase = new GetRestaurantDetailsResultsByIdUseCase(
-                mRestaurantDetailsResponseRepository
+                restaurantDetailsResponseRepository
         );
-        this.firestoreUseCase = new FirestoreUseCase();
-        this.searchViewUseCase = new SearchViewUseCase(
-                autocompleteRepository,
-                locationRepository);
         this.getPredictionsUseCase = new GetPredictionsUseCase(
                 locationRepository,
                 autocompleteRepository);
@@ -115,14 +109,14 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     locationRepository,
                     getNearbySearchResultsUseCase,
                     getRestaurantDetailsResultsUseCase,
-                    workmatesRepository,
+                    workmatesWhoMadeRestaurantChoiceRepository,
                     usersSearchRepository,
                     Clock.systemDefaultZone());
         } else if (modelClass.isAssignableFrom(MapViewModel.class)) {
             return (T) new MapViewModel(
                     locationRepository,
                     getNearbySearchResultsUseCase,
-                    workmatesRepository,
+                    workmatesWhoMadeRestaurantChoiceRepository,
                     usersSearchRepository);
         } else if (modelClass.isAssignableFrom(MainActivityViewModel.class)) {
             return (T) new MainActivityViewModel(
@@ -130,15 +124,19 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     locationRepository,
                     workmatesRepository,
                     getPredictionsUseCase,
-                    usersSearchRepository);
+                    usersSearchRepository,
+                    workmatesWhoMadeRestaurantChoiceRepository);
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
                     getNearbySearchResultsByIdUseCase,
                     getRestaurantDetailsResultsByIdUseCase,
-                    workmatesRepository);
+                    workmatesWhoMadeRestaurantChoiceRepository,
+                    workmatesRepository,
+                    favoriteRestaurantsRepository);
         } else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
             return (T) new WorkMatesViewModel(
-                    workmatesRepository
+                    workmatesRepository,
+                    workmatesWhoMadeRestaurantChoiceRepository
             );
         }
         throw new IllegalArgumentException("Unknown ViewModel class");

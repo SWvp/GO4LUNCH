@@ -16,7 +16,9 @@ public class RestaurantDetailsViewState {
     private final String detailsRestaurantId;
     private double rating;
     @DrawableRes
-    private final int isFavorite;
+    private final int choseRestaurantButton;
+    @DrawableRes
+    private final int detailLikeButton;
 
     public RestaurantDetailsViewState(String detailsRestaurantName,
                                       String detailsRestaurantAddress,
@@ -25,7 +27,8 @@ public class RestaurantDetailsViewState {
                                       String detailsWebsite,
                                       String detailsRestaurantId,
                                       double rating,
-                                      int isFavorite) {
+                                      int choseRestaurantButton,
+                                      int detailLikeButton) {
         this.detailsRestaurantName = detailsRestaurantName;
         this.detailsRestaurantAddress = detailsRestaurantAddress;
         this.detailsPhoto = detailsPhoto;
@@ -33,7 +36,8 @@ public class RestaurantDetailsViewState {
         this.detailsWebsite = detailsWebsite;
         this.detailsRestaurantId = detailsRestaurantId;
         this.rating = rating;
-        this.isFavorite = isFavorite;
+        this.choseRestaurantButton = choseRestaurantButton;
+        this.detailLikeButton = detailLikeButton;
 
     }
 
@@ -51,7 +55,9 @@ public class RestaurantDetailsViewState {
 
     public double getRating() { return rating; }
 
-    public int isFavorite() { return isFavorite; }
+    public int getChoseRestaurantButton() { return choseRestaurantButton; }
+
+    public int getDetailLikeButton() { return detailLikeButton; }
 
     public static String urlPhotoDetails(RestaurantDetailsViewState restaurantDetailsViewState) {
         if (restaurantDetailsViewState.getDetailsPhoto() != null) {

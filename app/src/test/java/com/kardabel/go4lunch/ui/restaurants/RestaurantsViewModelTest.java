@@ -24,11 +24,10 @@ import com.kardabel.go4lunch.pojo.RestaurantLatLngLiteral;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UsersSearchRepository;
-import com.kardabel.go4lunch.repository.WorkmatesRepository;
+import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
-import com.kardabel.go4lunch.usecase.GetUsersSearchUseCase;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -54,7 +53,7 @@ public class RestaurantsViewModelTest {
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
     private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
-    private final WorkmatesRepository workmatesRepository = Mockito.mock(WorkmatesRepository.class);
+    private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository = Mockito.mock(WorkmatesWhoMadeRestaurantChoiceRepository.class);
     private final UsersSearchRepository usersSearchRepository = Mockito.mock(UsersSearchRepository.class);
 
     private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase = Mockito.mock(GetNearbySearchResultsUseCase.class);
@@ -172,7 +171,7 @@ public class RestaurantsViewModelTest {
                 locationRepository,
                 getNearbySearchResultsUseCase,
                 getRestaurantDetailsResultsUseCase,
-                workmatesRepository,
+                workmatesWhoMadeRestaurantChoiceRepository,
                 usersSearchRepository,
                 clock);
     }
@@ -496,7 +495,7 @@ public class RestaurantsViewModelTest {
                 locationRepository,
                 getNearbySearchResultsUseCase,
                 getRestaurantDetailsResultsUseCase,
-                workmatesRepository,
+                workmatesWhoMadeRestaurantChoiceRepository,
                 usersSearchRepository,
                 clockNewMonth);
 
@@ -553,7 +552,7 @@ public class RestaurantsViewModelTest {
                 locationRepository,
                 getNearbySearchResultsUseCase,
                 getRestaurantDetailsResultsUseCase,
-                workmatesRepository,
+                workmatesWhoMadeRestaurantChoiceRepository,
                 usersSearchRepository,
                 clockNewYear);
 
