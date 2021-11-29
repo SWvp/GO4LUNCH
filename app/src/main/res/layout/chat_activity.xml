@@ -47,9 +47,10 @@
         android:layout_height="match_parent"
         android:layout_marginTop="90dp"
         android:layout_marginBottom="32dp"
+        android:background="@color/white"
         app:layout_constraintBottom_toTopOf="@id/chat_message_edit_text"
         app:layout_constraintTop_toBottomOf="@+id/mate_name"
-        android:background="@color/white"/>
+        tools:listitem="@layout/item_chat_incoming"/>
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/chat_message_edit_text"
@@ -73,6 +74,7 @@
         android:background="@android:color/transparent"
         android:padding="8dp"
         android:src="@drawable/ic_baseline_send_24"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/chat_message_edit_text" />
