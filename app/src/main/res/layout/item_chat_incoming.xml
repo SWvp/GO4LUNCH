@@ -32,7 +32,7 @@
         app:layout_constraintTop_toTopOf="@+id/avatar_mate">
 
         <TextView
-            android:id="@+id/mates_message_text"
+            android:id="@+id/incoming_message_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8dp"
@@ -43,7 +43,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/mates_message_hour"
+        android:id="@+id/incoming_message_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
