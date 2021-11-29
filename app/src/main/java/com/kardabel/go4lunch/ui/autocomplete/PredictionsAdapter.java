@@ -1,21 +1,16 @@
-package com.kardabel.go4lunch;
+package com.kardabel.go4lunch.ui.autocomplete;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.kardabel.go4lunch.R;
 
 public class PredictionsAdapter extends
         ListAdapter<PredictionsViewState,
@@ -33,8 +28,7 @@ public class PredictionsAdapter extends
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(
-            @NonNull ViewGroup parent,
-            int viewType) {
+            @NonNull ViewGroup parent, int viewType) {
         return new ViewHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_prediction, parent, false)
         );
@@ -42,8 +36,7 @@ public class PredictionsAdapter extends
 
     @Override
     public void onBindViewHolder(
-            @NonNull ViewHolder holder,
-            int position) {
+            @NonNull ViewHolder holder, int position) {
         holder.bind(getItem(position), listener);
 
     }

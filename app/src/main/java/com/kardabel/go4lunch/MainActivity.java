@@ -42,6 +42,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.manager.UserManager;
+import com.kardabel.go4lunch.ui.autocomplete.PredictionsAdapter;
+import com.kardabel.go4lunch.ui.autocomplete.PredictionsViewState;
 
 import java.util.ArrayList;
 import java.util.List;

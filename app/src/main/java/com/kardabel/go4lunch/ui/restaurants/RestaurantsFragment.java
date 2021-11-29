@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,13 +41,23 @@ public class RestaurantsFragment extends Fragment {
 
         // INJECTION OF RESTAURANT VIEWMODEL
         ViewModelFactory restaurantsViewModelFactory = ViewModelFactory.getInstance();
-        RestaurantsViewModel restaurantsViewModel = new ViewModelProvider(this, restaurantsViewModelFactory).get(RestaurantsViewModel.class);
+        RestaurantsViewModel restaurantsViewModel =
+                new ViewModelProvider(this, restaurantsViewModelFactory)
+                .get(RestaurantsViewModel.class);
 
         // CONFIGURE RECYCLERVIEW
-        restaurantsViewModel.getRestaurantsViewStateLiveData().observe(getViewLifecycleOwner(), restaurantsWrapperViewState -> adapter.setRestaurantListData(restaurantsWrapperViewState.getItemRestaurant()));
+        restaurantsViewModel.getRestaurantsViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<RestaurantsWrapperViewState>() {
+            @Override
+            public void onChanged(RestaurantsWrapperViewState restaurantsWrapperViewState) {
+                adapter.setRestaurantListData(restaurantsWrapperViewState.getItemRestaurant());
+            }
+        });
 
         // ON ITEM CLICK, GO TO DETAILS
-        adapter.setOnItemClickListener(restaurantsViewState -> startActivity(RestaurantDetailsActivity.navigate(requireContext(), restaurantsViewState.getPlaceId())));
+        adapter.setOnItemClickListener(restaurantsViewState ->
+                startActivity(RestaurantDetailsActivity.navigate(
+                        requireContext(),
+                        restaurantsViewState.getPlaceId())));
     }
 
     @Override

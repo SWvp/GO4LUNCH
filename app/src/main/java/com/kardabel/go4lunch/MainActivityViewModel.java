@@ -18,6 +18,7 @@ import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UsersSearchRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
+import com.kardabel.go4lunch.ui.autocomplete.PredictionsViewState;
 import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 import com.kardabel.go4lunch.util.PermissionsViewAction;
 import com.kardabel.go4lunch.util.SingleLiveEvent;

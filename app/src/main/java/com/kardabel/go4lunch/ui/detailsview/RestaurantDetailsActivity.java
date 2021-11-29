@@ -27,7 +27,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     private RestaurantDetailsBinding binding;
     private RestaurantDetailsViewModel restaurantDetailsViewModel;
 
-    public static Intent navigate(Context context, String placeId){
+    public static Intent navigate(Context context, String placeId) {
         Intent intent = new Intent(context, RestaurantDetailsActivity.class);
         intent.putExtra(RESTAURANT_ID, placeId);
         return intent;
@@ -42,13 +42,18 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         DetailsRecyclerViewAdapter adapter = new DetailsRecyclerViewAdapter();
 
         binding.detailRecyclerView.setAdapter(adapter);
-        binding.detailRecyclerView.setLayoutManager(new LinearLayoutManager(RestaurantDetailsActivity.this, RecyclerView.VERTICAL,false));
+        binding.detailRecyclerView.setLayoutManager(
+                new LinearLayoutManager(
+                        RestaurantDetailsActivity.this,
+                        RecyclerView.VERTICAL,
+                        false));
 
         // CONFIGURE VIEWMODEL
         ViewModelFactory listViewModelFactory = ViewModelFactory.getInstance();
         restaurantDetailsViewModel =
                 new ViewModelProvider(this, listViewModelFactory).get(RestaurantDetailsViewModel.class);
 
+        // INIT THE VIEW MODEL WITH THE RESTAURANT ID PASSED IN INTENT
         Intent intent = getIntent();
         restaurantDetailsViewModel.init(intent.getStringExtra(RESTAURANT_ID));
 
@@ -95,4 +100,4 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             }
         });
     }
- }
+}

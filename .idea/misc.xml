@@ -37,7 +37,9 @@
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/fragment_mapview.xml" value="0.490036231884058" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/fragment_workmates.xml" value="0.490036231884058" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_chat.xml" value="0.4631578947368421" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_chat_incoming.xml" value="0.275" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_chat_mate.xml" value="0.4631578947368421" />
+        <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_chat_outgoing.xml" value="0.275" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_listview.xml" value="0.27152988855116517" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_prediction.xml" value="0.33" />
         <entry key="..\:/OCRproject/GO4LUNCH/app/src/main/res/layout/item_restaurant.xml" value="0.2851851851851852" />
