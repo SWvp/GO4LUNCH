@@ -17,6 +17,7 @@ import com.kardabel.go4lunch.repository.UsersSearchRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
+import com.kardabel.go4lunch.ui.chat.ChatViewModel;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
@@ -144,6 +145,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     workmatesRepository,
                     workmatesWhoMadeRestaurantChoiceRepository
             );
+        } else if (modelClass.isAssignableFrom(ChatViewModel.class)) {
+            return (T) new ChatViewModel();
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
 
