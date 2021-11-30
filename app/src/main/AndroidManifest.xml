@@ -28,6 +28,15 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_application_id" />
 
+        <!--MESSAGING SERVICES-->
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <!--ACTIVITY-->
         <activity
             android:name=".AuthenticationActivity"
@@ -47,6 +56,9 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".ui.chat.ChatActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ui.setting.SettingActivity"
             android:parentActivityName=".MainActivity" />
 
 
