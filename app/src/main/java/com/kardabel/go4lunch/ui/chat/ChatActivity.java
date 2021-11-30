@@ -13,12 +13,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.kardabel.go4lunch.MainActivity;
+import com.bumptech.glide.Glide;
 import com.kardabel.go4lunch.databinding.ChatActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
-import com.kardabel.go4lunch.ui.detailsview.DetailsRecyclerViewAdapter;
-import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
-import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
+import com.kardabel.go4lunch.ui.detailsview.DetailsWorkmatesViewState;
+import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewState;
+import com.kardabel.go4lunch.usecase.AddChatMessageToFirestoreUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +27,21 @@ import java.util.Objects;
 public class ChatActivity extends AppCompatActivity {
 
     private static final String WORKMATE_ID = "WORKMATE_ID";
+    private static final String WORKMATE_NAME = "WORKMATE_NAME";
+    private static final String WORKMATE_PHOTO = "WORKMATE_PHOTO";
 
     private ChatActivityBinding binding;
     private ChatViewModel chatViewModel;
 
-    public static Intent navigate(Context context, String workmateId) {
+    public static Intent navigate(
+            Context context,
+            String workmateId,
+            String workmateName,
+            String workmatePhoto) {
         Intent intent = new Intent(context, ChatActivity.class);
         intent.putExtra(WORKMATE_ID, workmateId);
+        intent.putExtra(WORKMATE_NAME, workmateName);
+        intent.putExtra(WORKMATE_PHOTO, workmatePhoto);
         return intent;
     }
 
@@ -63,29 +71,40 @@ public class ChatActivity extends AppCompatActivity {
         Intent intent = getIntent();
         chatViewModel.init(intent.getStringExtra(WORKMATE_ID));
 
+        binding.mateName.setText(intent.getStringExtra(WORKMATE_NAME));
+        Glide.with(binding.workmatePhoto.getContext())
+                .load(intent.getStringExtra(WORKMATE_PHOTO))
+                .circleCrop()
+                .into(binding.workmatePhoto);
+
         chatViewModel.getChatMessages().observe(this, new Observer<List<ChatViewState>>() {
             @Override
             public void onChanged(List<ChatViewState> chatViewStatesList) {
                 adapter.setChatMessagesListData(chatViewStatesList);
 
+                // MOVE TO THE LATEST MESSAGE
+                binding.activityChatRecyclerView.scrollToPosition(chatViewStatesList.size() - 1);
+
             }
         });
 
-        binding.activityChatSendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!Objects.requireNonNull(binding.chatMessageEditText.getText()).toString().isEmpty()){
-                    String message = binding.chatMessageEditText.getText().toString();
-                    // TODO : envoyer tout ça à un usecase ou un repo
 
+                binding.activityChatSendButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!Objects.requireNonNull(binding.chatMessageEditText.getText()).toString().isEmpty()) {
+                            String message = binding.chatMessageEditText.getText().toString();
+                            // TODO : envoyer tout ça à un usecase ou un repo
+                            AddChatMessageToFirestoreUseCase.createChatMessage(message, intent.getStringExtra(WORKMATE_ID));
+                            binding.chatMessageEditText.getText().clear();
 
-                } else {
-                    Toast.makeText(
-                            ChatActivity.this,
-                            "Type your text first !",
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                        } else {
+                            Toast.makeText(
+                                    ChatActivity.this,
+                                    "Type your text first !",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

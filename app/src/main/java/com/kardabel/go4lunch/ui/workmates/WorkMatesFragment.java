@@ -59,7 +59,11 @@ public class WorkMatesFragment extends Fragment {
         adapter.setOnItemClickListener(new WorkMatesRecyclerViewAdapter.OnWorkmateItemClickListener() {
             @Override
             public void onWorkmateItemClick(WorkMatesViewState workMatesViewState) {
-                startActivity(ChatActivity.navigate(requireContext(), workMatesViewState.getWorkmateId()));
+                startActivity(ChatActivity.navigate(
+                        requireContext(),
+                        workMatesViewState.getWorkmateId(),
+                        workMatesViewState.getWorkmateName(),
+                        workMatesViewState.getWorkmatePhoto()));
             }
         });
     }
