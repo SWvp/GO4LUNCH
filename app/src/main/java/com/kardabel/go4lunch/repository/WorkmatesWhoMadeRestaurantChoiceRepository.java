@@ -35,7 +35,7 @@ public class WorkmatesWhoMadeRestaurantChoiceRepository {
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
 
                         if (error != null) {
-                            Log.e("no favorite today", error.getMessage());
+                            Log.e("restaurant choice error", error.getMessage());
                             return;
                         }
                         List<WorkmateWhoMadeRestaurantChoice> userWithRestaurant = new ArrayList<>();
