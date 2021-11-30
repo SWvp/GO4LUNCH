@@ -16,9 +16,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/avatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:id="@+id/workmate_photo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/orange"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,7 +28,7 @@
 
     <TextView
         android:id="@+id/mate_name"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="melanie"
         android:layout_marginStart="64dp"
@@ -35,10 +37,10 @@
         android:textSize="18sp"
         android:textAlignment="center"
         android:textStyle="bold"
-        android:background="@color/white"
+        android:background="@color/orange"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/avatar" />
+        app:layout_constraintTop_toBottomOf="@+id/workmate_photo" />
 
 
     <androidx.recyclerview.widget.RecyclerView
