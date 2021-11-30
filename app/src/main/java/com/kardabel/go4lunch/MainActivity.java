@@ -36,14 +36,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
-import com.kardabel.go4lunch.manager.UserManager;
 import com.kardabel.go4lunch.ui.autocomplete.PredictionsAdapter;
 import com.kardabel.go4lunch.ui.autocomplete.PredictionsViewState;
+import com.kardabel.go4lunch.usecase.GetCurrentUserUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements
     private MainActivityBinding binding;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
-    private final UserManager userManager = UserManager.getInstance();
     private PredictionsAdapter adapter;
 
     private static final int LOCATION_PERMISSION_CODE = 100;
@@ -101,12 +101,6 @@ public class MainActivity extends AppCompatActivity implements
         // RECEIVE SINGLE LIVEDATA EVENT FROM VM TO KNOW WHICH ACTION IS REQUIRED
         mainActivityViewModel.getActionSingleLiveEvent().observe(this, action -> {
             switch (action) {
-                case PERMISSION_GRANTED:
-                    Toast.makeText(
-                            MainActivity.this,
-                            "Welcome, take a seat, have a lunch!",
-                            Toast.LENGTH_LONG).show();
-                    break;
                 case PERMISSION_ASKED:
                     ActivityCompat.requestPermissions(MainActivity.this,
                             new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
@@ -115,14 +109,15 @@ public class MainActivity extends AppCompatActivity implements
                             "Needed for retrieve your position, thank you",
                             Toast.LENGTH_SHORT).show();
                     break;
-//             case PERMISSION_DENIED:
-//                 MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
-//                 alertDialogBuilder.setTitle("WARNING");
-//                 alertDialogBuilder.setMessage("if you want to take full advantage of GO4LUNCH , please reload GO4LUNCH and agree to share your position, thank you !");
-//                 alertDialogBuilder.show();
+                case PERMISSION_DENIED:
+                    MaterialAlertDialogBuilder alertDialogBuilder =
+                            new MaterialAlertDialogBuilder(MainActivity.this);
+                    alertDialogBuilder.setTitle("WARNING");
+                    alertDialogBuilder.setMessage(getString(R.string.rational));
+                    alertDialogBuilder.show();
 
 
-                //              break;
+                    break;
             }
         });
         configureRecyclerView();
@@ -136,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements
         TextView profileUsername = header.findViewById(R.id.header_name);
         TextView profileUserEmail = header.findViewById(R.id.header_email);
 
-        FirebaseUser currentUser = userManager.getCurrentUser();
+        FirebaseUser currentUser = GetCurrentUserUseCase.getCurrentUser();
         if (currentUser != null) {
 
             //Get picture URL from Firebase

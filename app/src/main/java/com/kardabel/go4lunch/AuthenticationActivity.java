@@ -1,57 +1,28 @@
 package com.kardabel.go4lunch;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.kardabel.go4lunch.databinding.AuthentificationBinding;
-import com.kardabel.go4lunch.manager.UserManager;
+import com.kardabel.go4lunch.databinding.AuthenticationBinding;
+import com.kardabel.go4lunch.usecase.CreateUserUseCase;
+import com.kardabel.go4lunch.usecase.GetCurrentUserUseCase;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class AuthenticationActivity extends BaseActivity<AuthentificationBinding> {
+public class AuthenticationActivity extends BaseActivity<AuthenticationBinding> {
 
     private static final int RC_SIGN_IN = 123;
-    private UserManager userManager = UserManager.getInstance();
 
     @Override
-    public AuthentificationBinding getViewBinding() {
-        return AuthentificationBinding.inflate(getLayoutInflater());
+    public AuthenticationBinding getViewBinding() {
+        return AuthenticationBinding.inflate(getLayoutInflater());
     }
 
     @Override
@@ -68,13 +39,13 @@ public class AuthenticationActivity extends BaseActivity<AuthentificationBinding
 
     // Update Login Button when activity is resuming
     private void updateLoginButton() {
-        binding.loginButton.setText(userManager.isCurrentUserLogged() ? getString(R.string.button_login_text_logged) : getString(R.string.button_login_text_not_logged));
+        binding.loginButton.setText(GetCurrentUserUseCase.getCurrentUser() != null ? getString(R.string.button_login_text_logged) : getString(R.string.button_login_text_not_logged));
     }
 
     private void setupListeners() {
         // Login/Profile Button
         binding.loginButton.setOnClickListener(view -> {
-            if (userManager.isCurrentUserLogged()) {
+            if (GetCurrentUserUseCase.getCurrentUser() != null) {
                 startProfileActivity();
             } else {
                 startSignInActivity();
@@ -129,7 +100,7 @@ public class AuthenticationActivity extends BaseActivity<AuthentificationBinding
         if (requestCode == RC_SIGN_IN) {
             // SUCCESS
             if (resultCode == RESULT_OK) {
-                userManager.createUser();
+                CreateUserUseCase.createUser();
                 showSnackBar(getString(R.string.connection_succeed));
             } else {
                 // ERRORS
