@@ -120,15 +120,13 @@ public class RestaurantDetailsViewModel extends ViewModel {
             workMatesDetailsViewStateMediatorLiveData.setValue(mapWithoutDetails(
                     restaurant,
                     workmateWhoMadeRestaurantChoices));
-        } else if(restaurant != null && favoriteRestaurants != null){
+        } else if (restaurant != null && favoriteRestaurants != null) {
             workMatesDetailsViewStateMediatorLiveData.setValue(mapIfFavoriteRestaurants(
                     restaurant,
                     workmateWhoMadeRestaurantChoices,
                     restaurantDetails,
                     favoriteRestaurants));
-        }
-
-        else if (restaurant != null) {
+        } else if (restaurant != null) {
             workMatesDetailsViewStateMediatorLiveData.setValue(mapWithoutFavoriteRestaurants(
                     restaurant,
                     workmateWhoMadeRestaurantChoices,
@@ -195,10 +193,15 @@ public class RestaurantDetailsViewModel extends ViewModel {
         if (restaurantDetails.getDetailsResult().getFormattedPhoneNumber() != null) {
             restaurantPhoneNumber = restaurantDetails.getDetailsResult().getFormattedPhoneNumber();
 
+        } else {
+            restaurantPhoneNumber = "0";
         }
+
         if (restaurantDetails.getDetailsResult().getWebsite() != null) {
             restaurantWebsite = restaurantDetails.getDetailsResult().getWebsite();
 
+        } else {
+            restaurantWebsite = "https://www.google.com/";
         }
 
         int restaurantChoiceState = R.drawable.hasnt_decided;
@@ -209,7 +212,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
         int detailLikeButton = R.drawable.detail_favorite_star_empty;
         for (int i = 0; i < favoriteRestaurants.size(); i++) {
 
-            if(favoriteRestaurants.get(i).getRestaurantId().equals(restaurant.getRestaurantId())){
+            if (favoriteRestaurants.get(i).getRestaurantId().equals(restaurant.getRestaurantId())) {
                 detailLikeButton = R.drawable.details_favorite_star_full;
 
             }
@@ -254,10 +257,15 @@ public class RestaurantDetailsViewModel extends ViewModel {
         if (restaurantDetails.getDetailsResult().getFormattedPhoneNumber() != null) {
             restaurantPhoneNumber = restaurantDetails.getDetailsResult().getFormattedPhoneNumber();
 
+        } else {
+            restaurantPhoneNumber = "0";
         }
+
         if (restaurantDetails.getDetailsResult().getWebsite() != null) {
             restaurantWebsite = restaurantDetails.getDetailsResult().getWebsite();
 
+        } else {
+            restaurantWebsite = "https://www.google.com/";
         }
 
         int restaurantChoiceState = R.drawable.hasnt_decided;

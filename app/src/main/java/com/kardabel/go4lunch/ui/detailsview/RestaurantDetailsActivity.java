@@ -2,8 +2,10 @@ package com.kardabel.go4lunch.ui.detailsview;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +25,8 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     private static final String RESTAURANT_ID = "RESTAURANT_ID";
     private String restaurantId;
     private String restaurantName;
+    private String restaurantPhoneNumber;
+    private String restaurantWebsite;
 
     private RestaurantDetailsBinding binding;
     private RestaurantDetailsViewModel restaurantDetailsViewModel;
@@ -75,6 +79,9 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 binding.detailsRating.setRating((float) details.getRating());
                 binding.choseRestaurantButton.setImageResource(details.getChoseRestaurantButton());
                 binding.detailLikeButton.setImageResource(details.getDetailLikeButton());
+
+                restaurantPhoneNumber = details.getDetailsRestaurantNumber();
+                restaurantWebsite = details.getDetailsWebsite();
             }
         });
 
@@ -97,6 +104,36 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 restaurantDetailsViewModel.onFavoriteIconClick(restaurantId, restaurantName);
+            }
+        });
+
+        // CALL THE RESTAURANT
+        binding.callIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (restaurantPhoneNumber){
+                    case "0":
+                        Toast.makeText(RestaurantDetailsActivity.this, "This restaurant doesn't have phone number", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + restaurantPhoneNumber));
+                        startActivity(intent);
+                }
+            }
+        });
+
+        // GO TO THE RESTAURANT WEBSITE
+        binding.webIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (restaurantWebsite){
+                    case "https://www.google.com/":
+                        Toast.makeText(RestaurantDetailsActivity.this, "It seems your restaurant isn't on the web, but you can try on google !", Toast.LENGTH_LONG).show();
+                        break;
+                    default:
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(restaurantWebsite));
+                        startActivity(intent);
+                }
             }
         });
     }
