@@ -21,9 +21,8 @@ import java.util.List;
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context context;
-    List<ChatViewState> chatMessagesList;
+    List<ChatViewState> chatMessagesList = new ArrayList<>();
     public static final int MESSAGE_TYPE_IN = 1;
-   // public static final int MESSAGE_TYPE_OUT = 2;
 
     public ChatAdapter(Context context) {
         this.context = context;
@@ -42,7 +41,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void bind(int position) {
             ChatViewState chatViewState = chatMessagesList.get(position);
             message.setText(chatViewState.getChatMessageViewState());
-            date.setText(DateFormat.getTimeInstance(DateFormat.SHORT).format(chatViewState.getChatMessageTimeViewState()));
+            date.setText(chatViewState.getChatMessageTimeViewState());
         }
     }
 
@@ -58,7 +57,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void bind(int position) {
             ChatViewState chatViewState = chatMessagesList.get(position);
             message.setText(chatViewState.getChatMessageViewState());
-            date.setText(DateFormat.getTimeInstance(DateFormat.SHORT).format(chatViewState.getChatMessageTimeViewState()));
+            date.setText(chatViewState.getChatMessageTimeViewState());
         }
     }
 
@@ -82,7 +81,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return chatMessagesList.size();
+        if (chatMessagesList == null) {
+            return 0;
+        } else {
+            return chatMessagesList.size();
+        }
     }
 
     @Override
