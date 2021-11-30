@@ -25,62 +25,64 @@ public class WorkMatesViewModel extends ViewModel {
 
 
         LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
-        LiveData<List<WorkmateWhoMadeRestaurantChoice>> favoriteRestaurantsLiveData = workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
+        LiveData<List<WorkmateWhoMadeRestaurantChoice>> workmatesWhoMadeChoiceLiveData = workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
 
         // OBSERVERS
 
-        workMatesViewStateMediatorLiveData.addSource(workMatesLiveData, userModels -> combine(userModels, favoriteRestaurantsLiveData.getValue()));
-        workMatesViewStateMediatorLiveData.addSource(favoriteRestaurantsLiveData, usersWithRestaurant -> combine(workMatesLiveData.getValue(), usersWithRestaurant));
+        workMatesViewStateMediatorLiveData.addSource(workMatesLiveData, userModels -> combine(userModels, workmatesWhoMadeChoiceLiveData.getValue()));
+        workMatesViewStateMediatorLiveData.addSource(workmatesWhoMadeChoiceLiveData, usersWithRestaurant -> combine(workMatesLiveData.getValue(), usersWithRestaurant));
     }
 
     private void combine(List<UserModel> users, List<WorkmateWhoMadeRestaurantChoice> usersWithRestaurant) {
 
         if (usersWithRestaurant != null) {
-            workMatesViewStateMediatorLiveData.setValue(mapWithFavorites(users, usersWithRestaurant));
-
-        } else {
-            workMatesViewStateMediatorLiveData.setValue(map(users));
+            workMatesViewStateMediatorLiveData.setValue(mapWorkmateWhoChose(users, usersWithRestaurant));
 
         }
+//     else {
+//         workMatesViewStateMediatorLiveData.setValue(map(users));
+
+//     }
     }
 
-    // TODO: si le workmate c'est moi, ne pas afficher
-    private List<WorkMatesViewState> map(List<UserModel> users) {
-        List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
+ // private List<WorkMatesViewState> map(List<UserModel> users) {
+ //     List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
 
-        for (int i = 0; i < users.size(); i++) {
+ //     for (int i = 0; i < users.size(); i++) {
 
-            String description = users.get(i).getUserName();
-            String avatar = users.get(i).getAvatarURL();
-            String workmateId = users.get(i).getUid();
-            String restaurant = "";
+ //         String workmateName = users.get(i).getUserName();
+ //         String avatar = users.get(i).getAvatarURL();
+ //         String workmateId = users.get(i).getUid();
+ //         String restaurant = "";
 
-            workMatesViewStateList.add(new WorkMatesViewState(
-                    description + restaurant,
-                    avatar,
-                    restaurant,
-                    workmateId,
-                    false
-            ));
-        }
-        return workMatesViewStateList;
+ //         workMatesViewStateList.add(new WorkMatesViewState(
+ //                 workmateName,
+ //                 workmateName + restaurant,
+ //                 avatar,
+ //                 restaurant,
+ //                 workmateId,
+ //                 false
+ //         ));
+ //     }
+ //     return workMatesViewStateList;
 
-    }
+ // }
 
-    private List<WorkMatesViewState> mapWithFavorites(List<UserModel> users,
-                                                      List<WorkmateWhoMadeRestaurantChoice> usersWithRestaurant) {
+    private List<WorkMatesViewState> mapWorkmateWhoChose(List<UserModel> users,
+                                                         List<WorkmateWhoMadeRestaurantChoice> usersWithRestaurant) {
         List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
 
         for (int i = 0; i < users.size(); i++) {
             String userId = users.get(i).getUid();
 
-            String description = users.get(i).getUserName();
+            String workmateName = users.get(i).getUserName();
             String avatar = users.get(i).getAvatarURL();
             String workmateId = users.get(i).getUid();
             String restaurant = userChoice(userId, usersWithRestaurant);
 
             workMatesViewStateList.add(new WorkMatesViewState(
-                    description + restaurant,
+                    workmateName,
+                    workmateName + restaurant,
                     avatar,
                     restaurant,
                     workmateId,
