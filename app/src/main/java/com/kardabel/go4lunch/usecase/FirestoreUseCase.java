@@ -8,27 +8,27 @@ import com.google.android.gms.tasks.Task;
 
 public class FirestoreUseCase {
 
-    private static volatile FirestoreUseCase instance;
+//  private static volatile FirestoreUseCase instance;
 
-    public FirestoreUseCase() {
-    }
+//  public FirestoreUseCase() {
+//  }
 
-    public static FirestoreUseCase getInstance() {
-        FirestoreUseCase result = instance;
-        if (result != null) {
-            return result;
-        }
-        synchronized (FirestoreUseCase.class) {
-            if (instance == null) {
-                instance = new FirestoreUseCase();
-            }
-            return instance;
-        }
-    }
+//  public static FirestoreUseCase getInstance() {
+//      FirestoreUseCase result = instance;
+//      if (result != null) {
+//          return result;
+//      }
+//      synchronized (FirestoreUseCase.class) {
+//          if (instance == null) {
+//              instance = new FirestoreUseCase();
+//          }
+//          return instance;
+//      }
+//  }
 
-    public Task<Void> signOut(Context context) {
-        return AuthUI.getInstance().signOut(context);
-    }
+    //public Task<Void> signOut(Context context) {
+     //   return AuthUI.getInstance().signOut(context);
+    //}
 
 
 
