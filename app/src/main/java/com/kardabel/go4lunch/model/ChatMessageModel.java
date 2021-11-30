@@ -1,26 +1,25 @@
 package com.kardabel.go4lunch.model;
 
-
-import java.time.LocalDateTime;
-
 public class ChatMessageModel {
 
     private String message;
-    private int messageType;
-    private LocalDateTime messageTime;
+    private String sender;
+    private String date;
+    private String timestamp;
 
     public ChatMessageModel() {}
 
-    public ChatMessageModel(String message, int messageType, LocalDateTime messageTime) {
+    public ChatMessageModel(String message, String sender, String date, String timestamp) {
         this.message = message;
-        this.messageType = messageType;
-        this.messageTime = messageTime;
+        this.sender = sender;
+        this.date = date;
+        this.timestamp = timestamp;
     }
 
     public String getMessage() { return message; }
 
-    public int getMessageType() { return messageType; }
+    public String getSender() { return sender; }
 
-    public LocalDateTime getMessageTime() { return messageTime; }
+    public String getDate() { return date; }
 
 }
