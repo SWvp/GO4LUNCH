@@ -44,6 +44,8 @@ import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.ui.autocomplete.PredictionsAdapter;
 import com.kardabel.go4lunch.ui.autocomplete.PredictionsViewState;
+import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
+import com.kardabel.go4lunch.ui.setting.SettingActivity;
 import com.kardabel.go4lunch.usecase.GetCurrentUserUseCase;
 
 import java.util.ArrayList;
@@ -61,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private PredictionsAdapter adapter;
+
+    private String restaurantId;
 
     private static final int LOCATION_PERMISSION_CODE = 100;
 
@@ -162,13 +166,18 @@ public class MainActivity extends AppCompatActivity implements
 
         switch (id) {
             case R.id.your_lunch:
+                startActivity(RestaurantDetailsActivity.navigate(
+                        MainActivity.this,
+                        restaurantId));
                 break;
             case R.id.settings:
+                final Intent intentSetting = new Intent(this, SettingActivity.class);
+                startActivity(intentSetting);
                 break;
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
-                final Intent intent = new Intent(this, AuthenticationActivity.class);
-                startActivity(intent);
+                final Intent intentLogout = new Intent(this, AuthenticationActivity.class);
+                startActivity(intentLogout);
                 finish();
                 break;
             default:
