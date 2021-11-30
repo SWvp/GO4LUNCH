@@ -84,8 +84,8 @@ public class MainActivityViewModel extends ViewModel {
     // WHEN PERMISSION IS GRANTED, LETS RETRIEVE LOCATION AND USER DATA BASE
     private void permissionGranted() {
         locationRepository.StartLocationRequest();
-        workmatesRepository.getWorkmates();
-        workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
+       // workmatesRepository.getWorkmates();
+       // workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
 
     }
 

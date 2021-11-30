@@ -148,12 +148,13 @@ public class MapViewModel extends ViewModel {
             NearbySearchResults nearbySearchResults,
             Location location,
             List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
+
         List<Poi> poiList = new ArrayList<>();
-        List<String> restaurantAsFavoriteId = new ArrayList<>();
+        List<String> restaurantWithWorkmate = new ArrayList<>();
 
         if (workmateWhoMadeRestaurantChoice != null) {
             for (int i = 0; i < workmateWhoMadeRestaurantChoice.size(); i++) {
-                restaurantAsFavoriteId.add(workmateWhoMadeRestaurantChoice.get(i).getRestaurantId());
+                restaurantWithWorkmate.add(workmateWhoMadeRestaurantChoice.get(i).getRestaurantId());
 
             }
         }
@@ -178,7 +179,7 @@ public class MapViewModel extends ViewModel {
                             .getLng());
             if (
                     workmateWhoMadeRestaurantChoice != null
-                            && restaurantAsFavoriteId.contains(poiPlaceId)) {
+                            && restaurantWithWorkmate.contains(poiPlaceId)) {
                 isFavorite = true;
             }
 

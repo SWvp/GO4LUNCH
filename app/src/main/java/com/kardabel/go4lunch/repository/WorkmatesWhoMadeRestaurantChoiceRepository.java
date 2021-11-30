@@ -12,20 +12,22 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.kardabel.go4lunch.model.WorkmateWhoMadeRestaurantChoice;
-import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class WorkmatesWhoMadeRestaurantChoiceRepository {
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    // GET WORMATES WHO DECIDED WHERE THEY WOULD EAT
+    // GET WORKMATES WHO DECIDED WHERE THEY WOULD EAT
     public LiveData<List<WorkmateWhoMadeRestaurantChoice>> getWorkmatesWhoMadeRestaurantChoice() {
         MutableLiveData<List<WorkmateWhoMadeRestaurantChoice>> userModelMutableLiveData = new MutableLiveData<>();
+
+        List<WorkmateWhoMadeRestaurantChoice> usersWithRestaurant = new ArrayList<>();
 
         LocalDate today = LocalDate.now();
 
@@ -38,17 +40,24 @@ public class WorkmatesWhoMadeRestaurantChoiceRepository {
                             Log.e("restaurant choice error", error.getMessage());
                             return;
                         }
-                        List<WorkmateWhoMadeRestaurantChoice> userWithRestaurant = new ArrayList<>();
+                      //  List<WorkmateWhoMadeRestaurantChoice> userWithRestaurant = new ArrayList<>();
 
+
+                        assert value != null;
                         for (DocumentChange document : value.getDocumentChanges()) {
-                            if (document.getType() == DocumentChange.Type.ADDED ||
-                                    document.getType() == DocumentChange.Type.MODIFIED) {
+                            if (document.getType() == DocumentChange.Type.ADDED ) {
 
-                                userWithRestaurant.add(document.getDocument().toObject(WorkmateWhoMadeRestaurantChoice.class));
+                                usersWithRestaurant.add(document.getDocument().toObject(WorkmateWhoMadeRestaurantChoice.class));
+
+                            }else if(document.getType() == DocumentChange.Type.REMOVED){
+
+
+                                usersWithRestaurant.remove(document.getDocument().toObject(WorkmateWhoMadeRestaurantChoice.class));
 
                             }
                         }
-                        userModelMutableLiveData.setValue(userWithRestaurant);
+                        List<WorkmateWhoMadeRestaurantChoice> list = new ArrayList<>(usersWithRestaurant);
+                        userModelMutableLiveData.setValue(list);
                     }
                 });
         return userModelMutableLiveData;

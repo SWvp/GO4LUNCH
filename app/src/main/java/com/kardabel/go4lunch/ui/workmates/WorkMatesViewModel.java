@@ -30,7 +30,7 @@ public class WorkMatesViewModel extends ViewModel {
         // OBSERVERS
 
         workMatesViewStateMediatorLiveData.addSource(workMatesLiveData, userModels -> combine(userModels, workmatesWhoMadeChoiceLiveData.getValue()));
-        workMatesViewStateMediatorLiveData.addSource(workmatesWhoMadeChoiceLiveData, usersWithRestaurant -> combine(workMatesLiveData.getValue(), usersWithRestaurant));
+        workMatesViewStateMediatorLiveData.addSource(workmatesWhoMadeChoiceLiveData, workmateWhoMadeRestaurantChoices -> combine(workMatesLiveData.getValue(), workmateWhoMadeRestaurantChoices));
     }
 
     private void combine(List<UserModel> users, List<WorkmateWhoMadeRestaurantChoice> usersWithRestaurant) {
@@ -45,40 +45,40 @@ public class WorkMatesViewModel extends ViewModel {
 //     }
     }
 
- // private List<WorkMatesViewState> map(List<UserModel> users) {
- //     List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
+    // private List<WorkMatesViewState> map(List<UserModel> users) {
+    //     List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
 
- //     for (int i = 0; i < users.size(); i++) {
+    //     for (int i = 0; i < users.size(); i++) {
 
- //         String workmateName = users.get(i).getUserName();
- //         String avatar = users.get(i).getAvatarURL();
- //         String workmateId = users.get(i).getUid();
- //         String restaurant = "";
+    //         String workmateName = users.get(i).getUserName();
+    //         String avatar = users.get(i).getAvatarURL();
+    //         String workmateId = users.get(i).getUid();
+    //         String restaurant = "";
 
- //         workMatesViewStateList.add(new WorkMatesViewState(
- //                 workmateName,
- //                 workmateName + restaurant,
- //                 avatar,
- //                 restaurant,
- //                 workmateId,
- //                 false
- //         ));
- //     }
- //     return workMatesViewStateList;
+    //         workMatesViewStateList.add(new WorkMatesViewState(
+    //                 workmateName,
+    //                 workmateName + restaurant,
+    //                 avatar,
+    //                 restaurant,
+    //                 workmateId,
+    //                 false
+    //         ));
+    //     }
+    //     return workMatesViewStateList;
 
- // }
+    // }
 
     private List<WorkMatesViewState> mapWorkmateWhoChose(List<UserModel> users,
-                                                         List<WorkmateWhoMadeRestaurantChoice> usersWithRestaurant) {
+                                                         List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices) {
         List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
 
         for (int i = 0; i < users.size(); i++) {
-            String userId = users.get(i).getUid();
 
+            String userId = users.get(i).getUid();
             String workmateName = users.get(i).getUserName();
             String avatar = users.get(i).getAvatarURL();
             String workmateId = users.get(i).getUid();
-            String restaurant = userChoice(userId, usersWithRestaurant);
+            String restaurant = userChoice(userId, workmateWhoMadeRestaurantChoices);
 
             workMatesViewStateList.add(new WorkMatesViewState(
                     workmateName,
@@ -86,7 +86,7 @@ public class WorkMatesViewModel extends ViewModel {
                     avatar,
                     restaurant,
                     workmateId,
-                    isUserHasDecided(userId, usersWithRestaurant)
+                    isUserHasDecided(userId, workmateWhoMadeRestaurantChoices)
             ));
         }
         return workMatesViewStateList;
@@ -94,11 +94,11 @@ public class WorkMatesViewModel extends ViewModel {
     }
 
     private boolean isUserHasDecided(String userId,
-                                     List<WorkmateWhoMadeRestaurantChoice> usersWithRestaurant) {
+                                     List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices) {
         boolean state = false;
 
-        for (int i = 0; i < usersWithRestaurant.size(); i++) {
-            if (usersWithRestaurant.get(i).getUserId().equals(userId)) {
+        for (int i = 0; i < workmateWhoMadeRestaurantChoices.size(); i++) {
+            if (workmateWhoMadeRestaurantChoices.get(i).getUserId().equals(userId)) {
                 state = true;
 
             }
@@ -108,12 +108,12 @@ public class WorkMatesViewModel extends ViewModel {
     }
 
     private String userChoice(@NonNull String userId,
-                              @NonNull List<WorkmateWhoMadeRestaurantChoice> usersWithRestaurant) {
+                              @NonNull List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices) {
         String restaurantName = " hasn't decided yet";
 
-        for (int i = 0; i < usersWithRestaurant.size(); i++) {
-            if (usersWithRestaurant.get(i).getUserId().equals(userId)) {
-                restaurantName = " (" + usersWithRestaurant.get(i).getRestaurantName() + ")";
+        for (int i = 0; i < workmateWhoMadeRestaurantChoices.size(); i++) {
+            if (workmateWhoMadeRestaurantChoices.get(i).getUserId().equals(userId)) {
+                restaurantName = " (" + workmateWhoMadeRestaurantChoices.get(i).getRestaurantName() + ")";
 
             }
         }

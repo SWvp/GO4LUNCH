@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ClickOnChoseRestaurantButtonUseCase {
 
@@ -34,7 +35,7 @@ public class ClickOnChoseRestaurantButtonUseCase {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        if (task.getResult().exists()) {
+                        if (Objects.equals(task.getResult().get("restaurantId"), restaurantId)) {
                             task.getResult().getReference().delete();
                         } else {
                             task.getResult().getReference().set(userGotRestaurant);

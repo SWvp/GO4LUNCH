@@ -61,7 +61,7 @@ public class RestaurantsViewModel extends ViewModel {
         LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
         LiveData<NearbySearchResults> nearbySearchResultsLiveData = getNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
         LiveData<List<RestaurantDetailsResult>> restaurantsDetailsResultLiveData = getRestaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
-        LiveData<List<WorkmateWhoMadeRestaurantChoice>> favoriteRestaurantLiveData = workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
+        LiveData<List<WorkmateWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceLiveData = workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
         LiveData<String> usersSearchLiveData = usersSearchRepository.getUsersSearchLiveData();
 
         // OBSERVERS
@@ -71,7 +71,7 @@ public class RestaurantsViewModel extends ViewModel {
                         nearbySearchResults,
                         restaurantsDetailsResultLiveData.getValue(),
                         locationLiveData.getValue(),
-                        favoriteRestaurantLiveData.getValue(),
+                        workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
                         usersSearchLiveData.getValue()));
 
         restaurantsWrapperViewStateMediatorLiveData.addSource(restaurantsDetailsResultLiveData, restaurantDetailsResults ->
@@ -79,7 +79,7 @@ public class RestaurantsViewModel extends ViewModel {
                         nearbySearchResultsLiveData.getValue(),
                         restaurantDetailsResults,
                         locationLiveData.getValue(),
-                        favoriteRestaurantLiveData.getValue(),
+                        workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
                         usersSearchLiveData.getValue()));
 
         restaurantsWrapperViewStateMediatorLiveData.addSource(locationLiveData, location ->
@@ -87,10 +87,10 @@ public class RestaurantsViewModel extends ViewModel {
                         nearbySearchResultsLiveData.getValue(),
                         restaurantsDetailsResultLiveData.getValue(),
                         location,
-                        favoriteRestaurantLiveData.getValue(),
+                        workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
                         usersSearchLiveData.getValue()));
 
-        restaurantsWrapperViewStateMediatorLiveData.addSource(favoriteRestaurantLiveData, userWithFavoriteRestaurants ->
+        restaurantsWrapperViewStateMediatorLiveData.addSource(workmatesWhoMadeRestaurantChoiceLiveData, userWithFavoriteRestaurants ->
                 combine(
                         nearbySearchResultsLiveData.getValue(),
                         restaurantsDetailsResultLiveData.getValue(),
@@ -102,7 +102,7 @@ public class RestaurantsViewModel extends ViewModel {
                 nearbySearchResultsLiveData.getValue(),
                 restaurantsDetailsResultLiveData.getValue(),
                 locationLiveData.getValue(),
-                favoriteRestaurantLiveData.getValue(),
+                workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
                 usersSearch));
     }
 
