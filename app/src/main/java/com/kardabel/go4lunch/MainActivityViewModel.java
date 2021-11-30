@@ -7,6 +7,7 @@ import android.app.Application;
 import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
@@ -62,19 +63,18 @@ public class MainActivityViewModel extends ViewModel {
     // CHECK PERMISSIONS
     public void checkPermission(Activity activity) {
         if (ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_GRANTED);
             permissionGranted();
 
+    // } else if (ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+    //     actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
+
         }
-        //    else if(ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
-        //        actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_ASKED);
 
-        //    }
+     else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, ACCESS_FINE_LOCATION)) {
+         actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
 
-        //  else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, ACCESS_FINE_LOCATION)) {
-        //      actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
+        }
 
-        //  }
         else {
             actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_ASKED);
 
@@ -84,8 +84,8 @@ public class MainActivityViewModel extends ViewModel {
     // WHEN PERMISSION IS GRANTED, LETS RETRIEVE LOCATION AND USER DATA BASE
     private void permissionGranted() {
         locationRepository.StartLocationRequest();
-       // workmatesRepository.getWorkmates();
-       // workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
+        // workmatesRepository.getWorkmates();
+        // workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
 
     }
 
