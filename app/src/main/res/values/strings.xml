@@ -1,14 +1,19 @@
 <resources>
     <string name="app_name">GO4LUNCH</string>
+
+    <!-- GOOGLE MAP API KEY -->
+    <string name="google_map_key">your key here</string>
+
+    <!-- USED IN BOTTOM NAV VIEW -->
     <string name="title_mapview">Map View</string>
     <string name="title_listview">List View</string>
     <string name="title_workmates">Workmates</string>
+
+    <!-- USED IN MENU-->
     <string name="title_1">YOUR LUNCH</string>
     <string name="title_2">SETTINGS</string>
     <string name="title_3">LOGOUT</string>
 
-    <!-- GOOGLE MAP API KEY -->
-    <string name="google_map_key">1234</string>
 
     <!-- USED IN AUTHENTICATION -->
     <string name="button_login_text_logged">Display profile</string>
