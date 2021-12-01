@@ -19,7 +19,6 @@ import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UsersSearchRepository;
-import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
@@ -250,7 +249,7 @@ public class RestaurantsViewModel extends ViewModel {
                         String openingHours = getOpeningText(restaurantDetailsResults.get(i).getDetailsResult().getOpeningHours(), place.isPermanentlyClosed());
                         double rating = convertRatingStars(place.getRating());
                         String restaurantId = place.getRestaurantId();
-                        String like = like(restaurantId, workmateWhoMadeRestaurantChoice);
+                        String usersWhoMadeThisChoice = like(restaurantId, workmateWhoMadeRestaurantChoice);
 
                         restaurantList.add(new RestaurantsViewState(
                                 name,
@@ -260,7 +259,7 @@ public class RestaurantsViewModel extends ViewModel {
                                 openingHours,
                                 rating,
                                 restaurantId,
-                                like));
+                                usersWhoMadeThisChoice));
                         break;
 
                     }
@@ -271,7 +270,7 @@ public class RestaurantsViewModel extends ViewModel {
 
     }
 
-    // WORKMATES WHO ALREADY LIKES THIS RESTAURANT
+    // WORKMATES WHO ALREADY CHOSE THIS RESTAURANT
     private String like(String restaurantId, List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
         int likes = 0;
         String likeAsString;
