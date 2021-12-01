@@ -12,6 +12,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.kardabel.go4lunch.model.WorkmateWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.pojo.FavoriteRestaurant;
 import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 
@@ -41,10 +42,14 @@ public class FavoriteRestaurantsRepository {
                         List<FavoriteRestaurant> favoriteRestaurants = new ArrayList<>();
 
                         for (DocumentChange document : value.getDocumentChanges()) {
-                            if (document.getType() == DocumentChange.Type.ADDED ||
-                                    document.getType() == DocumentChange.Type.MODIFIED) {
+                            if (document.getType() == DocumentChange.Type.ADDED) {
 
                                 favoriteRestaurants.add(document.getDocument().toObject(FavoriteRestaurant.class));
+
+                            }else if(document.getType() == DocumentChange.Type.REMOVED){
+
+
+                                favoriteRestaurants.remove(document.getDocument().toObject(FavoriteRestaurant.class));
 
                             }
                         }
