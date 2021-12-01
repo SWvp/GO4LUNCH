@@ -39,34 +39,34 @@ public class WorkMatesViewModel extends ViewModel {
             workMatesViewStateMediatorLiveData.setValue(mapWorkmateWhoChose(users, usersWithRestaurant));
 
         }
-//     else {
-//         workMatesViewStateMediatorLiveData.setValue(map(users));
+//      else {
+//          workMatesViewStateMediatorLiveData.setValue(map(users));
 
-//     }
+//      }
     }
 
-    // private List<WorkMatesViewState> map(List<UserModel> users) {
-    //     List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
+//  private List<WorkMatesViewState> map(List<UserModel> users) {
+//      List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
 
-    //     for (int i = 0; i < users.size(); i++) {
+//      for (int i = 0; i < users.size(); i++) {
 
-    //         String workmateName = users.get(i).getUserName();
-    //         String avatar = users.get(i).getAvatarURL();
-    //         String workmateId = users.get(i).getUid();
-    //         String restaurant = "";
+//          String workmateName = users.get(i).getUserName();
+//          String avatar = users.get(i).getAvatarURL();
+//          String workmateId = users.get(i).getUid();
+//          String restaurant = "";
 
-    //         workMatesViewStateList.add(new WorkMatesViewState(
-    //                 workmateName,
-    //                 workmateName + restaurant,
-    //                 avatar,
-    //                 restaurant,
-    //                 workmateId,
-    //                 false
-    //         ));
-    //     }
-    //     return workMatesViewStateList;
+//          workMatesViewStateList.add(new WorkMatesViewState(
+//                  workmateName,
+//                  workmateName + restaurant,
+//                  avatar,
+//                  restaurant,
+//                  workmateId,
+//                  false
+//          ));
+//      }
+//      return workMatesViewStateList;
 
-    // }
+//  }
 
     private List<WorkMatesViewState> mapWorkmateWhoChose(List<UserModel> users,
                                                          List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices) {
