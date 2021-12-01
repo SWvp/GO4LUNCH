@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.R;
@@ -20,6 +21,7 @@ import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.usecase.ClickOnChoseRestaurantButtonUseCase;
 import com.kardabel.go4lunch.usecase.ClickOnFavoriteRestaurantUseCase;
+import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsByIdUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsByIdUseCase;
 
@@ -104,7 +106,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
                 userWithFavoriteRestaurants,
                 workMatesLiveData.getValue()));
 
-        workmatesLikeThisRestaurantMediatorLiveData.addSource(workMatesLiveData, userModels -> combineWorkmates(
+        workmatesLikeThisRestaurantMediatorLiveData.addSource(workMatesLiveData, userModels -> RestaurantDetailsViewModel.this.combineWorkmates(
                 restaurantLiveData.getValue(),
                 workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
                 userModels));
@@ -119,39 +121,60 @@ public class RestaurantDetailsViewModel extends ViewModel {
         if (restaurant != null && restaurantDetails == null) {
             workMatesDetailsViewStateMediatorLiveData.setValue(mapWithoutDetails(
                     restaurant,
-                    workmateWhoMadeRestaurantChoices));
+                    workmateWhoMadeRestaurantChoices,
+                    favoriteRestaurants));
         } else if (restaurant != null && favoriteRestaurants != null) {
             workMatesDetailsViewStateMediatorLiveData.setValue(mapIfFavoriteRestaurants(
                     restaurant,
                     workmateWhoMadeRestaurantChoices,
                     restaurantDetails,
                     favoriteRestaurants));
-        } else if (restaurant != null) {
-            workMatesDetailsViewStateMediatorLiveData.setValue(mapWithoutFavoriteRestaurants(
-                    restaurant,
-                    workmateWhoMadeRestaurantChoices,
-                    restaurantDetails));
         }
+
+ //   else if (restaurant != null) {
+ //       workMatesDetailsViewStateMediatorLiveData.setValue(mapWithoutFavoriteRestaurants(
+ //               restaurant,
+ //               workmateWhoMadeRestaurantChoices,
+ //               restaurantDetails));
+ //   }
+
+
     }
 
     // MAP WITHOUT DETAILS, WHEN USER HAS NO LONGER NETWORK AVAILABLE
     // (ASSUME THAT THE GOOGLE DETAILS SERVICE WILL WORK AS LONG AS NEARBY WORKS)
     private RestaurantDetailsViewState mapWithoutDetails(@NonNull RestaurantSearch restaurant,
-                                                         List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices) {
+                                                         List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices,
+                                                         List<FavoriteRestaurant> favoriteRestaurants) {
 
-        List<String> restaurantAsFavoriteId = new ArrayList<>();
+        // TODO: gérer la dépendance pour test
+        String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
 
+        // CHECK IF THE RESTAURANT IS USER CHOICE
+        boolean isMyRestaurant = false;
         if (workmateWhoMadeRestaurantChoices != null) {
             for (int i = 0; i < workmateWhoMadeRestaurantChoices.size(); i++) {
-                restaurantAsFavoriteId.add(workmateWhoMadeRestaurantChoices.get(i).getRestaurantId());
+
+                if(workmateWhoMadeRestaurantChoices.get(i).getRestaurantId().equals(restaurant.getRestaurantId())){
+                    if(workmateWhoMadeRestaurantChoices.get(i).getUserId().equals(userId)){
+                        isMyRestaurant = true;
+                    }
+                }
+            }
+        }
+        int restaurantChoiceState = R.drawable.hasnt_decided;
+        if (isMyRestaurant) {
+            restaurantChoiceState = R.drawable.has_decided;
+        }
+
+        // CHECK IF THIS RESTAURANT IS IN USERS FAVORITE
+        int detailLikeButton = R.drawable.detail_favorite_star_empty;
+        for (int i = 0; i < favoriteRestaurants.size(); i++) {
+            if (favoriteRestaurants.get(i).getRestaurantId().equals(restaurant.getRestaurantId())) {
+                detailLikeButton = R.drawable.details_favorite_star_full;
 
             }
         }
-        int choseRestaurantButton = R.drawable.hasnt_decided;
-        if (restaurantAsFavoriteId.contains(restaurant.getRestaurantId())) {
-            choseRestaurantButton = R.drawable.has_decided;
-        }
-        int detailLikeButton = R.drawable.detail_favorite_star_empty;
 
         result = new RestaurantDetailsViewState(
                 restaurant.getRestaurantName(),
@@ -165,7 +188,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
                 "",
                 restaurant.getRestaurantId(),
                 convertRatingStars(restaurant.getRating()),
-                choseRestaurantButton,
+                restaurantChoiceState,
                 detailLikeButton
 
         );
@@ -180,38 +203,47 @@ public class RestaurantDetailsViewModel extends ViewModel {
             RestaurantDetailsResult restaurantDetails,
             List<FavoriteRestaurant> favoriteRestaurants) {
 
-        List<String> selectedRestaurantsId = new ArrayList<>();
-        String restaurantPhoneNumber = "";
-        String restaurantWebsite = "";
+        // TODO: gérer la dépendance pour test
+        String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
 
+        String restaurantPhoneNumber;
+        String restaurantWebsite;
+
+        // CHECK IF THE RESTAURANT IS USER CHOICE
+        boolean isMyRestaurant = false;
         if (workmateWhoMadeRestaurantChoices != null) {
             for (int i = 0; i < workmateWhoMadeRestaurantChoices.size(); i++) {
-                selectedRestaurantsId.add(workmateWhoMadeRestaurantChoices.get(i).getRestaurantId());
 
+                if(workmateWhoMadeRestaurantChoices.get(i).getRestaurantId().equals(restaurant.getRestaurantId())){
+                    if(workmateWhoMadeRestaurantChoices.get(i).getUserId().equals(userId)){
+                        isMyRestaurant = true;
+                    }
+                }
             }
         }
+
+        int restaurantChoiceState = R.drawable.hasnt_decided;
+        if (isMyRestaurant) {
+            restaurantChoiceState = R.drawable.has_decided;
+        }
+
+        // CHECK IF PHONE NUMBER IS AVAILABLE
         if (restaurantDetails.getDetailsResult().getFormattedPhoneNumber() != null) {
             restaurantPhoneNumber = restaurantDetails.getDetailsResult().getFormattedPhoneNumber();
-
         } else {
             restaurantPhoneNumber = "0";
         }
 
+        // CHECK IF WEBSITE ADDRESS IS AVAILABLE
         if (restaurantDetails.getDetailsResult().getWebsite() != null) {
             restaurantWebsite = restaurantDetails.getDetailsResult().getWebsite();
-
         } else {
             restaurantWebsite = "https://www.google.com/";
         }
 
-        int restaurantChoiceState = R.drawable.hasnt_decided;
-        if (selectedRestaurantsId.contains(restaurant.getRestaurantId())) {
-            restaurantChoiceState = R.drawable.has_decided;
-        }
-
+        // CHECK IF THIS RESTAURANT IS IN USERS FAVORITE
         int detailLikeButton = R.drawable.detail_favorite_star_empty;
         for (int i = 0; i < favoriteRestaurants.size(); i++) {
-
             if (favoriteRestaurants.get(i).getRestaurantId().equals(restaurant.getRestaurantId())) {
                 detailLikeButton = R.drawable.details_favorite_star_full;
 
@@ -239,70 +271,80 @@ public class RestaurantDetailsViewModel extends ViewModel {
     }
 
 
-    // MAP WITH FULL RESTAURANT DETAILS
-    private RestaurantDetailsViewState mapWithoutFavoriteRestaurants(@NonNull RestaurantSearch restaurant,
-                                                                     List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices,
-                                                                     @NonNull RestaurantDetailsResult restaurantDetails) {
+//  // MAP WITH FULL RESTAURANT DETAILS, AND NO USERS FAVORITE
+//  private RestaurantDetailsViewState mapWithoutFavoriteRestaurants(@NonNull RestaurantSearch restaurant,
+//                                                                   List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices,
+//                                                                   @NonNull RestaurantDetailsResult restaurantDetails) {
 
-        List<String> selectedRestaurantsId = new ArrayList<>();
-        String restaurantPhoneNumber = "";
-        String restaurantWebsite = "";
+//      // TODO: gérer la dépendance pour test
+//      String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
 
-        if (workmateWhoMadeRestaurantChoices != null) {
-            for (int i = 0; i < workmateWhoMadeRestaurantChoices.size(); i++) {
-                selectedRestaurantsId.add(workmateWhoMadeRestaurantChoices.get(i).getRestaurantId());
+//      String restaurantPhoneNumber;
+//      String restaurantWebsite;
 
-            }
-        }
-        if (restaurantDetails.getDetailsResult().getFormattedPhoneNumber() != null) {
-            restaurantPhoneNumber = restaurantDetails.getDetailsResult().getFormattedPhoneNumber();
+//      // CHECK IF THE RESTAURANT IS USER CHOICE
+//      boolean isMyRestaurant = false;
+//      if (workmateWhoMadeRestaurantChoices != null) {
+//          for (int i = 0; i < workmateWhoMadeRestaurantChoices.size(); i++) {
 
-        } else {
-            restaurantPhoneNumber = "0";
-        }
+//              if(workmateWhoMadeRestaurantChoices.get(i).getRestaurantId().equals(restaurant.getRestaurantId())){
+//                  if(workmateWhoMadeRestaurantChoices.get(i).getUserId().equals(userId)){
+//                      isMyRestaurant = true;
+//                  }
+//              }
+//          }
+//      }
+//      int restaurantChoiceState = R.drawable.hasnt_decided;
+//      if (isMyRestaurant) {
+//          restaurantChoiceState = R.drawable.has_decided;
+//      }
 
-        if (restaurantDetails.getDetailsResult().getWebsite() != null) {
-            restaurantWebsite = restaurantDetails.getDetailsResult().getWebsite();
+//      // CHECK IF PHONE NUMBER IS AVAILABLE
+//      if (restaurantDetails.getDetailsResult().getFormattedPhoneNumber() != null) {
+//          restaurantPhoneNumber = restaurantDetails.getDetailsResult().getFormattedPhoneNumber();
+//      } else {
+//          restaurantPhoneNumber = "0";
+//      }
 
-        } else {
-            restaurantWebsite = "https://www.google.com/";
-        }
+//      // CHECK IF WEBSITE ADDRESS IS AVAILABLE
+//      if (restaurantDetails.getDetailsResult().getWebsite() != null) {
+//          restaurantWebsite = restaurantDetails.getDetailsResult().getWebsite();
+//      } else {
+//          restaurantWebsite = "https://www.google.com/";
+//      }
+//
+//      // SET THE FAVORITE STAR ON EMPTY
+//      int detailLikeButton = R.drawable.detail_favorite_star_empty;
 
-        int restaurantChoiceState = R.drawable.hasnt_decided;
-        if (selectedRestaurantsId.contains(restaurant.getRestaurantId())) {
-            restaurantChoiceState = R.drawable.has_decided;
-        }
-        int detailLikeButton = R.drawable.detail_favorite_star_empty;
+//      result = new RestaurantDetailsViewState(
+//              restaurant.getRestaurantName(),
+//              restaurant.getRestaurantAddress(),
+//              application.getString(R.string.api_url)
+//                      + application.getString(R.string.photo_reference)
+//                      + photoReference(restaurant.getRestaurantPhotos())
+//                      + application.getString(R.string.and_key)
+//                      + application.getString(R.string.google_map_key),
+//              restaurantPhoneNumber,
+//              restaurantWebsite,
+//              restaurant.getRestaurantId(),
+//              convertRatingStars(restaurant.getRating()),
+//              restaurantChoiceState,
+//              detailLikeButton
 
-        result = new RestaurantDetailsViewState(
-                restaurant.getRestaurantName(),
-                restaurant.getRestaurantAddress(),
-                application.getString(R.string.api_url)
-                        + application.getString(R.string.photo_reference)
-                        + photoReference(restaurant.getRestaurantPhotos())
-                        + application.getString(R.string.and_key)
-                        + application.getString(R.string.google_map_key),
-                restaurantPhoneNumber,
-                restaurantWebsite,
-                restaurant.getRestaurantId(),
-                convertRatingStars(restaurant.getRating()),
-                restaurantChoiceState,
-                detailLikeButton
+//      );
+//      return result;
 
-        );
-        return result;
-
-    }
+//  }
 
     // COMBINE SECOND MEDIATOR FOR WORKMATES WITH THIS RESTAURANT IN FAVORITE
     private void combineWorkmates(@Nullable RestaurantSearch restaurant,
-                                  @Nullable List<WorkmateWhoMadeRestaurantChoice> usersWithFavoriteRestaurant,
+                                  @Nullable List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices,
                                   @Nullable List<UserModel> users) {
 
-        if (usersWithFavoriteRestaurant != null && users != null && restaurant != null) {
+        if (workmateWhoMadeRestaurantChoices != null && users != null && restaurant != null) {
             workmatesLikeThisRestaurantMediatorLiveData.setValue(mapWorkmates(
                     restaurant,
-                    usersWithFavoriteRestaurant,
+                    workmateWhoMadeRestaurantChoices,
                     users));
         }
     }
