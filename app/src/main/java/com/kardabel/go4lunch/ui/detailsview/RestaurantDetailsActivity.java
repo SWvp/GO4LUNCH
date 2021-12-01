@@ -111,7 +111,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         binding.callIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (restaurantPhoneNumber){
+                switch (restaurantPhoneNumber) {
                     case "0":
                         Toast.makeText(RestaurantDetailsActivity.this, "This restaurant doesn't have phone number", Toast.LENGTH_SHORT).show();
                         break;
@@ -126,7 +126,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         binding.webIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (restaurantWebsite){
+                switch (restaurantWebsite) {
                     case "https://www.google.com/":
                         Toast.makeText(RestaurantDetailsActivity.this, "It seems your restaurant isn't on the web, but you can try on google !", Toast.LENGTH_LONG).show();
                         break;
@@ -136,5 +136,6 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 }
