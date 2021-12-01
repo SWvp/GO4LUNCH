@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.model;
 
+import java.util.Objects;
+
 public class WorkmateWhoMadeRestaurantChoice {
 
     private String restaurantId;
@@ -37,5 +39,27 @@ public class WorkmateWhoMadeRestaurantChoice {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WorkmateWhoMadeRestaurantChoice that = (WorkmateWhoMadeRestaurantChoice) o;
+        return Objects.equals(restaurantId, that.restaurantId) && Objects.equals(restaurantName, that.restaurantName) && Objects.equals(userId, that.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(restaurantId, restaurantName, userId);
+    }
+
+    @Override
+    public String toString() {
+        return "WorkmateWhoMadeRestaurantChoice{" +
+                "restaurantId='" + restaurantId + '\'' +
+                ", restaurantName='" + restaurantName + '\'' +
+                ", userId='" + userId + '\'' +
+                '}';
     }
 }
