@@ -2,6 +2,8 @@ package com.kardabel.go4lunch.ui.detailsview;
 
 import androidx.annotation.DrawableRes;
 
+import java.util.Objects;
+
 public class RestaurantDetailsViewState {
 
     private final String detailsRestaurantName;
@@ -10,7 +12,7 @@ public class RestaurantDetailsViewState {
     private final String detailsRestaurantNumber;
     private final String detailsWebsite;
     private final String detailsRestaurantId;
-    private double rating;
+    private final double rating;
     @DrawableRes
     private final int choseRestaurantButton;
     @DrawableRes
@@ -55,5 +57,31 @@ public class RestaurantDetailsViewState {
 
     public int getDetailLikeButton() { return detailLikeButton; }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RestaurantDetailsViewState that = (RestaurantDetailsViewState) o;
+        return Double.compare(that.rating, rating) == 0 && choseRestaurantButton == that.choseRestaurantButton && detailLikeButton == that.detailLikeButton && Objects.equals(detailsRestaurantName, that.detailsRestaurantName) && Objects.equals(detailsRestaurantAddress, that.detailsRestaurantAddress) && Objects.equals(detailsPhoto, that.detailsPhoto) && Objects.equals(detailsRestaurantNumber, that.detailsRestaurantNumber) && Objects.equals(detailsWebsite, that.detailsWebsite) && Objects.equals(detailsRestaurantId, that.detailsRestaurantId);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(detailsRestaurantName, detailsRestaurantAddress, detailsPhoto, detailsRestaurantNumber, detailsWebsite, detailsRestaurantId, rating, choseRestaurantButton, detailLikeButton);
+    }
+
+    @Override
+    public String toString() {
+        return "RestaurantDetailsViewState{" +
+                "detailsRestaurantName='" + detailsRestaurantName + '\'' +
+                ", detailsRestaurantAddress='" + detailsRestaurantAddress + '\'' +
+                ", detailsPhoto='" + detailsPhoto + '\'' +
+                ", detailsRestaurantNumber='" + detailsRestaurantNumber + '\'' +
+                ", detailsWebsite='" + detailsWebsite + '\'' +
+                ", detailsRestaurantId='" + detailsRestaurantId + '\'' +
+                ", rating=" + rating +
+                ", choseRestaurantButton=" + choseRestaurantButton +
+                ", detailLikeButton=" + detailLikeButton +
+                '}';
+    }
 }
