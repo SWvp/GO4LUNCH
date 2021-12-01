@@ -39,7 +39,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         holder.viewHolderBinding.itemListviewOpeningHour.setText(restaurant.getOpeningHours());
         holder.viewHolderBinding.itemListviewDistance.setText(restaurant.getDistance());
         holder.viewHolderBinding.ratingBar.setRating((float) restaurant.getRating());
-        holder.viewHolderBinding.itemListviewInterestedWorkmates.setText(restaurant.getLike());
+        holder.viewHolderBinding.itemListviewInterestedWorkmates.setText(restaurant.getUsersWhoChoseThisRestaurant());
         Glide.with(holder.viewHolderBinding.itemListviewRestaurantPicture.getContext())
                 .load(restaurant.getPhoto())
                 .into(holder.viewHolderBinding.itemListviewRestaurantPicture);
