@@ -11,6 +11,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 
 import com.kardabel.go4lunch.R;
+import com.kardabel.go4lunch.model.WorkmateWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.pojo.Close;
 import com.kardabel.go4lunch.pojo.Geometry;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
@@ -52,15 +53,22 @@ public class RestaurantsViewModelTest {
     @Rule
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
-    private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
-    private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository = Mockito.mock(WorkmatesWhoMadeRestaurantChoiceRepository.class);
-    private final UsersSearchRepository usersSearchRepository = Mockito.mock(UsersSearchRepository.class);
+    private final LocationRepository locationRepository =
+            Mockito.mock(LocationRepository.class);
+    private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository =
+            Mockito.mock(WorkmatesWhoMadeRestaurantChoiceRepository.class);
+    private final UsersSearchRepository usersSearchRepository =
+            Mockito.mock(UsersSearchRepository.class);
 
-    private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase = Mockito.mock(GetNearbySearchResultsUseCase.class);
-    private final GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase = Mockito.mock(GetRestaurantDetailsResultsUseCase.class);
+    private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase =
+            Mockito.mock(GetNearbySearchResultsUseCase.class);
+    private final GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase =
+            Mockito.mock(GetRestaurantDetailsResultsUseCase.class);
 
-    private final Location location = Mockito.mock(Location.class);
-    private final Application application = Mockito.mock(Application.class);
+    private final Application application =
+            Mockito.mock(Application.class);
+    private final Location location =
+            Mockito.mock(Location.class);
     private final Clock clock = Clock.fixed(
             LocalDateTime
                     .of(
@@ -89,9 +97,17 @@ public class RestaurantsViewModelTest {
             ZoneOffset.UTC
     );
 
-    private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<NearbySearchResults> nearbySearchResultsMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<RestaurantDetailsResult>> restaurantDetailsResultsUseCaseMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Location> locationMutableLiveData =
+            new MutableLiveData<>();
+    private final MutableLiveData<NearbySearchResults> nearbySearchResultsMutableLiveData =
+            new MutableLiveData<>();
+    private final MutableLiveData<List<RestaurantDetailsResult>> restaurantDetailsResultsUseCaseMutableLiveData =
+            new MutableLiveData<>();
+    private final MutableLiveData<List<WorkmateWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceMutableLiveData =
+            new MutableLiveData<>();
+    private final MutableLiveData<List<String>> usersSearchMutableLiveData =
+            new MutableLiveData<>();
+
 
     private RestaurantsViewModel restaurantsViewModel;
 
@@ -114,6 +130,13 @@ public class RestaurantsViewModelTest {
         Mockito.doReturn("Permanently closed").when(application).getString(R.string.permanently_closed);
         Mockito.doReturn("Opening hours unavailable").when(application).getString(R.string.opening_hours_unavailable);
         Mockito.doReturn("Photo unavailable").when(application).getString(R.string.photo_unavailable);
+        Mockito.doReturn("https://maps.googleapis.com/maps/api/place/").when(application).getString(R.string.api_url);
+        Mockito.doReturn("photo?maxwidth=300&photo_reference=").when(application).getString(R.string.photo_reference);
+        Mockito.doReturn("&key=").when(application).getString(R.string.and_key);
+        Mockito.doReturn("AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8").when(application).getString(R.string.google_map_key);
+        Mockito.doReturn("(").when(application).getString(R.string.left_bracket);
+        Mockito.doReturn(")").when(application).getString(R.string.right_bracket);
+        Mockito.doReturn("Distance unavailable").when(application).getString(R.string.distance_unavailable);
         Mockito.doReturn("am").when(application).getString(R.string.am);
         Mockito.doReturn("pm").when(application).getString(R.string.pm);
         Mockito.doReturn("m").when(application).getString(R.string.m);
@@ -131,6 +154,12 @@ public class RestaurantsViewModelTest {
         Mockito.doReturn(restaurantDetailsResultsUseCaseMutableLiveData)
                 .when(getRestaurantDetailsResultsUseCase)
                 .getPlaceDetailsResultLiveData();
+        Mockito.doReturn(workmatesWhoMadeRestaurantChoiceMutableLiveData)
+                .when(workmatesWhoMadeRestaurantChoiceRepository)
+                .getWorkmatesWhoMadeRestaurantChoice();
+        Mockito.doReturn(usersSearchMutableLiveData)
+                .when(usersSearchRepository)
+                .getUsersSearchLiveData();
 
 
         // SET LIVEDATA VALUES
@@ -138,7 +167,7 @@ public class RestaurantsViewModelTest {
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getDefaultRestaurants()));
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
-                        firstPlaceId,
+                        firstRestaurantId,
                         new OpeningHours(
                                 true,
                                 getDefaultPeriod(
@@ -155,7 +184,7 @@ public class RestaurantsViewModelTest {
                         firstSite
                 ),
                 new RestaurantDetails(
-                        secondPlaceId,
+                        secondRestaurantId,
                         new OpeningHours(
                                 true,
                                 getDefaultPeriod(
@@ -171,6 +200,8 @@ public class RestaurantsViewModelTest {
                         secondSite
                 )
         ));
+        workmatesWhoMadeRestaurantChoiceMutableLiveData.setValue(workmatesWhoMadeChoice());
+        usersSearchMutableLiveData.setValue(null);
 
         restaurantsViewModel = new RestaurantsViewModel(
                 application,
@@ -185,14 +216,17 @@ public class RestaurantsViewModelTest {
     @Test
     public void nominalCase() {
         // WHEN
-        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
-            // THEN
-            assertEquals(getDefaultRestaurantViewState(), restaurantsWrapperViewState);
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), new LiveDataTestUtils.OnObservedListener<RestaurantsWrapperViewState>() {
+            @Override
+            public void onObserved(RestaurantsWrapperViewState restaurantsWrapperViewState) {
+                // THEN
+                assertEquals(RestaurantsViewModelTest.this.getDefaultRestaurantViewState(), restaurantsWrapperViewState);
 
-            verify(locationRepository).getLocationLiveData();
-            verify(getNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
-            verify(getRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
-            verifyNoMoreInteractions(locationRepository, getNearbySearchResultsUseCase, getRestaurantDetailsResultsUseCase);
+                verify(locationRepository).getLocationLiveData();
+                verify(getNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+                verify(getRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
+                verifyNoMoreInteractions(locationRepository, getNearbySearchResultsUseCase, getRestaurantDetailsResultsUseCase);
+            }
         });
     }
 
@@ -203,7 +237,7 @@ public class RestaurantsViewModelTest {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
-                        firstPlaceId,
+                        firstRestaurantId,
                         new OpeningHours(
                                 true,
                                 getDefaultPeriod(
@@ -220,7 +254,7 @@ public class RestaurantsViewModelTest {
                         firstSite
                 ),
                 new RestaurantDetails(
-                        secondPlaceId,
+                        secondRestaurantId,
                         new OpeningHours(
                                 true,
                                 getDefaultPeriod(
@@ -254,7 +288,7 @@ public class RestaurantsViewModelTest {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
-                        firstPlaceId,
+                        firstRestaurantId,
                         new OpeningHours(
                                 true,
                                 getDefaultPeriod(
@@ -267,7 +301,7 @@ public class RestaurantsViewModelTest {
                         firstSite
                 ),
                 new RestaurantDetails(
-                        secondPlaceId,
+                        secondRestaurantId,
                         new OpeningHours(
                                 true,
                                 getDefaultPeriod(
@@ -305,7 +339,7 @@ public class RestaurantsViewModelTest {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
-                        firstPlaceId,
+                        firstRestaurantId,
                         new OpeningHours(
                                 false,
                                 getDefaultPeriod(
@@ -322,7 +356,7 @@ public class RestaurantsViewModelTest {
                         firstSite
                 ),
                 new RestaurantDetails(
-                        secondPlaceId,
+                        secondRestaurantId,
                         new OpeningHours(
                                 false,
                                 getDefaultPeriod(
@@ -352,13 +386,13 @@ public class RestaurantsViewModelTest {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
-                        firstPlaceId,
+                        firstRestaurantId,
                         new OpeningHours(true, null),
                         firstNumber,
                         firstSite
                 ),
                 new RestaurantDetails(
-                        secondPlaceId,
+                        secondRestaurantId,
                         new OpeningHours(true, null),
                         secondNumber,
                         secondSite
@@ -378,13 +412,13 @@ public class RestaurantsViewModelTest {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
-                        firstPlaceId,
+                        firstRestaurantId,
                         new OpeningHours(false, null),
                         firstNumber,
                         firstSite
                 ),
                 new RestaurantDetails(
-                        secondPlaceId,
+                        secondRestaurantId,
                         new OpeningHours(false, null),
                         secondNumber,
                         secondSite
@@ -404,7 +438,7 @@ public class RestaurantsViewModelTest {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
-                        firstPlaceId,
+                        firstRestaurantId,
                         new OpeningHours(
                                 false,
                                 getDefaultPeriod(
@@ -421,7 +455,7 @@ public class RestaurantsViewModelTest {
                         firstSite
                 ),
                 new RestaurantDetails(
-                        secondPlaceId,
+                        secondRestaurantId,
                         new OpeningHours(
                                 false,
                                 getDefaultPeriod(
@@ -451,7 +485,7 @@ public class RestaurantsViewModelTest {
         // GIVEN
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
-                        firstPlaceId,
+                        firstRestaurantId,
                         new OpeningHours(
                                 false,
                                 getDefaultPeriod(
@@ -468,7 +502,7 @@ public class RestaurantsViewModelTest {
                         firstSite
                 ),
                 new RestaurantDetails(
-                        secondPlaceId,
+                        secondRestaurantId,
                         new OpeningHours(
                                 false,
                                 getDefaultPeriod(
@@ -507,7 +541,7 @@ public class RestaurantsViewModelTest {
 
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
-                        firstPlaceId,
+                        firstRestaurantId,
                         new OpeningHours(
                                 false,
                                 getDefaultPeriod(
@@ -524,7 +558,7 @@ public class RestaurantsViewModelTest {
                         firstSite
                 ),
                 new RestaurantDetails(
-                        secondPlaceId,
+                        secondRestaurantId,
                         new OpeningHours(
                                 false,
                                 getDefaultPeriod(
@@ -564,7 +598,7 @@ public class RestaurantsViewModelTest {
 
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
                 new RestaurantDetails(
-                        firstPlaceId,
+                        firstRestaurantId,
                         new OpeningHours(
                                 false,
                                 getDefaultPeriod(
@@ -581,7 +615,7 @@ public class RestaurantsViewModelTest {
                         firstSite
                 ),
                 new RestaurantDetails(
-                        secondPlaceId,
+                        secondRestaurantId,
                         new OpeningHours(
                                 false,
                                 getDefaultPeriod(
@@ -665,25 +699,33 @@ public class RestaurantsViewModelTest {
 
     // VAL FOR TESTING //
 
-    String firstPlaceId = "First_Place_Id";
-    String secondPlaceId = "Second_Place_Id";
-    String firstRestaurantName = "First_Name";
-    String secondRestaurantName = "First_Name";
+    String firstRestaurantId = "First_Restaurant_Id";
+    String firstRestaurantName = "First_Restaurant_Name";
     String firstAddress = "First_Address";
-    String secondAddress = "Second_Address";
     String firstNumber = "First_Phone_Number";
-    String secondNumber = "Second_Phone_Number";
     String firstSite = "First_Website";
+
+    String secondRestaurantId = "Second_Restaurant_Id";
+    String secondRestaurantName = "First_Restaurant_Name";
+    String secondAddress = "Second_Address";
+    String secondNumber = "Second_Phone_Number";
     String secondSite = "Second_Website";
+
     String photo = "photo";
+    String photoApiUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=300&photo_reference=photo&key=AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8";
     String distance = "0";
+
     String openH24 = "Open 24/7";
     String open = "Open";
     String closed = "Closed";
     String closingSoon = "Closing soon";
     String permanentlyClosed = "Permanently closed";
     String photoUnavailable = "Photo unavailable";
-    String like = "1";
+    String twoUsersChoseThisRestaurant = "(2)";
+    String nobodyChoseThisRestaurant = "";
+
+    String firstUserId = "First_user_Id";
+    String secondUserId = "Second_user_Id";
 
     // region IN
 
@@ -691,7 +733,7 @@ public class RestaurantsViewModelTest {
         List<RestaurantSearch> restaurants = new ArrayList<>();
         restaurants.add(
                 new RestaurantSearch(
-                        firstPlaceId,
+                        firstRestaurantId,
                         firstRestaurantName,
                         firstAddress,
                         getPhoto(),
@@ -707,7 +749,7 @@ public class RestaurantsViewModelTest {
         );
         restaurants.add(
                 new RestaurantSearch(
-                        secondPlaceId,
+                        secondRestaurantId,
                         secondRestaurantName,
                         secondAddress,
                         getPhoto(),
@@ -728,7 +770,7 @@ public class RestaurantsViewModelTest {
         List<RestaurantSearch> restaurants = new ArrayList<>();
         restaurants.add(
                 new RestaurantSearch(
-                        firstPlaceId,
+                        firstRestaurantId,
                         firstRestaurantName,
                         firstAddress,
                         getPhoto(),
@@ -743,7 +785,7 @@ public class RestaurantsViewModelTest {
         );
         restaurants.add(
                 new RestaurantSearch(
-                        secondPlaceId,
+                        secondRestaurantId,
                         secondRestaurantName,
                         secondAddress,
                         getPhoto(),
@@ -764,7 +806,7 @@ public class RestaurantsViewModelTest {
         List<RestaurantSearch> restaurants = new ArrayList<>();
         restaurants.add(
                 new RestaurantSearch(
-                        firstPlaceId,
+                        firstRestaurantId,
                         firstRestaurantName,
                         firstAddress,
                         getPhoto(),
@@ -779,7 +821,7 @@ public class RestaurantsViewModelTest {
         );
         restaurants.add(
                 new RestaurantSearch(
-                        secondPlaceId,
+                        secondRestaurantId,
                         secondRestaurantName,
                         secondAddress,
                         getPhoto(),
@@ -800,7 +842,7 @@ public class RestaurantsViewModelTest {
         List<RestaurantSearch> restaurants = new ArrayList<>();
         restaurants.add(
                 new RestaurantSearch(
-                        firstPlaceId,
+                        firstRestaurantId,
                         firstRestaurantName,
                         firstAddress,
                         null,
@@ -815,7 +857,7 @@ public class RestaurantsViewModelTest {
         );
         restaurants.add(
                 new RestaurantSearch(
-                        secondPlaceId,
+                        secondRestaurantId,
                         secondRestaurantName,
                         secondAddress,
                         null,
@@ -836,7 +878,7 @@ public class RestaurantsViewModelTest {
         List<RestaurantSearch> restaurants = new ArrayList<>();
         restaurants.add(
                 new RestaurantSearch(
-                        firstPlaceId,
+                        firstRestaurantId,
                         firstRestaurantName,
                         firstAddress,
                         getPhoto(),
@@ -851,7 +893,7 @@ public class RestaurantsViewModelTest {
         );
         restaurants.add(
                 new RestaurantSearch(
-                        secondPlaceId,
+                        secondRestaurantId,
                         secondRestaurantName,
                         secondAddress,
                         getPhoto(),
@@ -866,6 +908,27 @@ public class RestaurantsViewModelTest {
         );
         return restaurants;
 
+    }
+
+    private List<WorkmateWhoMadeRestaurantChoice> workmatesWhoMadeChoice() {
+        List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices = new ArrayList<>();
+        workmateWhoMadeRestaurantChoices.add(
+                new WorkmateWhoMadeRestaurantChoice(
+                        firstRestaurantId,
+                        firstRestaurantName,
+                        firstUserId
+
+                )
+        );
+        workmateWhoMadeRestaurantChoices.add(
+                new WorkmateWhoMadeRestaurantChoice(
+                        firstRestaurantId,
+                        secondRestaurantName,
+                        secondUserId
+
+                )
+        );
+        return workmateWhoMadeRestaurantChoices;
     }
 
     private List<Photo> getPhoto() {
@@ -923,23 +986,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 "Open until 1.pm",
                                 1,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 "Open until 11:50am",
                                 2,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -955,23 +1018,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 closingSoon,
                                 1,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 closingSoon,
                                 2,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -987,23 +1050,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 "Closed until 6.pm",
                                 1,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 "Closed until 11.am",
                                 2,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -1020,23 +1083,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 openH24,
                                 1,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 openH24,
                                 2,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -1052,23 +1115,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 permanentlyClosed,
                                 1,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 permanentlyClosed,
                                 2,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -1084,23 +1147,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 open,
                                 1,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 open,
                                 2,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -1116,23 +1179,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 closed,
                                 1,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 closed,
                                 2,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -1148,23 +1211,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 "Closed until Friday 9.pm",
                                 1,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 "Closed until Tuesday 9.pm",
                                 2,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -1180,23 +1243,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 "Closed until Tomorrow 9.pm",
                                 1,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 "Closed until Tomorrow 9.pm",
                                 2,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -1212,23 +1275,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 permanentlyClosed,
                                 2,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 permanentlyClosed,
                                 1,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -1248,8 +1311,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 permanentlyClosed,
                                 2,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
@@ -1259,8 +1322,8 @@ public class RestaurantsViewModelTest {
                                 distance,
                                 permanentlyClosed,
                                 1,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -1276,23 +1339,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 "Closed until Monday 2:50pm",
                                 1,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 "Closed until Tuesday 5.pm",
                                 2,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -1308,23 +1371,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 "Closed until Tomorrow 8:30am",
                                 1,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 "Closed until Tuesday 9.am",
                                 2,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
@@ -1340,23 +1403,23 @@ public class RestaurantsViewModelTest {
                         (
                                 firstRestaurantName,
                                 firstAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 open,
                                 1,
-                                firstPlaceId,
-                                like),
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant),
 
                 new RestaurantsViewState
                         (
                                 secondRestaurantName,
                                 secondAddress,
-                                photo,
+                                photoApiUrl,
                                 distance,
                                 closed,
                                 2,
-                                secondPlaceId,
-                                like)
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant)
 
         );
     }
