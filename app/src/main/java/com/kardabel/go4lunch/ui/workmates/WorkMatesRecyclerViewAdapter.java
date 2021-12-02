@@ -1,9 +1,9 @@
 package com.kardabel.go4lunch.ui.workmates;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.kardabel.go4lunch.databinding.ItemWorkmateBinding;
-import com.kardabel.go4lunch.ui.restaurants.RestaurantRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,26 +36,18 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
 
         WorkMatesViewState workMate = workmatesList.get(position);
 
-        if (!workMate.isUserHasDecided()) {
-            holder.viewHolderBinding.itemWorkmateDescription.setText(workMate.getWorkmateDescription());
-            holder.viewHolderBinding.itemWorkmateDescription.setTextColor(Color.GRAY);
-            holder.viewHolderBinding.itemWorkmateDescription.setTypeface(null, Typeface.ITALIC);
-        } else {
-            holder.viewHolderBinding.itemWorkmateDescription.setText(workMate.getWorkmateDescription());
-        }
-
+        holder.viewHolderBinding.itemWorkmateDescription.setTextColor(workMate.getTextColor());
+        holder.viewHolderBinding.itemWorkmateDescription.setText(workMate.getWorkmateDescription());
         Glide.with(holder.viewHolderBinding.itemWorkmateAvatar.getContext())
                 .load(workMate.getWorkmatePhoto())
                 .circleCrop()
                 .into(holder.viewHolderBinding.itemWorkmateAvatar);
+        // TODO : IF THERE IS A SOLUTION TO PASS STYLE RESOURCE...
+        if (!workMate.isUserHasDecided()) {
+            holder.viewHolderBinding.itemWorkmateDescription.setTypeface(null, Typeface.ITALIC);
+        }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onWorkmateItemClickListener.onWorkmateItemClick(workMate);
-
-            }
-        });
+        holder.itemView.setOnClickListener(v -> onWorkmateItemClickListener.onWorkmateItemClick(workMate));
     }
 
     @Override
@@ -69,13 +60,14 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setWorkmatesListData(List<WorkMatesViewState> workmatesList) {
         this.workmatesList = workmatesList;
         notifyDataSetChanged();
 
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         ItemWorkmateBinding viewHolderBinding;
 
         public ViewHolder(@NonNull ItemWorkmateBinding itemView) {
@@ -85,6 +77,7 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
         }
     }
 
+    // WHEN USER CLICK ON A WORKMATE ITEM TO DISPLAY RESTAURANT DETAILS
     public void setOnItemClickListener(OnWorkmateItemClickListener onWorkmateItemClickListener) {
         this.onWorkmateItemClickListener = onWorkmateItemClickListener;
 
