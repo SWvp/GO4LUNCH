@@ -1,25 +1,27 @@
 package com.kardabel.go4lunch.ui.workmates;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+
 import android.app.Application;
-import android.location.Location;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 
-import com.kardabel.go4lunch.pojo.NearbySearchResults;
-import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
-import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
-import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
+import com.kardabel.go4lunch.R;
+import com.kardabel.go4lunch.model.UserModel;
+import com.kardabel.go4lunch.model.WorkmateWhoMadeRestaurantChoice;
+import com.kardabel.go4lunch.repository.WorkmatesRepository;
+import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
+import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
 
+import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WorkmatesViewModelTest {
@@ -27,23 +29,251 @@ public class WorkmatesViewModelTest {
     @Rule
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
-    private final GetNearbySearchResultsUseCase mGetNearbySearchResultsUseCase = Mockito.mock(GetNearbySearchResultsUseCase.class);
-    private final GetRestaurantDetailsResultsUseCase mGetRestaurantDetailsResultsUseCase = Mockito.mock(GetRestaurantDetailsResultsUseCase.class);
+    private final WorkmatesRepository workmatesRepository =
+            Mockito.mock(WorkmatesRepository.class);
+    private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository =
+            Mockito.mock(WorkmatesWhoMadeRestaurantChoiceRepository.class);
 
-    private final Location location = Mockito.mock(Location.class);
     private final Application application = Mockito.mock(Application.class);
-    private final Clock clock = Clock.fixed(
-            LocalDateTime
-                    .of(
-                            LocalDate.of(2021, 10, 20),
-                            LocalTime.of(10, 0)
-                    )
-                    .toInstant(ZoneOffset.UTC),
-            ZoneOffset.UTC
-    );
 
-    private final MutableLiveData<NearbySearchResults> nearbySearchResultsMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<RestaurantDetailsResult>> restaurantDetailsResultsUseCaseMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<UserModel>> workmatesRepositoryMutableLiveData =
+            new MutableLiveData<>();
+    private final MutableLiveData<List<WorkmateWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceRepositoryMutableLiveData =
+            new MutableLiveData<>();
 
     private WorkMatesViewModel workMatesViewModel;
+
+    @Before
+    public void setUp() {
+
+        // STRING RETURNS
+        Mockito.doReturn("hasn't decided yet").when(application).getString(R.string.not_decided);
+        Mockito.doReturn("(").when(application).getString(R.string.left_bracket);
+        Mockito.doReturn(")").when(application).getString(R.string.right_bracket);
+
+        // RETURNS OF MOCKED CLASS
+        Mockito.doReturn(workmatesRepositoryMutableLiveData)
+                .when(workmatesRepository)
+                .getWorkmates();
+        Mockito.doReturn(workmatesWhoMadeRestaurantChoiceRepositoryMutableLiveData)
+                .when(workmatesWhoMadeRestaurantChoiceRepository)
+                .getWorkmatesWhoMadeRestaurantChoice();
+
+        // SET LIVEDATA VALUES
+        workmatesRepositoryMutableLiveData.setValue(workmates());
+        workmatesWhoMadeRestaurantChoiceRepositoryMutableLiveData.setValue(workmatesWhoMadeChoice());
+
+        // SET THE VIEW MODEL WITH THE MOCKED CLASS
+        workMatesViewModel = new WorkMatesViewModel(
+                application,
+                workmatesRepository,
+                workmatesWhoMadeRestaurantChoiceRepository
+        );
+
+    }
+
+    @Test
+    public void nominalCase() {
+         // WHEN
+        LiveDataTestUtils.observeForTesting(workMatesViewModel.getWorkmatesViewStateLiveData(), new LiveDataTestUtils.OnObservedListener<List<WorkMateViewState>>() {
+            @Override
+            public void onObserved(List<WorkMateViewState> workmatesViewState) {
+                // THEN
+                assertEquals(WorkmatesViewModelTest.this.getDefaultWorkmatesViewState(), workmatesViewState);
+
+                verify(workmatesRepository).getWorkmates();
+                verify(workmatesWhoMadeRestaurantChoiceRepository).getWorkmatesWhoMadeRestaurantChoice();
+            }
+        });
+    }
+
+    @Test
+    public void no_workmate_have_chose_restaurant_yet_should_display_only_has_not_decided_status() {
+        // GIVEN
+        workmatesWhoMadeRestaurantChoiceRepositoryMutableLiveData.setValue(new ArrayList<>());
+        // WHEN
+        LiveDataTestUtils.observeForTesting(workMatesViewModel.getWorkmatesViewStateLiveData(), new LiveDataTestUtils.OnObservedListener<List<WorkMateViewState>>() {
+            @Override
+            public void onObserved(List<WorkMateViewState> workmatesViewState) {
+                // THEN
+                assertEquals(WorkmatesViewModelTest.this.getWorkmatesHaveNotChosenYet(), workmatesViewState);
+
+                verify(workmatesRepository).getWorkmates();
+                verify(workmatesWhoMadeRestaurantChoiceRepository).getWorkmatesWhoMadeRestaurantChoice();
+            }
+        });
+    }
+
+
+    // region IN
+
+    // VAL FOR TESTING
+    String firstUserId = "First_User_Id";
+    String firstUserName = "First_Name";
+    String firstAvatar = "First_Avatar";
+    String firstEmail = "First_Email";
+
+    String secondUserId = "Second_User_Id";
+    String secondUserName = "Second_Name";
+    String secondAvatar = "Second_Avatar";
+    String secondEmail = "Second_Email";
+
+    String thirdUserId = "Third_User_Id";
+    String thirdUserName = "Third_Name";
+    String thirdAvatar = "Third_Avatar";
+    String thirdEmail = "Third_Email";
+
+    String fourthUserId = "Fourth_User_Id";
+    String fourthUserName = "Fourth_Name";
+    String fourthAvatar = "Fourth_Avatar";
+    String fourthEmail = "Fourth_Email";
+
+    String firstRestaurantId = "First_Restaurant_Id";
+    String firstRestaurantName = "First_Restaurant_Name";
+
+    String secondRestaurantId = "Second_Restaurant_Id";
+    String secondRestaurantName = "Second_Restaurant_Name";
+
+    private List<UserModel> workmates() {
+        List<UserModel> workmates = new ArrayList<>();
+        workmates.add(
+                new UserModel(
+                        firstUserId,
+                        firstUserName,
+                        firstAvatar,
+                        firstEmail
+                )
+        );
+        workmates.add(
+                new UserModel(
+                        secondUserId,
+                        secondUserName,
+                        secondAvatar,
+                        secondEmail
+                )
+        );
+        workmates.add(
+                new UserModel(
+                        thirdUserId,
+                        thirdUserName,
+                        thirdAvatar,
+                        thirdEmail
+                )
+        );
+        workmates.add(
+                new UserModel(
+                        fourthUserId,
+                        fourthUserName,
+                        fourthAvatar,
+                        fourthEmail
+                )
+        );
+        return workmates;
+    }
+
+    private List<WorkmateWhoMadeRestaurantChoice> workmatesWhoMadeChoice() {
+        List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices = new ArrayList<>();
+        workmateWhoMadeRestaurantChoices.add(
+                new WorkmateWhoMadeRestaurantChoice(
+                        firstRestaurantId,
+                        firstRestaurantName,
+                        thirdUserId
+
+                )
+        );
+        workmateWhoMadeRestaurantChoices.add(
+                new WorkmateWhoMadeRestaurantChoice(
+                        secondRestaurantId,
+                        secondRestaurantName,
+                        fourthUserId
+
+                )
+        );
+        return workmateWhoMadeRestaurantChoices;
+    }
+
+    // endregion
+
+    /////////////////////////////////////////////////////////
+
+    // region OUT
+
+    // VAL FOR TESTING
+    String hasNotDecidedYet = "hasn't decided yet";
+    int gray = -7829368;
+    int black = -16777216;
+
+    private List<WorkMateViewState> getDefaultWorkmatesViewState() {
+        List<WorkMateViewState> workMateViewStates = new ArrayList<>();
+        workMateViewStates.add(new WorkMateViewState(
+                firstUserName,
+                firstUserName + " "  + hasNotDecidedYet,
+                firstAvatar,
+                firstUserId,
+                false,
+                gray
+        ));
+        workMateViewStates.add(new WorkMateViewState(
+                secondUserName,
+                secondUserName + " "  + hasNotDecidedYet,
+                secondAvatar,
+                secondUserId,
+                false,
+                gray
+        ));
+        workMateViewStates.add(new WorkMateViewState(
+                thirdUserName,
+                thirdUserName + " "  + "(" + firstRestaurantName + ")",
+                thirdAvatar,
+                thirdUserId,
+                true,
+                black
+        ));
+        workMateViewStates.add(new WorkMateViewState(
+                fourthUserName,
+                fourthUserName + " "  + "(" + secondRestaurantName + ")",
+                fourthAvatar,
+                fourthUserId,
+                true,
+                black
+        ));
+        return workMateViewStates;
+    }
+
+    private List<WorkMateViewState> getWorkmatesHaveNotChosenYet() {
+        List<WorkMateViewState> workMateViewStates = new ArrayList<>();
+        workMateViewStates.add(new WorkMateViewState(
+                firstUserName,
+                firstUserName + " "  + hasNotDecidedYet,
+                firstAvatar,
+                firstUserId,
+                false,
+                gray
+        ));
+        workMateViewStates.add(new WorkMateViewState(
+                secondUserName,
+                secondUserName + " "  + hasNotDecidedYet,
+                secondAvatar,
+                secondUserId,
+                false,
+                gray
+        ));
+        workMateViewStates.add(new WorkMateViewState(
+                thirdUserName,
+                thirdUserName + " "  + hasNotDecidedYet,
+                thirdAvatar,
+                thirdUserId,
+                false,
+                gray
+        ));
+        workMateViewStates.add(new WorkMateViewState(
+                fourthUserName,
+                fourthUserName + " "  + hasNotDecidedYet,
+                fourthAvatar,
+                fourthUserId,
+                false,
+                gray
+        ));
+        return workMateViewStates;
+    }
 }
