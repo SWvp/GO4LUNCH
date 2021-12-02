@@ -85,7 +85,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.workmatesRepository = new WorkmatesRepository();
         this.usersSearchRepository = new UsersSearchRepository();
         this.favoriteRestaurantsRepository = new FavoriteRestaurantsRepository();
-        this.workmatesWhoMadeRestaurantChoiceRepository = new WorkmatesWhoMadeRestaurantChoiceRepository();
+        this.workmatesWhoMadeRestaurantChoiceRepository = new WorkmatesWhoMadeRestaurantChoiceRepository(Clock.systemDefaultZone());
         this.chatMessageRepository = new ChatMessageRepository();
 
         this.getNearbySearchResultsUseCase = new GetNearbySearchResultsUseCase(
@@ -130,10 +130,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new MainActivityViewModel(
                     application,
                     locationRepository,
-                    workmatesRepository,
                     getPredictionsUseCase,
-                    usersSearchRepository,
-                    workmatesWhoMadeRestaurantChoiceRepository);
+                    usersSearchRepository
+            );
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
                     application,
@@ -144,6 +143,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     favoriteRestaurantsRepository);
         } else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
             return (T) new WorkMatesViewModel(
+                    application,
                     workmatesRepository,
                     workmatesWhoMadeRestaurantChoiceRepository
             );
