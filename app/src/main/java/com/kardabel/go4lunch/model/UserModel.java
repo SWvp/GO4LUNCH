@@ -2,7 +2,6 @@ package com.kardabel.go4lunch.model;
 
 import androidx.annotation.Nullable;
 
-import java.util.List;
 import java.util.Objects;
 
 public class UserModel {
@@ -12,7 +11,6 @@ public class UserModel {
     @Nullable
     private String avatarURL;
     private String email;
-    private List<String> favoriteRestaurants;
 
     public UserModel() {
     }
