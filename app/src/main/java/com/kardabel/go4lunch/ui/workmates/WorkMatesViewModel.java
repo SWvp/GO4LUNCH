@@ -19,7 +19,7 @@ import java.util.List;
 
 public class WorkMatesViewModel extends ViewModel {
 
-    private final MediatorLiveData<List<WorkMatesViewState>> workMatesViewStateMediatorLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<List<WorkMateViewState>> workMatesViewStateMediatorLiveData = new MediatorLiveData<>();
 
     private final Application application;
 
@@ -65,9 +65,9 @@ public class WorkMatesViewModel extends ViewModel {
     }
 
     // MAP TO WORKMATE VIEW STATE
-    private List<WorkMatesViewState> mapWorkmates(List<UserModel> workmates,
-                                                  List<WorkmateWhoMadeRestaurantChoice> workmatesWhoMadeRestaurantChoices) {
-        List<WorkMatesViewState> workMatesViewStateList = new ArrayList<>();
+    private List<WorkMateViewState> mapWorkmates(List<UserModel> workmates,
+                                                 List<WorkmateWhoMadeRestaurantChoice> workmatesWhoMadeRestaurantChoices) {
+        List<WorkMateViewState> workMateViewStateList = new ArrayList<>();
 
         for (int i = 0; i < workmates.size(); i++) {
 
@@ -75,18 +75,18 @@ public class WorkMatesViewModel extends ViewModel {
             String workmateName = workmates.get(i).getUserName();
             String avatar = workmates.get(i).getAvatarURL();
             String workmateId = workmates.get(i).getUid();
-            String restaurant = userChoice(workmateId, workmatesWhoMadeRestaurantChoices);
+            String workmateChoice = workmateChoice(workmateId, workmatesWhoMadeRestaurantChoices);
 
             int colorText = Color.GRAY;
-            if(!userChoice(workmateId, workmatesWhoMadeRestaurantChoices).equals(application.getString(R.string.not_decided))){
+            if(isUserHasDecided(workmateId, workmatesWhoMadeRestaurantChoices)){
                 colorText = Color.BLACK;
 
 
             }
 
-            workMatesViewStateList.add(new WorkMatesViewState(
+            workMateViewStateList.add(new WorkMateViewState(
                     workmateName,
-                    workmateName + restaurant,
+                    workmateName + workmateChoice,
                     avatar,
                     workmateId,
                     isUserHasDecided(workmateId, workmatesWhoMadeRestaurantChoices),
@@ -94,7 +94,7 @@ public class WorkMatesViewModel extends ViewModel {
 
             ));
         }
-        return workMatesViewStateList;
+        return workMateViewStateList;
 
     }
 
@@ -114,13 +114,13 @@ public class WorkMatesViewModel extends ViewModel {
     }
 
     // GET THE RESTAURANT WHO HAS BEEN CHOSEN
-    private String userChoice(@NonNull String workmateId,
-                              @NonNull List<WorkmateWhoMadeRestaurantChoice> workmatesWhoMadeRestaurantChoices) {
-        String restaurantName = application.getString(R.string.not_decided);
+    private String workmateChoice(@NonNull String workmateId,
+                                  @NonNull List<WorkmateWhoMadeRestaurantChoice> workmatesWhoMadeRestaurantChoices) {
+        String restaurantName = " " + application.getString(R.string.not_decided);
 
         for (int i = 0; i < workmatesWhoMadeRestaurantChoices.size(); i++) {
             if (workmatesWhoMadeRestaurantChoices.get(i).getUserId().equals(workmateId)) {
-                restaurantName = application.getString(R.string.left_bracket) +
+                restaurantName = " " + application.getString(R.string.left_bracket) +
                         workmatesWhoMadeRestaurantChoices.get(i).getRestaurantName() +
                         application.getString(R.string.right_bracket);
 
@@ -131,7 +131,7 @@ public class WorkMatesViewModel extends ViewModel {
     }
 
     // LIVEDATA OBSERVED BY LIST VIEW FRAGMENT
-    public LiveData<List<WorkMatesViewState>> getWorkmatesViewStateLiveData() {
+    public LiveData<List<WorkMateViewState>> getWorkmatesViewStateLiveData() {
         return workMatesViewStateMediatorLiveData;
 
     }
