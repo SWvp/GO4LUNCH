@@ -26,6 +26,10 @@
     <string name="error_no_internet">Internet unavailable</string>
     <string name="error_unknown_error">Unknown error</string>
 
+    <!-- USED BY FACEBOOK AUTH -->
+    <string name="facebook_application_id">303261874567043</string>
+    <string name="fb_login_protocol_scheme">fb303261874567043</string>
+
     <!-- USED IN NAVIGATIONDRAWER -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -39,10 +43,6 @@
     <!-- USED IN SEARCH MENU -->
     <string name="search_hint">Search restaurants</string>
     <string name="search_field">Search</string>
-
-    <!-- USED BY FACEBOOK AUTH -->
-    <string name="facebook_application_id">303261874567043</string>
-    <string name="fb_login_protocol_scheme">fb303261874567043</string>
 
     <!-- MESSAGE FOR OPENING HOURS -->
     <string name="open">Open</string>
@@ -84,10 +84,15 @@
     <!-- RADIUS -->
     <string name="radius">1000</string>
 
-    <!-- PHOTO -->
+    <!-- PHOTO URL -->
     <string name="api_url">https://maps.googleapis.com/maps/api/place/</string>
     <string name="photo_reference">photo?maxwidth=300&amp;photo_reference=</string>
     <string name="and_key">&amp;key=</string>
+
+    <!-- WORKMATES VIEW MODEL -->
+    <string name="not_decided">hasn\'t decided yet</string>
+    <string name="left_bracket">(</string>
+    <string name="right_bracket">)</string>
 
 
 
