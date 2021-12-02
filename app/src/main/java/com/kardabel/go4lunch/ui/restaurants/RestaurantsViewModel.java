@@ -163,7 +163,7 @@ public class RestaurantsViewModel extends ViewModel {
                 String openingHours = OpeningHoursWithoutDetails(nearbySearchResults.getResults().get(i).getOpeningHours());
                 double rating = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
                 String restaurantId = nearbySearchResults.getResults().get(i).getRestaurantId();
-                String like = like(restaurantId, workmateWhoMadeRestaurantChoice);
+                String like = usersWhoChoseThisRestaurant(restaurantId, workmateWhoMadeRestaurantChoice);
 
                 restaurantList.add(new RestaurantsViewState(
                         name,
@@ -203,7 +203,7 @@ public class RestaurantsViewModel extends ViewModel {
             String openingHours = OpeningHoursWithoutDetails(nearbySearchResults.getResults().get(i).getOpeningHours());
             double rating = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
             String restaurantId = nearbySearchResults.getResults().get(i).getRestaurantId();
-            String like = like(restaurantId, workmateWhoMadeRestaurantChoice);
+            String usersWhoChoseThisRestaurant = usersWhoChoseThisRestaurant(restaurantId, workmateWhoMadeRestaurantChoice);
 
             restaurantList.add(new RestaurantsViewState(
                     name,
@@ -213,7 +213,7 @@ public class RestaurantsViewModel extends ViewModel {
                     openingHours,
                     rating,
                     restaurantId,
-                    like));
+                    usersWhoChoseThisRestaurant));
 
         }
         return new RestaurantsWrapperViewState(restaurantList);
@@ -249,7 +249,7 @@ public class RestaurantsViewModel extends ViewModel {
                         String openingHours = getOpeningText(restaurantDetailsResults.get(i).getDetailsResult().getOpeningHours(), place.isPermanentlyClosed());
                         double rating = convertRatingStars(place.getRating());
                         String restaurantId = place.getRestaurantId();
-                        String usersWhoMadeThisChoice = like(restaurantId, workmateWhoMadeRestaurantChoice);
+                        String usersWhoMadeThisChoice = usersWhoChoseThisRestaurant(restaurantId, workmateWhoMadeRestaurantChoice);
 
                         restaurantList.add(new RestaurantsViewState(
                                 name,
@@ -271,7 +271,7 @@ public class RestaurantsViewModel extends ViewModel {
     }
 
     // WORKMATES WHO ALREADY CHOSE THIS RESTAURANT
-    private String like(String restaurantId, List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
+    private String usersWhoChoseThisRestaurant(String restaurantId, List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
         int likes = 0;
         String likeAsString;
         if (workmateWhoMadeRestaurantChoice != null) {
@@ -283,7 +283,7 @@ public class RestaurantsViewModel extends ViewModel {
         }
 
         if (likes != 0) {
-            likeAsString = "(" + likes + ")";
+            likeAsString = application.getString(R.string.left_bracket) + likes + application.getString(R.string.right_bracket);
         } else {
             likeAsString = "";
         }
