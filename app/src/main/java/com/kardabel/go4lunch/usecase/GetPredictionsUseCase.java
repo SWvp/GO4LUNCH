@@ -22,13 +22,13 @@ public class GetPredictionsUseCase {
 
     }
 
-
-
-
     public LiveData<Predictions> invoke(String text) {
         return Transformations.switchMap(locationRepository.getLocationLiveData(), input -> {
             String locationAsText = input.getLatitude() + "," + input.getLongitude();
-            return Transformations.map(autocompleteRepository.getAutocompleteResultListLiveData(locationAsText, text), input1 -> input1);
+            return Transformations.map(autocompleteRepository.getAutocompleteResultListLiveData(
+                    locationAsText,
+                    text),
+                    input1 -> input1);
 
         });
     }

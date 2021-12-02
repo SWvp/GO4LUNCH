@@ -256,12 +256,12 @@ public class MainActivity extends AppCompatActivity implements
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mainActivityViewModel.retrievePredictions(newText);
+                mainActivityViewModel.sendTextToAutocomplete(newText);
                 return false;
             }
         });
 
-        // WHEN USER LEAVES THE SEARCHVIEW, UPDATE CURRENT VIEW AND CLOSE THE SEARCHVIEW
+        // WHEN USER LEAVES THE SEARCHVIEW, RESET AND CLOSE THE SEARCHVIEW
         item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -287,13 +287,15 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     // CLEAR THE AUTOCOMPLETE ADAPTER WITH EMPTY LIST WHEN USER FINISHED HIS RESEARCH
+    // TO CLEAN THE AUTOCOMPLETE RECYCLERVIEW
     private void initAutocomplete() {
         List<PredictionsViewState> emptyList = new ArrayList<>();
         adapter.submitList(emptyList);
     }
 
     // WHEN VIEW IS ON RESUME CHECK THE PERMISSION STATE IN VIEWMODEL (AND PASSED THE ACTIVITY
-    // FOR THE ALERTDIALOG EVEN IF ITS NOT THE GOOD WAY TO USE A VIEWMODEL!)
+    // FOR THE ALERTDIALOG EVEN IF ITS NOT THE GOOD WAY TO USE A VIEWMODEL,
+    // WE DON'T HAVE OTHER CHOICE)
     @Override
     protected void onResume() {
         super.onResume();

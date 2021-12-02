@@ -121,10 +121,16 @@ public class RestaurantsViewModelTest {
         Mockito.doReturn(":0").when(application).getString(R.string.two_dots_for_minutes);
         Mockito.doReturn(".").when(application).getString(R.string.dot);
 
-
-        Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
-        Mockito.doReturn(nearbySearchResultsMutableLiveData).when(getNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
-        Mockito.doReturn(restaurantDetailsResultsUseCaseMutableLiveData).when(getRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
+        // RETURNS OF MOCKED CLASS
+        Mockito.doReturn(locationMutableLiveData)
+                .when(locationRepository)
+                .getLocationLiveData();
+        Mockito.doReturn(nearbySearchResultsMutableLiveData)
+                .when(getNearbySearchResultsUseCase)
+                .getNearbySearchResultsLiveData();
+        Mockito.doReturn(restaurantDetailsResultsUseCaseMutableLiveData)
+                .when(getRestaurantDetailsResultsUseCase)
+                .getPlaceDetailsResultLiveData();
 
 
         // SET LIVEDATA VALUES

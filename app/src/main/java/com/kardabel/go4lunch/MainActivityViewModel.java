@@ -17,8 +17,6 @@ import com.kardabel.go4lunch.pojo.Prediction;
 import com.kardabel.go4lunch.pojo.Predictions;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UsersSearchRepository;
-import com.kardabel.go4lunch.repository.WorkmatesRepository;
-import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.ui.autocomplete.PredictionsViewState;
 import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 import com.kardabel.go4lunch.util.PermissionsViewAction;
@@ -36,26 +34,20 @@ public class MainActivityViewModel extends ViewModel {
     private final Application application;
 
     private final LocationRepository locationRepository;
-    private final WorkmatesRepository workmatesRepository;
     private final GetPredictionsUseCase getPredictionsUseCase;
     private final UsersSearchRepository usersSearchRepository;
-    private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository;
 
 
     public MainActivityViewModel(
             @NonNull Application application,
             @NonNull LocationRepository locationRepository,
-            @NonNull WorkmatesRepository workmatesRepository,
             @NonNull GetPredictionsUseCase getPredictionsUseCase,
-            @NonNull UsersSearchRepository usersSearchRepository,
-            @NonNull WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository) {
+            @NonNull UsersSearchRepository usersSearchRepository) {
         super();
         this.application = application;
         this.locationRepository = locationRepository;
-        this.workmatesRepository = workmatesRepository;
         this.getPredictionsUseCase = getPredictionsUseCase;
         this.usersSearchRepository = usersSearchRepository;
-        this.workmatesWhoMadeRestaurantChoiceRepository = workmatesWhoMadeRestaurantChoiceRepository;
 
 
     }
@@ -64,18 +56,9 @@ public class MainActivityViewModel extends ViewModel {
     public void checkPermission(Activity activity) {
         if (ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             permissionGranted();
-
-    // } else if (ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-    //     actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
-
-        }
-
-     else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, ACCESS_FINE_LOCATION)) {
-         actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
-
-        }
-
-        else {
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, ACCESS_FINE_LOCATION)) {
+            actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_DENIED);
+        } else {
             actionSingleLiveEvent.setValue(PermissionsViewAction.PERMISSION_ASKED);
 
         }
@@ -84,24 +67,17 @@ public class MainActivityViewModel extends ViewModel {
     // WHEN PERMISSION IS GRANTED, LETS RETRIEVE LOCATION AND USER DATA BASE
     private void permissionGranted() {
         locationRepository.StartLocationRequest();
-        // workmatesRepository.getWorkmates();
-        // workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
 
     }
 
-    // WHEN CLICKING ON SEARCHVIEW
-    public void retrievePredictions(String text) {
-
-
+    // WHEN CLICKING ON SEARCHVIEW WE PASSED THE TEXT TO USECASE AND THEN OBSERVE IT
+    public void sendTextToAutocomplete(String text) {
         LiveData<Predictions> predictionsLiveData = getPredictionsUseCase.invoke(text);
-
-        // TODO: observe and retrieve the distance to calculate the distance from user
-
-        predictionsMediatorLiveData.addSource(predictionsLiveData, predictions -> combine(predictions));
-
+        predictionsMediatorLiveData.addSource(predictionsLiveData, this::combine);
 
     }
 
+    // IN CASE WE ADD A SOURCE
     private void combine(Predictions predictions) {
         if (predictions != null) {
             predictionsMediatorLiveData.setValue(map(predictions));
