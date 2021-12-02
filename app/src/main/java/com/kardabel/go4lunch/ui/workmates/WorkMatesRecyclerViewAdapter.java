@@ -1,7 +1,6 @@
 package com.kardabel.go4lunch.ui.workmates;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -19,7 +18,15 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
 
     private OnWorkmateItemClickListener onWorkmateItemClickListener;
 
-    private List<WorkMatesViewState> workmatesList = new ArrayList<>();
+    private List<WorkMateViewState> workmatesList = new ArrayList<>();
+
+    // INIT THE ADAPTER WITH NEW LIST OF WORKMATES
+    @SuppressLint("NotifyDataSetChanged")
+    public void setWorkmatesListData(List<WorkMateViewState> workmatesList) {
+        this.workmatesList = workmatesList;
+        notifyDataSetChanged();
+
+    }
 
     @NonNull
     @Override
@@ -31,23 +38,33 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
         return new ViewHolder(binding);
     }
 
+    // BIND THE VIEW WITH VIEW STATE VAL
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        WorkMateViewState workMate = workmatesList.get(position);
 
-        WorkMatesViewState workMate = workmatesList.get(position);
-
-        holder.viewHolderBinding.itemWorkmateDescription.setTextColor(workMate.getTextColor());
-        holder.viewHolderBinding.itemWorkmateDescription.setText(workMate.getWorkmateDescription());
+        holder
+                .viewHolderBinding
+                .itemWorkmateDescription
+                .setTextColor(workMate.getTextColor());
+        holder
+                .viewHolderBinding
+                .itemWorkmateDescription
+                .setText(workMate.getWorkmateDescription());
         Glide.with(holder.viewHolderBinding.itemWorkmateAvatar.getContext())
                 .load(workMate.getWorkmatePhoto())
                 .circleCrop()
                 .into(holder.viewHolderBinding.itemWorkmateAvatar);
-        // TODO : IF THERE IS A SOLUTION TO PASS STYLE RESOURCE...
+        // TODO : if there is a solution to pass styleRes to avoid "if" in view
         if (!workMate.isUserHasDecided()) {
-            holder.viewHolderBinding.itemWorkmateDescription.setTypeface(null, Typeface.ITALIC);
+            holder
+                    .viewHolderBinding
+                    .itemWorkmateDescription
+                    .setTypeface(null, Typeface.ITALIC);
         }
 
-        holder.itemView.setOnClickListener(v -> onWorkmateItemClickListener.onWorkmateItemClick(workMate));
+        holder.itemView.setOnClickListener(v ->
+                onWorkmateItemClickListener.onWorkmateItemClick(workMate));
     }
 
     @Override
@@ -60,13 +77,7 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void setWorkmatesListData(List<WorkMatesViewState> workmatesList) {
-        this.workmatesList = workmatesList;
-        notifyDataSetChanged();
-
-    }
-
+    // VIEW HOLDER CLASS
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ItemWorkmateBinding viewHolderBinding;
 
@@ -83,9 +94,8 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
 
     }
 
-    // WHEN USER CLICK ON A WORKMATE ITEM TO DISPLAY RESTAURANT DETAILS
     public interface OnWorkmateItemClickListener {
-        void onWorkmateItemClick(WorkMatesViewState workMatesViewState);
+        void onWorkmateItemClick(WorkMateViewState workMateViewState);
 
     }
 }
