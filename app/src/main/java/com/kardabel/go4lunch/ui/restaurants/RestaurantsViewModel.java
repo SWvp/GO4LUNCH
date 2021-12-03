@@ -1,6 +1,7 @@
 package com.kardabel.go4lunch.ui.restaurants;
 
 import android.app.Application;
+import android.graphics.Color;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
@@ -22,14 +23,14 @@ import com.kardabel.go4lunch.repository.UsersSearchRepository;
 import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
-import com.kardabel.go4lunch.util.OpeningHoursColorViewAction;
-import com.kardabel.go4lunch.util.SingleLiveEvent;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,12 +38,8 @@ public class RestaurantsViewModel extends ViewModel {
 
     private final MediatorLiveData<RestaurantsWrapperViewState> restaurantsWrapperViewStateMediatorLiveData = new MediatorLiveData<>();
 
-    private final SingleLiveEvent<OpeningHoursColorViewAction> actionSingleLiveEvent = new SingleLiveEvent<>();
-
     private final Application application;
     private final Clock clock;
-
-    //private static final String googleMapApiKey = BuildConfig.
 
     public RestaurantsViewModel(
             @NonNull Application application,
@@ -57,10 +54,14 @@ public class RestaurantsViewModel extends ViewModel {
         this.clock = clock;
         this.application = application;
 
-        LiveData<Location> locationLiveData = locationRepository.getLocationLiveData();
-        LiveData<NearbySearchResults> nearbySearchResultsLiveData = getNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
-        LiveData<List<RestaurantDetailsResult>> restaurantsDetailsResultLiveData = getRestaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
-        LiveData<List<WorkmateWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceLiveData = workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
+        LiveData<Location> locationLiveData =
+                locationRepository.getLocationLiveData();
+        LiveData<NearbySearchResults> nearbySearchResultsLiveData =
+                getNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
+        LiveData<List<RestaurantDetailsResult>> restaurantsDetailsResultLiveData =
+                getRestaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
+        LiveData<List<WorkmateWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceLiveData =
+                workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
         LiveData<String> usersSearchLiveData = usersSearchRepository.getUsersSearchLiveData();
 
         // OBSERVERS
@@ -111,147 +112,105 @@ public class RestaurantsViewModel extends ViewModel {
                          @Nullable List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice,
                          @Nullable String usersSearch) {
 
-        if (usersSearch != null && usersSearch.length() > 0) {
-            restaurantsWrapperViewStateMediatorLiveData.setValue(mapUsersSearch(
-                    nearbySearchResults,
-                    restaurantDetailsResults,
-                    location,
-                    workmateWhoMadeRestaurantChoice,
-                    usersSearch));
+        if (location != null && workmateWhoMadeRestaurantChoice != null) {
+            if (nearbySearchResults != null && restaurantDetailsResults != null &&
+                    usersSearch != null && usersSearch.length() > 0) {
 
-        } else if (restaurantDetailsResults == null && nearbySearchResults != null) {
-            restaurantsWrapperViewStateMediatorLiveData.setValue(map(
-                    location,
-                    nearbySearchResults,
-                    workmateWhoMadeRestaurantChoice));
+                restaurantsWrapperViewStateMediatorLiveData.setValue(mapUsersSearch(
+                        nearbySearchResults,
+                        restaurantDetailsResults,
+                        location,
+                        workmateWhoMadeRestaurantChoice,
+                        usersSearch));
 
-        } else if (restaurantDetailsResults != null && nearbySearchResults != null) {
-            restaurantsWrapperViewStateMediatorLiveData.setValue(mapWithDetails(
-                    location,
-                    nearbySearchResults,
-                    restaurantDetailsResults,
-                    workmateWhoMadeRestaurantChoice));
+            } else if (restaurantDetailsResults == null && nearbySearchResults != null) {
+                restaurantsWrapperViewStateMediatorLiveData.setValue(mapWithoutDetails(
+                        location,
+                        nearbySearchResults,
+                        workmateWhoMadeRestaurantChoice));
 
+            } else if (restaurantDetailsResults != null && nearbySearchResults != null) {
+                restaurantsWrapperViewStateMediatorLiveData.setValue(mapWithDetails(
+                        location,
+                        nearbySearchResults,
+                        restaurantDetailsResults,
+                        workmateWhoMadeRestaurantChoice));
+
+            }
         }
     }
 
+    //************************************************************************//
+    ///////////////////////////     DATA MAPPING     ///////////////////////////
+    //************************************************************************//
+
     // 1.USER SEARCH RESULT, EXPOSE ONLY ONE RESULT
     private RestaurantsWrapperViewState mapUsersSearch(
-            NearbySearchResults nearbySearchResults,
-            List<RestaurantDetailsResult> restaurantDetailsResults,
-            Location location,
-            List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice,
-            String usersSearch) {
+            @NonNull NearbySearchResults nearbySearchResults,
+            @NonNull List<RestaurantDetailsResult> restaurantDetailsResults,
+            @NonNull Location location,
+            @NonNull List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice,
+            @NonNull String usersSearch) {
 
         List<RestaurantsViewState> restaurantList = new ArrayList<>();
 
         for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
 
             if (nearbySearchResults.getResults().get(i).getRestaurantName().contains(usersSearch)) {
-                String name = nearbySearchResults.getResults().get(i).getRestaurantName();
-                String address = nearbySearchResults.getResults().get(i).getRestaurantAddress();
-                String photo =
-                        application.getString(R.string.api_url)
-                                + application.getString(R.string.photo_reference)
-                                + photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos())
-                                + application.getString(R.string.and_key)
-                                + application.getString(R.string.google_map_key);
-                String distance = distance(
+
+                int distanceInt = distance(
                         location,
-                        nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
-                        nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
-                String openingHours = OpeningHoursWithoutDetails(nearbySearchResults.getResults().get(i).getOpeningHours());
-                double rating = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
-                String restaurantId = nearbySearchResults.getResults().get(i).getRestaurantId();
-                String like = usersWhoChoseThisRestaurant(restaurantId, workmateWhoMadeRestaurantChoice);
-
-                restaurantList.add(new RestaurantsViewState(
-                        name,
-                        address,
-                        photo,
-                        distance,
-                        openingHours,
-                        rating,
+                        nearbySearchResults
+                                .getResults()
+                                .get(i)
+                                .getRestaurantGeometry()
+                                .getRestaurantLatLngLiteral().getLat(),
+                        nearbySearchResults
+                                .getResults()
+                                .get(i)
+                                .getRestaurantGeometry()
+                                .getRestaurantLatLngLiteral()
+                                .getLng());
+                String name =
+                        nearbySearchResults
+                                .getResults()
+                                .get(i)
+                                .getRestaurantName();
+                String address =
+                        nearbySearchResults
+                                .getResults()
+                                .get(i)
+                                .getRestaurantAddress();
+                String photo = photoReference(
+                        nearbySearchResults
+                                .getResults()
+                                .get(i)
+                                .getRestaurantPhotos());
+                String distance = distanceInt + "m";
+                String openingHours = getOpeningText(
+                        restaurantDetailsResults
+                                .get(i).getDetailsResult()
+                                .getOpeningHours(), nearbySearchResults
+                                .getResults().get(i)
+                                .isPermanentlyClosed());
+                double rating = convertRatingStars(
+                        nearbySearchResults
+                                .getResults()
+                                .get(i)
+                                .getRating());
+                String restaurantId =
+                        nearbySearchResults
+                                .getResults()
+                                .get(i)
+                                .getRestaurantId();
+                String like = usersWhoChoseThisRestaurant(
                         restaurantId,
-                        like));
-            }
-        }
-        return new RestaurantsWrapperViewState(restaurantList);
-    }
+                        workmateWhoMadeRestaurantChoice);
+                int textColor = getTextColor(openingHours);
 
-    // 2.NEARBY SEARCH DATA (IF DETAILS ARE NOT SUPPORTED ANYMORE CAUSE TO CONNECTION PROBLEM)
-    private RestaurantsWrapperViewState map(
-            Location location,
-            NearbySearchResults nearbySearchResults,
-            List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
-
-        List<RestaurantsViewState> restaurantList = new ArrayList<>();
-
-        for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
-            String name = nearbySearchResults.getResults().get(i).getRestaurantName();
-            String address = nearbySearchResults.getResults().get(i).getRestaurantAddress();
-            String photo =
-                    application.getString(R.string.api_url)
-                            + application.getString(R.string.photo_reference)
-                            + photoReference(nearbySearchResults.getResults().get(i).getRestaurantPhotos())
-                            + application.getString(R.string.and_key)
-                            + application.getString(R.string.google_map_key);
-            String distance = distance(
-                    location,
-                    nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
-                    nearbySearchResults.getResults().get(i).getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
-            String openingHours = OpeningHoursWithoutDetails(nearbySearchResults.getResults().get(i).getOpeningHours());
-            double rating = convertRatingStars(nearbySearchResults.getResults().get(i).getRating());
-            String restaurantId = nearbySearchResults.getResults().get(i).getRestaurantId();
-            String usersWhoChoseThisRestaurant = usersWhoChoseThisRestaurant(restaurantId, workmateWhoMadeRestaurantChoice);
-
-            restaurantList.add(new RestaurantsViewState(
-                    name,
-                    address,
-                    photo,
-                    distance,
-                    openingHours,
-                    rating,
-                    restaurantId,
-                    usersWhoChoseThisRestaurant));
-
-        }
-        return new RestaurantsWrapperViewState(restaurantList);
-
-    }
-
-    // 3.NEARBY SEARCH WITH PLACE DETAILS DATA
-    private RestaurantsWrapperViewState mapWithDetails(
-            Location location,
-            NearbySearchResults nearbySearchResults,
-            List<RestaurantDetailsResult> restaurantDetailsResults,
-            List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
-
-        List<RestaurantsViewState> restaurantList = new ArrayList<>();
-
-        if (restaurantDetailsResults != null) {
-            for (RestaurantSearch place : nearbySearchResults.getResults()) {
-                for (int i = 0; i < restaurantDetailsResults.size(); i++) {
-                    if (restaurantDetailsResults.get(i).getDetailsResult().getPlaceId().equals(place.getRestaurantId())) {
-
-                        String name = place.getRestaurantName();
-                        String address = place.getRestaurantAddress();
-                        String photo =
-                                application.getString(R.string.api_url)
-                                        + application.getString(R.string.photo_reference)
-                                        + photoReference(place.getRestaurantPhotos())
-                                        + application.getString(R.string.and_key)
-                                        + application.getString(R.string.google_map_key);
-                        String distance = distance(
-                                location,
-                                place.getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
-                                place.getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
-                        String openingHours = getOpeningText(restaurantDetailsResults.get(i).getDetailsResult().getOpeningHours(), place.isPermanentlyClosed());
-                        double rating = convertRatingStars(place.getRating());
-                        String restaurantId = place.getRestaurantId();
-                        String usersWhoMadeThisChoice = usersWhoChoseThisRestaurant(restaurantId, workmateWhoMadeRestaurantChoice);
-
-                        restaurantList.add(new RestaurantsViewState(
+                restaurantList.add(
+                        new RestaurantsViewState(
+                                distanceInt,
                                 name,
                                 address,
                                 photo,
@@ -259,21 +218,185 @@ public class RestaurantsViewModel extends ViewModel {
                                 openingHours,
                                 rating,
                                 restaurantId,
-                                usersWhoMadeThisChoice));
-                        break;
+                                like,
+                                textColor));
+            }
+        }
 
-                    }
+        // COMPARATOR TO SORT LIST BY DISTANCE FROM THE USER LOCATION
+        Collections.sort(restaurantList, Comparator.comparingInt(RestaurantsViewState::getDistanceInt));
+
+        return new RestaurantsWrapperViewState(restaurantList);
+    }
+
+    // 2.NEARBY SEARCH DATA (IF DETAILS ARE NOT SUPPORTED ANYMORE CAUSE TO CONNECTION PROBLEM)
+    private RestaurantsWrapperViewState mapWithoutDetails(
+            @NonNull Location location,
+            @NonNull NearbySearchResults nearbySearchResults,
+            @NonNull List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
+
+        List<RestaurantsViewState> restaurantList = new ArrayList<>();
+
+        for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
+
+            int distanceInt = distance(
+                    location,
+                    nearbySearchResults
+                            .getResults()
+                            .get(i)
+                            .getRestaurantGeometry()
+                            .getRestaurantLatLngLiteral().getLat(),
+                    nearbySearchResults
+                            .getResults()
+                            .get(i)
+                            .getRestaurantGeometry()
+                            .getRestaurantLatLngLiteral()
+                            .getLng());
+            String name =
+                    nearbySearchResults
+                            .getResults()
+                            .get(i)
+                            .getRestaurantName();
+            String address =
+                    nearbySearchResults
+                            .getResults()
+                            .get(i)
+                            .getRestaurantAddress();
+            String photo = photoReference(
+                    nearbySearchResults
+                            .getResults()
+                            .get(i)
+                            .getRestaurantPhotos());
+            String distance = distanceInt + "m";
+            String openingHours = OpeningHoursWithoutDetails(
+                    nearbySearchResults
+                            .getResults()
+                            .get(i)
+                            .getOpeningHours());
+            double rating = convertRatingStars(
+                    nearbySearchResults
+                            .getResults()
+                            .get(i)
+                            .getRating());
+            String restaurantId =
+                    nearbySearchResults
+                            .getResults()
+                            .get(i)
+                            .getRestaurantId();
+            String usersWhoChoseThisRestaurant = usersWhoChoseThisRestaurant(
+                    restaurantId,
+                    workmateWhoMadeRestaurantChoice);
+            int textColor = getTextColor(openingHours);
+
+            restaurantList.add(
+                    new RestaurantsViewState(
+                            distanceInt,
+                            name,
+                            address,
+                            photo,
+                            distance,
+                            openingHours,
+                            rating,
+                            restaurantId,
+                            usersWhoChoseThisRestaurant,
+                            textColor));
+
+        }
+
+        // COMPARATOR TO SORT LIST BY DISTANCE FROM THE USER LOCATION
+        Collections.sort(restaurantList, Comparator.comparingInt(RestaurantsViewState::getDistanceInt));
+
+        return new RestaurantsWrapperViewState(restaurantList);
+
+    }
+
+    // 3.NEARBY SEARCH WITH PLACE DETAILS DATA
+    private RestaurantsWrapperViewState mapWithDetails(
+            @NonNull Location location,
+            @NonNull NearbySearchResults nearbySearchResults,
+            @NonNull List<RestaurantDetailsResult> restaurantDetailsResults,
+            @NonNull List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
+
+        List<RestaurantsViewState> restaurantList = new ArrayList<>();
+
+
+        for (RestaurantSearch restaurant : nearbySearchResults.getResults()) {
+            for (int i = 0; i < restaurantDetailsResults.size(); i++) {
+                if (restaurantDetailsResults.get(i).getDetailsResult().getPlaceId().equals(restaurant.getRestaurantId())) {
+
+                    int distanceInt = distance(
+                            location,
+                            nearbySearchResults
+                                    .getResults()
+                                    .get(i)
+                                    .getRestaurantGeometry()
+                                    .getRestaurantLatLngLiteral().getLat(),
+                            nearbySearchResults
+                                    .getResults()
+                                    .get(i)
+                                    .getRestaurantGeometry()
+                                    .getRestaurantLatLngLiteral()
+                                    .getLng());
+                    String name =
+                            restaurant
+                                    .getRestaurantName();
+                    String address =
+                            restaurant
+                                    .getRestaurantAddress();
+                    String photo = photoReference(
+                            restaurant
+                                    .getRestaurantPhotos());
+                    String distance = distanceInt + "m";
+                    String openingHours = getOpeningText(
+                            restaurantDetailsResults
+                                    .get(i)
+                                    .getDetailsResult()
+                                    .getOpeningHours(),
+                            restaurant
+                                    .isPermanentlyClosed());
+                    double rating = convertRatingStars(
+                            restaurant
+                                    .getRating());
+                    String restaurantId =
+                            restaurant
+                                    .getRestaurantId();
+                    String usersWhoMadeThisChoice = usersWhoChoseThisRestaurant(
+                            restaurantId,
+                            workmateWhoMadeRestaurantChoice);
+                    int textColor = getTextColor(openingHours);
+
+                    restaurantList.add(new RestaurantsViewState(
+                            distanceInt,
+                            name,
+                            address,
+                            photo,
+                            distance,
+                            openingHours,
+                            rating,
+                            restaurantId,
+                            usersWhoMadeThisChoice,
+                            textColor));
+                    break;
+
                 }
             }
         }
+
+        // COMPARATOR TO SORT LIST BY DISTANCE FROM THE USER LOCATION
+        Collections.sort(restaurantList, Comparator.comparingInt(RestaurantsViewState::getDistanceInt));
+
         return new RestaurantsWrapperViewState(restaurantList);
 
     }
 
     // WORKMATES WHO ALREADY CHOSE THIS RESTAURANT
-    private String usersWhoChoseThisRestaurant(String restaurantId, List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
+    private String usersWhoChoseThisRestaurant(
+            String restaurantId,
+            List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
+
         int likes = 0;
         String likeAsString;
+
         if (workmateWhoMadeRestaurantChoice != null) {
             for (int i = 0; i < workmateWhoMadeRestaurantChoice.size(); i++) {
                 if (workmateWhoMadeRestaurantChoice.get(i).getRestaurantId().equals(restaurantId)) {
@@ -281,7 +404,6 @@ public class RestaurantsViewModel extends ViewModel {
                 }
             }
         }
-
         if (likes != 0) {
             likeAsString = application.getString(R.string.left_bracket) + likes + application.getString(R.string.right_bracket);
         } else {
@@ -294,11 +416,17 @@ public class RestaurantsViewModel extends ViewModel {
 
     // SEARCH FOR A PHOTO IN THE LIST PROVIDED BY NEARBY PLACES
     private String photoReference(List<Photo> photoList) {
+
         String result = null;
+
         if (photoList != null) {
             for (Photo photo : photoList) {
                 if (!photo.getPhotoReference().isEmpty()) {
-                    result = photo.getPhotoReference();
+                    result = application.getString(R.string.api_url)
+                            + application.getString(R.string.photo_reference)
+                            + photo.getPhotoReference()
+                            + application.getString(R.string.and_key)
+                            + application.getString(R.string.google_map_key);
 
                 }
             }
@@ -319,11 +447,9 @@ public class RestaurantsViewModel extends ViewModel {
 
             } else {
                 openStatus = application.getString(R.string.closed);
-
             }
         } else {
             openStatus = application.getString(R.string.opening_hours_unavailable);
-
         }
         return openStatus;
 
@@ -404,9 +530,7 @@ public class RestaurantsViewModel extends ViewModel {
     }
 
     // GET LOCATION DISTANCE FROM USER TO RESTAURANT
-    @NonNull
-    private String distance(Location userLocation, double lat, double lng) {
-        if (userLocation != null) {
+    private int distance(Location userLocation, double lat, double lng) {
             float[] results = new float[1];
             Location.distanceBetween(
                     userLocation.getLatitude(),
@@ -414,12 +538,8 @@ public class RestaurantsViewModel extends ViewModel {
                     lat,
                     lng,
                     results);
-            return String.valueOf((int) results[0]);
+            return (int) results[0];
 
-        } else {
-            return application.getString(R.string.distance_unavailable);
-
-        }
     }
 
     // CONVERT RATING STARS (5 -> 3)
@@ -554,14 +674,19 @@ public class RestaurantsViewModel extends ViewModel {
 
     }
 
+    // TEXT COLOR RESOURCE
+    private int getTextColor(String openingHours) {
+        int textColor = Color.GRAY;
+        if(openingHours.equals(application.getString(R.string.closing_soon))){
+            textColor = Color.RED;
+        }
+        return textColor;
+    }
+
     // LIVEDATA OBSERVED BY LIST VIEW FRAGMENT
     public LiveData<RestaurantsWrapperViewState> getRestaurantsViewStateLiveData() {
         return restaurantsWrapperViewStateMediatorLiveData;
 
     }
 
-    public SingleLiveEvent<OpeningHoursColorViewAction> getActionSingleLiveEvent() {
-        return actionSingleLiveEvent;
-
-    }
 }
