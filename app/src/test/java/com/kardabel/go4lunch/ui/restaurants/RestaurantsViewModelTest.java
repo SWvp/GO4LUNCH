@@ -105,7 +105,7 @@ public class RestaurantsViewModelTest {
             new MutableLiveData<>();
     private final MutableLiveData<List<WorkmateWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceMutableLiveData =
             new MutableLiveData<>();
-    private final MutableLiveData<List<String>> usersSearchMutableLiveData =
+    private final MutableLiveData<String> usersSearchMutableLiveData =
             new MutableLiveData<>();
 
 
@@ -216,17 +216,14 @@ public class RestaurantsViewModelTest {
     @Test
     public void nominalCase() {
         // WHEN
-        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), new LiveDataTestUtils.OnObservedListener<RestaurantsWrapperViewState>() {
-            @Override
-            public void onObserved(RestaurantsWrapperViewState restaurantsWrapperViewState) {
-                // THEN
-                assertEquals(RestaurantsViewModelTest.this.getDefaultRestaurantViewState(), restaurantsWrapperViewState);
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+            // THEN
+            assertEquals(RestaurantsViewModelTest.this.getDefaultRestaurantViewState(), restaurantsWrapperViewState);
 
-                verify(locationRepository).getLocationLiveData();
-                verify(getNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
-                verify(getRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
-                verifyNoMoreInteractions(locationRepository, getNearbySearchResultsUseCase, getRestaurantDetailsResultsUseCase);
-            }
+            verify(locationRepository).getLocationLiveData();
+            verify(getNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+            verify(getRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
+            verifyNoMoreInteractions(locationRepository, getNearbySearchResultsUseCase, getRestaurantDetailsResultsUseCase);
         });
     }
 
@@ -675,17 +672,21 @@ public class RestaurantsViewModelTest {
     /////////// RESTAURANTS LIST TEST ///////////
 
     @Test
-    public void whenDetailsListIsEmptyShouldDisplayNearbyList() {
+    public void when_Details_List_Is_Empty_Should_Display_Nearby_List() {
         // GIVEN
+        restaurantDetailsResultsUseCaseMutableLiveData.setValue(null);
         // WHEN
-        // THEN
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+            // THEN
+            assertEquals(RestaurantsViewModelTest.this.getRestaurantWithoutDetailsViewState(), restaurantsWrapperViewState);
 
+        });
     }
 
     /////////// PHOTO TESTS ///////////
 
     @Test
-    public void whenPhotoListIsNullShouldDisplayPhotoUnavailable() {
+    public void when_Photo_List_Is_Null_Should_Display_Photo_Unavailable() {
         // GIVEN
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getNullPhoto()));
         // WHEN
@@ -697,7 +698,25 @@ public class RestaurantsViewModelTest {
 
     }
 
+    /////////// SEARCHVIEW AUTOCOMPLETE ///////////
+
+    @Test
+    public void when_User_Perform_Search_Should_Display_Result() {
+        // GIVEN
+        usersSearchMutableLiveData.setValue("Second_Restaurant_Name");
+        // WHEN
+        LiveDataTestUtils.observeForTesting(restaurantsViewModel.getRestaurantsViewStateLiveData(), restaurantsWrapperViewState -> {
+            // THEN
+            assertEquals(RestaurantsViewModelTest.this.getSearchViewResultViewState(), restaurantsWrapperViewState);
+
+        });
+
+
+    }
+
     // VAL FOR TESTING //
+
+    int distanceInt = 0;
 
     String firstRestaurantId = "First_Restaurant_Id";
     String firstRestaurantName = "First_Restaurant_Name";
@@ -706,14 +725,14 @@ public class RestaurantsViewModelTest {
     String firstSite = "First_Website";
 
     String secondRestaurantId = "Second_Restaurant_Id";
-    String secondRestaurantName = "First_Restaurant_Name";
+    String secondRestaurantName = "Second_Restaurant_Name";
     String secondAddress = "Second_Address";
     String secondNumber = "Second_Phone_Number";
     String secondSite = "Second_Website";
 
     String photo = "photo";
     String photoApiUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=300&photo_reference=photo&key=AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8";
-    String distance = "0";
+    String distance = "0m";
 
     String openH24 = "Open 24/7";
     String open = "Open";
@@ -723,6 +742,8 @@ public class RestaurantsViewModelTest {
     String photoUnavailable = "Photo unavailable";
     String twoUsersChoseThisRestaurant = "(2)";
     String nobodyChoseThisRestaurant = "";
+    int textColorGrey = -7829368;
+    int textColorBlack = -65536;
 
     String firstUserId = "First_user_Id";
     String secondUserId = "Second_user_Id";
@@ -984,6 +1005,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -991,10 +1013,12 @@ public class RestaurantsViewModelTest {
                                 "Open until 1.pm",
                                 1,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1002,7 +1026,8 @@ public class RestaurantsViewModelTest {
                                 "Open until 11:50am",
                                 2,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
@@ -1016,6 +1041,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -1023,10 +1049,12 @@ public class RestaurantsViewModelTest {
                                 closingSoon,
                                 1,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorBlack),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1034,7 +1062,8 @@ public class RestaurantsViewModelTest {
                                 closingSoon,
                                 2,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorBlack)
 
         );
     }
@@ -1048,6 +1077,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -1055,10 +1085,12 @@ public class RestaurantsViewModelTest {
                                 "Closed until 6.pm",
                                 1,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1066,7 +1098,8 @@ public class RestaurantsViewModelTest {
                                 "Closed until 11.am",
                                 2,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
@@ -1081,6 +1114,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -1088,10 +1122,12 @@ public class RestaurantsViewModelTest {
                                 openH24,
                                 1,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1099,7 +1135,8 @@ public class RestaurantsViewModelTest {
                                 openH24,
                                 2,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
@@ -1113,6 +1150,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -1120,10 +1158,12 @@ public class RestaurantsViewModelTest {
                                 permanentlyClosed,
                                 1,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1131,7 +1171,8 @@ public class RestaurantsViewModelTest {
                                 permanentlyClosed,
                                 2,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
@@ -1145,6 +1186,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -1152,10 +1194,12 @@ public class RestaurantsViewModelTest {
                                 open,
                                 1,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1163,7 +1207,8 @@ public class RestaurantsViewModelTest {
                                 open,
                                 2,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
@@ -1177,6 +1222,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -1184,10 +1230,12 @@ public class RestaurantsViewModelTest {
                                 closed,
                                 1,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1195,7 +1243,8 @@ public class RestaurantsViewModelTest {
                                 closed,
                                 2,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
@@ -1209,6 +1258,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -1216,10 +1266,12 @@ public class RestaurantsViewModelTest {
                                 "Closed until Friday 9.pm",
                                 1,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1227,7 +1279,8 @@ public class RestaurantsViewModelTest {
                                 "Closed until Tuesday 9.pm",
                                 2,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
@@ -1241,6 +1294,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -1248,10 +1302,12 @@ public class RestaurantsViewModelTest {
                                 "Closed until Tomorrow 9.pm",
                                 1,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1259,7 +1315,8 @@ public class RestaurantsViewModelTest {
                                 "Closed until Tomorrow 9.pm",
                                 2,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
@@ -1273,6 +1330,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -1280,10 +1338,12 @@ public class RestaurantsViewModelTest {
                                 permanentlyClosed,
                                 2,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1291,7 +1351,44 @@ public class RestaurantsViewModelTest {
                                 permanentlyClosed,
                                 1,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
+
+        );
+    }
+
+    private RestaurantsWrapperViewState getRestaurantWithoutDetailsViewState() {
+        return new RestaurantsWrapperViewState(getRestaurantsWithoutDetails());
+
+    }
+
+    private List<RestaurantsViewState> getRestaurantsWithoutDetails() {
+        return Arrays.asList(
+                new RestaurantsViewState
+                        (
+                                distanceInt,
+                                firstRestaurantName,
+                                firstAddress,
+                                photoApiUrl,
+                                distance,
+                                open,
+                                1,
+                                firstRestaurantId,
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
+
+                new RestaurantsViewState
+                        (
+                                distanceInt,
+                                secondRestaurantName,
+                                secondAddress,
+                                photoApiUrl,
+                                distance,
+                                open,
+                                2,
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
@@ -1305,6 +1402,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoUnavailable,
@@ -1312,10 +1410,12 @@ public class RestaurantsViewModelTest {
                                 permanentlyClosed,
                                 2,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoUnavailable,
@@ -1323,7 +1423,8 @@ public class RestaurantsViewModelTest {
                                 permanentlyClosed,
                                 1,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
@@ -1337,6 +1438,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -1344,10 +1446,12 @@ public class RestaurantsViewModelTest {
                                 "Closed until Monday 2:50pm",
                                 1,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1355,7 +1459,8 @@ public class RestaurantsViewModelTest {
                                 "Closed until Tuesday 5.pm",
                                 2,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
@@ -1369,6 +1474,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -1376,10 +1482,12 @@ public class RestaurantsViewModelTest {
                                 "Closed until Tomorrow 8:30am",
                                 1,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1387,7 +1495,8 @@ public class RestaurantsViewModelTest {
                                 "Closed until Tuesday 9.am",
                                 2,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
@@ -1401,6 +1510,7 @@ public class RestaurantsViewModelTest {
         return Arrays.asList(
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 firstRestaurantName,
                                 firstAddress,
                                 photoApiUrl,
@@ -1408,10 +1518,12 @@ public class RestaurantsViewModelTest {
                                 open,
                                 1,
                                 firstRestaurantId,
-                                twoUsersChoseThisRestaurant),
+                                twoUsersChoseThisRestaurant,
+                                textColorGrey),
 
                 new RestaurantsViewState
                         (
+                                distanceInt,
                                 secondRestaurantName,
                                 secondAddress,
                                 photoApiUrl,
@@ -1419,7 +1531,31 @@ public class RestaurantsViewModelTest {
                                 closed,
                                 2,
                                 secondRestaurantId,
-                                nobodyChoseThisRestaurant)
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
+
+        );
+    }
+
+    private RestaurantsWrapperViewState getSearchViewResultViewState() {
+        return new RestaurantsWrapperViewState(getSearchViewResult());
+
+    }
+
+    private List<RestaurantsViewState> getSearchViewResult() {
+        return Collections.singletonList(
+                new RestaurantsViewState
+                        (
+                                distanceInt,
+                                secondRestaurantName,
+                                secondAddress,
+                                photoApiUrl,
+                                distance,
+                                "Open until 11:50am",
+                                2,
+                                secondRestaurantId,
+                                nobodyChoseThisRestaurant,
+                                textColorGrey)
 
         );
     }
