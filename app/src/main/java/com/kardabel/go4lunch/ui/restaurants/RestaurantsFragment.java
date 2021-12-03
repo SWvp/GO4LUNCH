@@ -19,6 +19,8 @@ import com.kardabel.go4lunch.databinding.RecyclerviewRestaurantsBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 
+import java.util.List;
+
 public class RestaurantsFragment extends Fragment {
 
     private RecyclerviewRestaurantsBinding binding;
