@@ -11,9 +11,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.model.UserModel;
-import com.kardabel.go4lunch.model.WorkmateWhoMadeRestaurantChoice;
+import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
-import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
+import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
 
 import org.junit.Before;
@@ -31,14 +31,14 @@ public class WorkmatesViewModelTest {
 
     private final WorkmatesRepository workmatesRepository =
             Mockito.mock(WorkmatesRepository.class);
-    private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository =
-            Mockito.mock(WorkmatesWhoMadeRestaurantChoiceRepository.class);
+    private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository =
+            Mockito.mock(UsersWhoMadeRestaurantChoiceRepository.class);
 
     private final Application application = Mockito.mock(Application.class);
 
     private final MutableLiveData<List<UserModel>> workmatesRepositoryMutableLiveData =
             new MutableLiveData<>();
-    private final MutableLiveData<List<WorkmateWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceRepositoryMutableLiveData =
+    private final MutableLiveData<List<UserWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceRepositoryMutableLiveData =
             new MutableLiveData<>();
 
     private WorkMatesViewModel workMatesViewModel;
@@ -56,7 +56,7 @@ public class WorkmatesViewModelTest {
                 .when(workmatesRepository)
                 .getWorkmates();
         Mockito.doReturn(workmatesWhoMadeRestaurantChoiceRepositoryMutableLiveData)
-                .when(workmatesWhoMadeRestaurantChoiceRepository)
+                .when(mUsersWhoMadeRestaurantChoiceRepository)
                 .getWorkmatesWhoMadeRestaurantChoice();
 
         // SET LIVEDATA VALUES
@@ -67,7 +67,7 @@ public class WorkmatesViewModelTest {
         workMatesViewModel = new WorkMatesViewModel(
                 application,
                 workmatesRepository,
-                workmatesWhoMadeRestaurantChoiceRepository
+                mUsersWhoMadeRestaurantChoiceRepository
         );
 
     }
@@ -82,7 +82,7 @@ public class WorkmatesViewModelTest {
                 assertEquals(WorkmatesViewModelTest.this.getDefaultWorkmatesViewState(), workmatesViewState);
 
                 verify(workmatesRepository).getWorkmates();
-                verify(workmatesWhoMadeRestaurantChoiceRepository).getWorkmatesWhoMadeRestaurantChoice();
+                verify(mUsersWhoMadeRestaurantChoiceRepository).getWorkmatesWhoMadeRestaurantChoice();
             }
         });
     }
@@ -99,7 +99,7 @@ public class WorkmatesViewModelTest {
                 assertEquals(WorkmatesViewModelTest.this.getWorkmatesHaveNotChosenYet(), workmatesViewState);
 
                 verify(workmatesRepository).getWorkmates();
-                verify(workmatesWhoMadeRestaurantChoiceRepository).getWorkmatesWhoMadeRestaurantChoice();
+                verify(mUsersWhoMadeRestaurantChoiceRepository).getWorkmatesWhoMadeRestaurantChoice();
             }
         });
     }
@@ -171,25 +171,25 @@ public class WorkmatesViewModelTest {
         return workmates;
     }
 
-    private List<WorkmateWhoMadeRestaurantChoice> workmatesWhoMadeChoice() {
-        List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices = new ArrayList<>();
-        workmateWhoMadeRestaurantChoices.add(
-                new WorkmateWhoMadeRestaurantChoice(
+    private List<UserWhoMadeRestaurantChoice> workmatesWhoMadeChoice() {
+        List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoices = new ArrayList<>();
+        userWhoMadeRestaurantChoices.add(
+                new UserWhoMadeRestaurantChoice(
                         firstRestaurantId,
                         firstRestaurantName,
                         thirdUserId
 
                 )
         );
-        workmateWhoMadeRestaurantChoices.add(
-                new WorkmateWhoMadeRestaurantChoice(
+        userWhoMadeRestaurantChoices.add(
+                new UserWhoMadeRestaurantChoice(
                         secondRestaurantId,
                         secondRestaurantName,
                         fourthUserId
 
                 )
         );
-        return workmateWhoMadeRestaurantChoices;
+        return userWhoMadeRestaurantChoices;
     }
 
     // endregion

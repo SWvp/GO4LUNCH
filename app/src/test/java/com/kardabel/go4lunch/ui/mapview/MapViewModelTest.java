@@ -10,6 +10,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.pojo.Geometry;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.OpeningHours;
@@ -17,9 +18,8 @@ import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantLatLngLiteral;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.repository.UsersSearchRepository;
-import com.kardabel.go4lunch.repository.WorkmatesRepository;
-import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
+import com.kardabel.go4lunch.repository.UserSearchRepository;
+import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 
@@ -41,87 +41,176 @@ public class MapViewModelTest {
     @Rule
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
-    private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
-    private final GetNearbySearchResultsUseCase mGetNearbySearchResultsUseCase = Mockito.mock(GetNearbySearchResultsUseCase.class);
-    private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository = Mockito.mock(WorkmatesWhoMadeRestaurantChoiceRepository.class);
-    private final UsersSearchRepository usersSearchRepository = Mockito.mock(UsersSearchRepository.class);
+    private final LocationRepository locationRepository =
+            Mockito.mock(LocationRepository.class);
+    private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase =
+            Mockito.mock(GetNearbySearchResultsUseCase.class);
+    private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository =
+            Mockito.mock(UsersWhoMadeRestaurantChoiceRepository.class);
+    private final UserSearchRepository mUserSearchRepository =
+            Mockito.mock(UserSearchRepository.class);
 
     private final Location location = Mockito.mock(Location.class);
 
-    private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<NearbySearchResults> nearbySearchResultsMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Location> locationMutableLiveData =
+            new MutableLiveData<>();
+    private final MutableLiveData<NearbySearchResults> nearbySearchResultsMutableLiveData =
+            new MutableLiveData<>();
+    private final MutableLiveData<List<UserWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceMutableLiveData =
+            new MutableLiveData<>();
+    private final MutableLiveData<String> usersSearchMutableLiveData =
+            new MutableLiveData<>();
 
-    private MapViewModel mMapViewModel;
+    private MapViewModel mapViewModel;
 
     @Before
     public void setUp() {
         // SETUP THE LOCATION VALUE
-        Mockito.doReturn(EXPECTED_LATITUDE).when(location).getLatitude();
-        Mockito.doReturn(EXPECTED_LONGITUDE).when(location).getLongitude();
+        Mockito.doReturn(EXPECTED_LATITUDE)
+                .when(location)
+                .getLatitude();
+        Mockito.doReturn(EXPECTED_LONGITUDE)
+                .when(location)
+                .getLongitude();
 
-        // SETUP THE MOCK RETURN
-        Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
-        Mockito.doReturn(nearbySearchResultsMutableLiveData).when(mGetNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
+        // RETURNS OF MOCKED CLASS
+        Mockito.doReturn(locationMutableLiveData)
+                .when(locationRepository)
+                .getLocationLiveData();
+        Mockito.doReturn(nearbySearchResultsMutableLiveData)
+                .when(getNearbySearchResultsUseCase)
+                .invoke();
+        Mockito.doReturn(workmatesWhoMadeRestaurantChoiceMutableLiveData)
+                .when(mUsersWhoMadeRestaurantChoiceRepository)
+                .getWorkmatesWhoMadeRestaurantChoice();
+        Mockito.doReturn(usersSearchMutableLiveData)
+                .when(mUserSearchRepository)
+                .getUsersSearchLiveData();
+
 
         // SET LIVEDATA VALUES
         locationMutableLiveData.setValue(location);
         nearbySearchResultsMutableLiveData.setValue(new NearbySearchResults(getDefaultRestaurants()));
+        workmatesWhoMadeRestaurantChoiceMutableLiveData.setValue(workmatesWhoMadeChoice());
+        usersSearchMutableLiveData.setValue(null);
 
-        mMapViewModel = new MapViewModel(
+        mapViewModel = new MapViewModel(
                 locationRepository,
-                mGetNearbySearchResultsUseCase,
-                workmatesWhoMadeRestaurantChoiceRepository,
-                usersSearchRepository);
+                getNearbySearchResultsUseCase,
+                mUsersWhoMadeRestaurantChoiceRepository,
+                mUserSearchRepository);
     }
 
     @Test
     public void nominalCase() {
         // WHEN
-        LiveDataTestUtils.observeForTesting(mMapViewModel.getMapViewStateLiveData(), mapViewState -> {
+        LiveDataTestUtils.observeForTesting(mapViewModel.getMapViewStateLiveData(), mapViewState -> {
             // THEN
             assertEquals(MapViewModelTest.this.getDefaultMapViewState(), mapViewState);
 
             verify(locationRepository).getLocationLiveData();
-            verify(mGetNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
-            verifyNoMoreInteractions(locationRepository, mGetNearbySearchResultsUseCase);
+            verify(getNearbySearchResultsUseCase).invoke();
+            verify(mUsersWhoMadeRestaurantChoiceRepository).getWorkmatesWhoMadeRestaurantChoice();
+            verify(mUserSearchRepository).getUsersSearchLiveData();
+            verifyNoMoreInteractions(
+                    locationRepository,
+                    getNearbySearchResultsUseCase,
+                    mUsersWhoMadeRestaurantChoiceRepository,
+                    mUserSearchRepository);
         });
     }
+
+    /////////// SEARCHVIEW AUTOCOMPLETE ///////////
+
+    @Test
+    public void when_User_Perform_Search_Should_Display_Result() {
+        // GIVEN
+        usersSearchMutableLiveData.setValue("Second_Restaurant_Name");
+        // WHEN
+        LiveDataTestUtils.observeForTesting(mapViewModel.getMapViewStateLiveData(), restaurantsWrapperViewState -> {
+            // THEN
+            assertEquals(MapViewModelTest.this.getUserSearchMapViewState(), restaurantsWrapperViewState);
+
+        });
+
+
+    }
+
+    // VAL FOR TESTING //
+
+    String firstRestaurantId = "First_Restaurant_Id";
+    String firstRestaurantName = "First_Restaurant_Name";
+    String firstAddress = "First_Address";
+    String firstNumber = "First_Phone_Number";
+    String firstSite = "First_Website";
+
+    String secondRestaurantId = "Second_Restaurant_Id";
+    String secondRestaurantName = "Second_Restaurant_Name";
+    String secondAddress = "Second_Address";
+    String secondNumber = "Second_Phone_Number";
+    String secondSite = "Second_Website";
+
+    String photoReference = "photo";
+
+    String firstUserId = "First_user_Id";
+    String secondUserId = "Second_user_Id";
 
     // region IN
     private List<RestaurantSearch> getDefaultRestaurants() {
         List<RestaurantSearch> restaurants = new ArrayList<>();
         restaurants.add(
                 new RestaurantSearch(
-                        "235",
-                        "hotel",
-                        "0102",
+                        firstRestaurantId,
+                        firstRestaurantName,
+                        firstAddress,
                         getPhoto(),
                         new Geometry(new RestaurantLatLngLiteral(30.0, 42.1)),
                         new OpeningHours(false, null),
                         2,
                         25,
                         false,
-                        "",
-                        ""
+                        firstNumber,
+                        firstSite
                 )
         );
         restaurants.add(
                 new RestaurantSearch(
-                        "450",
-                        "pipo",
-                        "bla",
+                        secondRestaurantId,
+                        secondRestaurantName,
+                        secondAddress,
                         getPhoto(),
                         new Geometry(new RestaurantLatLngLiteral(32.1, 42.2)),
                         new OpeningHours(false, null),
                         2,
                         25,
                         false,
-                        "",
-                        ""
+                        secondNumber,
+                        secondSite
                 )
         );
         return restaurants;
 
+    }
+
+    private List<UserWhoMadeRestaurantChoice> workmatesWhoMadeChoice() {
+        List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoices = new ArrayList<>();
+        userWhoMadeRestaurantChoices.add(
+                new UserWhoMadeRestaurantChoice(
+                        firstRestaurantId,
+                        firstRestaurantName,
+                        firstUserId
+
+                )
+        );
+        userWhoMadeRestaurantChoices.add(
+                new UserWhoMadeRestaurantChoice(
+                        firstRestaurantId,
+                        secondRestaurantName,
+                        secondUserId
+
+                )
+        );
+        return userWhoMadeRestaurantChoices;
     }
 
     private List<Photo> getPhoto() {
@@ -131,7 +220,7 @@ public class MapViewModelTest {
                         400,
                         400,
                         new ArrayList<>(),
-                        "photoTest"
+                        photoReference
 
                 )
         );
@@ -148,21 +237,41 @@ public class MapViewModelTest {
     private List<Poi> getPoi() {
         List<Poi> poi = new ArrayList<>();
         poi.add(new Poi(
-                "hotel",
-                "235",
-                "0102",
+                firstRestaurantName,
+                firstRestaurantId,
+                firstAddress,
                 new LatLng(30.0, 42.1),
-                false
+                true
         ));
         poi.add(new Poi(
-                "pipo",
-                "450",
-                "bla",
+                secondRestaurantName,
+                secondRestaurantId,
+                secondAddress,
                 new LatLng(32.1, 42.2),
                 false
         ));
         return poi;
     }
+
+    private MapViewState getUserSearchMapViewState() {
+        return new MapViewState(
+                getPoiUserSearch(),
+                new LatLng(EXPECTED_LATITUDE, EXPECTED_LONGITUDE), EXPECTED_ZOOM_FOCUS);
+    }
+
+    private List<Poi> getPoiUserSearch() {
+        List<Poi> poi = new ArrayList<>();
+             poi.add(new Poi(
+                secondRestaurantName,
+                secondRestaurantId,
+                secondAddress,
+                new LatLng(32.1, 42.2),
+                false
+        ));
+        return poi;
+    }
+
+
     // endregion OUT
 
 }
