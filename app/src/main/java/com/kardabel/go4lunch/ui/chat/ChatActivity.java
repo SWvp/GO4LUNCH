@@ -1,9 +1,11 @@
 package com.kardabel.go4lunch.ui.chat;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -16,8 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.kardabel.go4lunch.databinding.ChatActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
-import com.kardabel.go4lunch.ui.detailsview.DetailsWorkmatesViewState;
-import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewState;
 import com.kardabel.go4lunch.usecase.AddChatMessageToFirestoreUseCase;
 
 import java.util.ArrayList;
@@ -97,6 +97,7 @@ public class ChatActivity extends AppCompatActivity {
                             // TODO : envoyer tout ça à un usecase ou un repo
                             AddChatMessageToFirestoreUseCase.createChatMessage(message, intent.getStringExtra(WORKMATE_ID));
                             binding.chatMessageEditText.getText().clear();
+                            hideSoftKeyboard(ChatActivity.this);
 
                         } else {
                             Toast.makeText(
@@ -106,5 +107,13 @@ public class ChatActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        if (activity == null) return;
+        if (activity.getCurrentFocus() == null) return;
+
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 }
