@@ -21,7 +21,7 @@ import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UserSearchRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
-import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.getNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
 
 import java.time.Clock;
@@ -44,7 +44,7 @@ public class RestaurantsViewModel extends ViewModel {
     public RestaurantsViewModel(
             @NonNull Application application,
             @NonNull LocationRepository locationRepository,
-            @NonNull GetNearbySearchResultsUseCase getNearbySearchResultsUseCase,
+            @NonNull getNearbySearchResultsUseCase getNearbySearchResultsUseCase,
             @NonNull GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase,
             @NonNull UsersWhoMadeRestaurantChoiceRepository usersWhoMadeRestaurantChoiceRepository,
             @NonNull UserSearchRepository userSearchRepository,

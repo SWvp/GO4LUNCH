@@ -25,7 +25,7 @@ import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
 import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsByIdUseCase;
-import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.getNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsByIdUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
@@ -47,7 +47,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository;
     private final ChatMessageRepository chatMessageRepository;
 
-    private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase;
+    private final com.kardabel.go4lunch.usecase.getNearbySearchResultsUseCase getNearbySearchResultsUseCase;
     private final GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase;
     private final GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase;
     private final GetRestaurantDetailsResultsByIdUseCase getRestaurantDetailsResultsByIdUseCase;
@@ -90,7 +90,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.mUsersWhoMadeRestaurantChoiceRepository = new UsersWhoMadeRestaurantChoiceRepository(Clock.systemDefaultZone());
         this.chatMessageRepository = new ChatMessageRepository();
 
-        this.getNearbySearchResultsUseCase = new GetNearbySearchResultsUseCase(
+        this.getNearbySearchResultsUseCase = new getNearbySearchResultsUseCase(
                 locationRepository,
                 nearbySearchResponseRepository);
         this.getNearbySearchResultsByIdUseCase = new GetNearbySearchResultsByIdUseCase(
