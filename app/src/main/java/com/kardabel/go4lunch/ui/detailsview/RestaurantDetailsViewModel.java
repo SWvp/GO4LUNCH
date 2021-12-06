@@ -10,14 +10,14 @@ import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.model.UserModel;
-import com.kardabel.go4lunch.model.WorkmateWhoMadeRestaurantChoice;
+import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.pojo.FavoriteRestaurant;
 import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.FavoriteRestaurantsRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
-import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
+import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.usecase.ClickOnChoseRestaurantButtonUseCase;
 import com.kardabel.go4lunch.usecase.ClickOnFavoriteRestaurantUseCase;
 import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
@@ -30,7 +30,7 @@ import java.util.List;
 public class RestaurantDetailsViewModel extends ViewModel {
 
     private final MediatorLiveData<RestaurantDetailsViewState> workMatesDetailsViewStateMediatorLiveData = new MediatorLiveData<>();
-    private final MediatorLiveData<List<DetailsWorkmatesViewState>> workmatesLikeThisRestaurantMediatorLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<List<RestaurantDetailsWorkmatesViewState>> workmatesLikeThisRestaurantMediatorLiveData = new MediatorLiveData<>();
     private RestaurantDetailsViewState result;
     @NonNull
     private final Application application;
@@ -43,29 +43,33 @@ public class RestaurantDetailsViewModel extends ViewModel {
     @NonNull
     private final FavoriteRestaurantsRepository favoriteRestaurantsRepository;
     @NonNull
-    private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository;
+    private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository;
+    @NonNull
+    private final GetCurrentUserIdUseCase getCurrentUserIdUseCase;
 
 
     public RestaurantDetailsViewModel(@NonNull Application application,
                                       @NonNull GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase,
                                       @NonNull GetRestaurantDetailsResultsByIdUseCase getRestaurantDetailsResultsByIdUseCase,
-                                      @NonNull WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository,
+                                      @NonNull UsersWhoMadeRestaurantChoiceRepository usersWhoMadeRestaurantChoiceRepository,
                                       @NonNull WorkmatesRepository workmatesRepository,
-                                      @NonNull FavoriteRestaurantsRepository favoriteRestaurantsRepository) {
+                                      @NonNull FavoriteRestaurantsRepository favoriteRestaurantsRepository,
+                                      @NonNull GetCurrentUserIdUseCase getCurrentUserIdUseCase) {
 
         this.application = application;
         this.getNearbySearchResultsByIdUseCase = getNearbySearchResultsByIdUseCase;
         this.getRestaurantDetailsResultsByIdUseCase = getRestaurantDetailsResultsByIdUseCase;
-        this.workmatesWhoMadeRestaurantChoiceRepository = workmatesWhoMadeRestaurantChoiceRepository;
+        this.mUsersWhoMadeRestaurantChoiceRepository = usersWhoMadeRestaurantChoiceRepository;
         this.workmatesRepository = workmatesRepository;
         this.favoriteRestaurantsRepository = favoriteRestaurantsRepository;
+        this.getCurrentUserIdUseCase = getCurrentUserIdUseCase;
 
     }
 
     public void init(String placeId) {
         LiveData<RestaurantSearch> restaurantLiveData = getNearbySearchResultsByIdUseCase.invoke(placeId);
         LiveData<RestaurantDetailsResult> restaurantDetailsLiveData = getRestaurantDetailsResultsByIdUseCase.invoke(placeId);
-        LiveData<List<WorkmateWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceLiveData = workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
+        LiveData<List<UserWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceLiveData = mUsersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
         LiveData<List<UserModel>> workMatesLiveData = workmatesRepository.getWorkmates();
         LiveData<List<FavoriteRestaurant>> favoriteRestaurantsLiveData = favoriteRestaurantsRepository.getFavoriteRestaurants();
 
@@ -114,48 +118,39 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     // COMBINE FIRST MEDIATOR FOR RESTAURANT DETAILS
     private void combine(@Nullable RestaurantSearch restaurant,
-                         @Nullable List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices,
+                         @Nullable List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoices,
                          @Nullable RestaurantDetailsResult restaurantDetails,
                          @Nullable List<FavoriteRestaurant> favoriteRestaurants) {
         if (restaurant != null && restaurantDetails == null) {
             workMatesDetailsViewStateMediatorLiveData.setValue(mapWithoutDetails(
                     restaurant,
-                    workmateWhoMadeRestaurantChoices,
+                    userWhoMadeRestaurantChoices,
                     favoriteRestaurants));
         } else if (restaurant != null && favoriteRestaurants != null) {
             workMatesDetailsViewStateMediatorLiveData.setValue(mapIfFavoriteRestaurants(
                     restaurant,
-                    workmateWhoMadeRestaurantChoices,
+                    userWhoMadeRestaurantChoices,
                     restaurantDetails,
                     favoriteRestaurants));
         }
-
- //   else if (restaurant != null) {
- //       workMatesDetailsViewStateMediatorLiveData.setValue(mapWithoutFavoriteRestaurants(
- //               restaurant,
- //               workmateWhoMadeRestaurantChoices,
- //               restaurantDetails));
- //   }
-
-
     }
 
     // MAP WITHOUT DETAILS, WHEN USER HAS NO LONGER NETWORK AVAILABLE
     // (ASSUME THAT THE GOOGLE DETAILS SERVICE WILL WORK AS LONG AS NEARBY WORKS)
     private RestaurantDetailsViewState mapWithoutDetails(@NonNull RestaurantSearch restaurant,
-                                                         List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices,
+                                                         List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoices,
                                                          List<FavoriteRestaurant> favoriteRestaurants) {
 
         // TODO: gérer la dépendance pour test
-        String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
+        String userId = getCurrentUserIdUseCase.invoke();
 
         // CHECK IF THE RESTAURANT IS USER CHOICE
         boolean isMyRestaurant = false;
-        if (workmateWhoMadeRestaurantChoices != null) {
-            for (int i = 0; i < workmateWhoMadeRestaurantChoices.size(); i++) {
+        if (userWhoMadeRestaurantChoices != null) {
+            for (int i = 0; i < userWhoMadeRestaurantChoices.size(); i++) {
 
-                if(workmateWhoMadeRestaurantChoices.get(i).getRestaurantId().equals(restaurant.getRestaurantId())){
-                    if(workmateWhoMadeRestaurantChoices.get(i).getUserId().equals(userId)){
+                if(userWhoMadeRestaurantChoices.get(i).getRestaurantId().equals(restaurant.getRestaurantId())){
+                    if(userWhoMadeRestaurantChoices.get(i).getUserId().equals(userId)){
                         isMyRestaurant = true;
                     }
                 }
@@ -197,24 +192,23 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     private RestaurantDetailsViewState mapIfFavoriteRestaurants(
             RestaurantSearch restaurant,
-            List<WorkmateWhoMadeRestaurantChoice>
-                    workmateWhoMadeRestaurantChoices,
+            List<UserWhoMadeRestaurantChoice>
+                    userWhoMadeRestaurantChoices,
             RestaurantDetailsResult restaurantDetails,
             List<FavoriteRestaurant> favoriteRestaurants) {
 
-        // TODO: gérer la dépendance pour test
-        String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
+        String userId = getCurrentUserIdUseCase.invoke();
 
         String restaurantPhoneNumber;
         String restaurantWebsite;
 
         // CHECK IF THE RESTAURANT IS USER CHOICE
         boolean isMyRestaurant = false;
-        if (workmateWhoMadeRestaurantChoices != null) {
-            for (int i = 0; i < workmateWhoMadeRestaurantChoices.size(); i++) {
+        if (userWhoMadeRestaurantChoices != null) {
+            for (int i = 0; i < userWhoMadeRestaurantChoices.size(); i++) {
 
-                if(workmateWhoMadeRestaurantChoices.get(i).getRestaurantId().equals(restaurant.getRestaurantId())){
-                    if(workmateWhoMadeRestaurantChoices.get(i).getUserId().equals(userId)){
+                if(userWhoMadeRestaurantChoices.get(i).getRestaurantId().equals(restaurant.getRestaurantId())){
+                    if(userWhoMadeRestaurantChoices.get(i).getUserId().equals(userId)){
                         isMyRestaurant = true;
                     }
                 }
@@ -269,100 +263,34 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     }
 
-
-//  // MAP WITH FULL RESTAURANT DETAILS, AND NO USERS FAVORITE
-//  private RestaurantDetailsViewState mapWithoutFavoriteRestaurants(@NonNull RestaurantSearch restaurant,
-//                                                                   List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices,
-//                                                                   @NonNull RestaurantDetailsResult restaurantDetails) {
-
-//      // TODO: gérer la dépendance pour test
-//      String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
-
-//      String restaurantPhoneNumber;
-//      String restaurantWebsite;
-
-//      // CHECK IF THE RESTAURANT IS USER CHOICE
-//      boolean isMyRestaurant = false;
-//      if (workmateWhoMadeRestaurantChoices != null) {
-//          for (int i = 0; i < workmateWhoMadeRestaurantChoices.size(); i++) {
-
-//              if(workmateWhoMadeRestaurantChoices.get(i).getRestaurantId().equals(restaurant.getRestaurantId())){
-//                  if(workmateWhoMadeRestaurantChoices.get(i).getUserId().equals(userId)){
-//                      isMyRestaurant = true;
-//                  }
-//              }
-//          }
-//      }
-//      int restaurantChoiceState = R.drawable.hasnt_decided;
-//      if (isMyRestaurant) {
-//          restaurantChoiceState = R.drawable.has_decided;
-//      }
-
-//      // CHECK IF PHONE NUMBER IS AVAILABLE
-//      if (restaurantDetails.getDetailsResult().getFormattedPhoneNumber() != null) {
-//          restaurantPhoneNumber = restaurantDetails.getDetailsResult().getFormattedPhoneNumber();
-//      } else {
-//          restaurantPhoneNumber = "0";
-//      }
-
-//      // CHECK IF WEBSITE ADDRESS IS AVAILABLE
-//      if (restaurantDetails.getDetailsResult().getWebsite() != null) {
-//          restaurantWebsite = restaurantDetails.getDetailsResult().getWebsite();
-//      } else {
-//          restaurantWebsite = "https://www.google.com/";
-//      }
-//
-//      // SET THE FAVORITE STAR ON EMPTY
-//      int detailLikeButton = R.drawable.detail_favorite_star_empty;
-
-//      result = new RestaurantDetailsViewState(
-//              restaurant.getRestaurantName(),
-//              restaurant.getRestaurantAddress(),
-//              application.getString(R.string.api_url)
-//                      + application.getString(R.string.photo_reference)
-//                      + photoReference(restaurant.getRestaurantPhotos())
-//                      + application.getString(R.string.and_key)
-//                      + application.getString(R.string.google_map_key),
-//              restaurantPhoneNumber,
-//              restaurantWebsite,
-//              restaurant.getRestaurantId(),
-//              convertRatingStars(restaurant.getRating()),
-//              restaurantChoiceState,
-//              detailLikeButton
-
-//      );
-//      return result;
-
-//  }
-
     // COMBINE SECOND MEDIATOR FOR WORKMATES WITH THIS RESTAURANT IN FAVORITE
     private void combineWorkmates(@Nullable RestaurantSearch restaurant,
-                                  @Nullable List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices,
+                                  @Nullable List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoices,
                                   @Nullable List<UserModel> users) {
 
-        if (workmateWhoMadeRestaurantChoices != null && users != null && restaurant != null) {
+        if (userWhoMadeRestaurantChoices != null && users != null && restaurant != null) {
             workmatesLikeThisRestaurantMediatorLiveData.setValue(mapWorkmates(
                     restaurant,
-                    workmateWhoMadeRestaurantChoices,
+                    userWhoMadeRestaurantChoices,
                     users));
         }
     }
 
     // MAP THE RECYCLER VIEW ITEMS FOR WORKMATES WHO HAVE THIS ITEM IN FAVORITE
-    private List<DetailsWorkmatesViewState> mapWorkmates(RestaurantSearch restaurant,
-                                                         List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices,
-                                                         List<UserModel> users) {
+    private List<RestaurantDetailsWorkmatesViewState> mapWorkmates(RestaurantSearch restaurant,
+                                                                   List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoices,
+                                                                   List<UserModel> users) {
 
-        List<DetailsWorkmatesViewState> workMatesViewStateList = new ArrayList<>();
+        List<RestaurantDetailsWorkmatesViewState> workMatesViewStateList = new ArrayList<>();
 
-        for (int i = 0; i < workmateWhoMadeRestaurantChoices.size(); i++) {
-            if (workmateWhoMadeRestaurantChoices.get(i).getRestaurantId().equals(restaurant.getRestaurantId())) {
+        for (int i = 0; i < userWhoMadeRestaurantChoices.size(); i++) {
+            if (userWhoMadeRestaurantChoices.get(i).getRestaurantId().equals(restaurant.getRestaurantId())) {
                 for (int j = 0; j < users.size(); j++) {
-                    if (users.get(j).getUid().equals(workmateWhoMadeRestaurantChoices.get(i).getUserId())) {
+                    if (users.get(j).getUid().equals(userWhoMadeRestaurantChoices.get(i).getUserId())) {
                         String name = users.get(j).getUserName() + " is joining!";
                         String avatar = users.get(j).getAvatarURL();
 
-                        workMatesViewStateList.add(new DetailsWorkmatesViewState(
+                        workMatesViewStateList.add(new RestaurantDetailsWorkmatesViewState(
                                 name,
                                 avatar
 
@@ -413,7 +341,7 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     }
 
-    public LiveData<List<DetailsWorkmatesViewState>> getWorkmatesLikeThisRestaurant() {
+    public LiveData<List<RestaurantDetailsWorkmatesViewState>> getWorkmatesLikeThisRestaurant() {
         return workmatesLikeThisRestaurantMediatorLiveData;
 
     }
