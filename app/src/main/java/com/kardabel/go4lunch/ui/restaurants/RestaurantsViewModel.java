@@ -11,7 +11,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.R;
-import com.kardabel.go4lunch.model.WorkmateWhoMadeRestaurantChoice;
+import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.OpeningHours;
 import com.kardabel.go4lunch.pojo.Periods;
@@ -19,8 +19,8 @@ import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.repository.UsersSearchRepository;
-import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
+import com.kardabel.go4lunch.repository.UserSearchRepository;
+import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
 
@@ -46,8 +46,8 @@ public class RestaurantsViewModel extends ViewModel {
             @NonNull LocationRepository locationRepository,
             @NonNull GetNearbySearchResultsUseCase getNearbySearchResultsUseCase,
             @NonNull GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase,
-            @NonNull WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository,
-            @NonNull UsersSearchRepository usersSearchRepository,
+            @NonNull UsersWhoMadeRestaurantChoiceRepository usersWhoMadeRestaurantChoiceRepository,
+            @NonNull UserSearchRepository userSearchRepository,
             @NonNull Clock clock
     ) {
 
@@ -57,12 +57,13 @@ public class RestaurantsViewModel extends ViewModel {
         LiveData<Location> locationLiveData =
                 locationRepository.getLocationLiveData();
         LiveData<NearbySearchResults> nearbySearchResultsLiveData =
-                getNearbySearchResultsUseCase.getNearbySearchResultsLiveData();
+                getNearbySearchResultsUseCase.invoke();
         LiveData<List<RestaurantDetailsResult>> restaurantsDetailsResultLiveData =
-                getRestaurantDetailsResultsUseCase.getPlaceDetailsResultLiveData();
-        LiveData<List<WorkmateWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceLiveData =
-                workmatesWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
-        LiveData<String> usersSearchLiveData = usersSearchRepository.getUsersSearchLiveData();
+                getRestaurantDetailsResultsUseCase.invoke();
+        LiveData<List<UserWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceLiveData =
+                usersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
+        LiveData<String> usersSearchLiveData =
+                userSearchRepository.getUsersSearchLiveData();
 
         // OBSERVERS
 
@@ -109,10 +110,10 @@ public class RestaurantsViewModel extends ViewModel {
     private void combine(@Nullable NearbySearchResults nearbySearchResults,
                          @Nullable List<RestaurantDetailsResult> restaurantDetailsResults,
                          @Nullable Location location,
-                         @Nullable List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice,
+                         @Nullable List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoice,
                          @Nullable String usersSearch) {
 
-        if (location != null && workmateWhoMadeRestaurantChoice != null) {
+        if (location != null && userWhoMadeRestaurantChoice != null) {
             if (nearbySearchResults != null && restaurantDetailsResults != null &&
                     usersSearch != null && usersSearch.length() > 0) {
 
@@ -120,21 +121,21 @@ public class RestaurantsViewModel extends ViewModel {
                         nearbySearchResults,
                         restaurantDetailsResults,
                         location,
-                        workmateWhoMadeRestaurantChoice,
+                        userWhoMadeRestaurantChoice,
                         usersSearch));
 
             } else if (restaurantDetailsResults == null && nearbySearchResults != null) {
                 restaurantsWrapperViewStateMediatorLiveData.setValue(mapWithoutDetails(
                         location,
                         nearbySearchResults,
-                        workmateWhoMadeRestaurantChoice));
+                        userWhoMadeRestaurantChoice));
 
             } else if (restaurantDetailsResults != null && nearbySearchResults != null) {
                 restaurantsWrapperViewStateMediatorLiveData.setValue(mapWithDetails(
                         location,
                         nearbySearchResults,
                         restaurantDetailsResults,
-                        workmateWhoMadeRestaurantChoice));
+                        userWhoMadeRestaurantChoice));
 
             }
         }
@@ -149,7 +150,7 @@ public class RestaurantsViewModel extends ViewModel {
             @NonNull NearbySearchResults nearbySearchResults,
             @NonNull List<RestaurantDetailsResult> restaurantDetailsResults,
             @NonNull Location location,
-            @NonNull List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice,
+            @NonNull List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoice,
             @NonNull String usersSearch) {
 
         List<RestaurantsViewState> restaurantList = new ArrayList<>();
@@ -203,9 +204,9 @@ public class RestaurantsViewModel extends ViewModel {
                                 .getResults()
                                 .get(i)
                                 .getRestaurantId();
-                String like = usersWhoChoseThisRestaurant(
+                String usersWhoChoseThisRestaurant = usersWhoChoseThisRestaurant(
                         restaurantId,
-                        workmateWhoMadeRestaurantChoice);
+                        userWhoMadeRestaurantChoice);
                 int textColor = getTextColor(openingHours);
 
                 restaurantList.add(
@@ -218,7 +219,7 @@ public class RestaurantsViewModel extends ViewModel {
                                 openingHours,
                                 rating,
                                 restaurantId,
-                                like,
+                                usersWhoChoseThisRestaurant,
                                 textColor));
             }
         }
@@ -233,7 +234,7 @@ public class RestaurantsViewModel extends ViewModel {
     private RestaurantsWrapperViewState mapWithoutDetails(
             @NonNull Location location,
             @NonNull NearbySearchResults nearbySearchResults,
-            @NonNull List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
+            @NonNull List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoice) {
 
         List<RestaurantsViewState> restaurantList = new ArrayList<>();
 
@@ -285,7 +286,7 @@ public class RestaurantsViewModel extends ViewModel {
                             .getRestaurantId();
             String usersWhoChoseThisRestaurant = usersWhoChoseThisRestaurant(
                     restaurantId,
-                    workmateWhoMadeRestaurantChoice);
+                    userWhoMadeRestaurantChoice);
             int textColor = getTextColor(openingHours);
 
             restaurantList.add(
@@ -315,7 +316,7 @@ public class RestaurantsViewModel extends ViewModel {
             @NonNull Location location,
             @NonNull NearbySearchResults nearbySearchResults,
             @NonNull List<RestaurantDetailsResult> restaurantDetailsResults,
-            @NonNull List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
+            @NonNull List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoice) {
 
         List<RestaurantsViewState> restaurantList = new ArrayList<>();
 
@@ -326,17 +327,10 @@ public class RestaurantsViewModel extends ViewModel {
 
                     int distanceInt = distance(
                             location,
-                            nearbySearchResults
-                                    .getResults()
-                                    .get(i)
-                                    .getRestaurantGeometry()
-                                    .getRestaurantLatLngLiteral().getLat(),
-                            nearbySearchResults
-                                    .getResults()
-                                    .get(i)
-                                    .getRestaurantGeometry()
-                                    .getRestaurantLatLngLiteral()
-                                    .getLng());
+                            restaurant
+                                    .getRestaurantGeometry().getRestaurantLatLngLiteral().getLat(),
+                            restaurant
+                                    .getRestaurantGeometry().getRestaurantLatLngLiteral().getLng());
                     String name =
                             restaurant
                                     .getRestaurantName();
@@ -362,7 +356,7 @@ public class RestaurantsViewModel extends ViewModel {
                                     .getRestaurantId();
                     String usersWhoMadeThisChoice = usersWhoChoseThisRestaurant(
                             restaurantId,
-                            workmateWhoMadeRestaurantChoice);
+                            userWhoMadeRestaurantChoice);
                     int textColor = getTextColor(openingHours);
 
                     restaurantList.add(new RestaurantsViewState(
@@ -392,14 +386,14 @@ public class RestaurantsViewModel extends ViewModel {
     // WORKMATES WHO ALREADY CHOSE THIS RESTAURANT
     private String usersWhoChoseThisRestaurant(
             String restaurantId,
-            List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoice) {
+            List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoice) {
 
         int likes = 0;
         String likeAsString;
 
-        if (workmateWhoMadeRestaurantChoice != null) {
-            for (int i = 0; i < workmateWhoMadeRestaurantChoice.size(); i++) {
-                if (workmateWhoMadeRestaurantChoice.get(i).getRestaurantId().equals(restaurantId)) {
+        if (userWhoMadeRestaurantChoice != null) {
+            for (int i = 0; i < userWhoMadeRestaurantChoice.size(); i++) {
+                if (userWhoMadeRestaurantChoice.get(i).getRestaurantId().equals(restaurantId)) {
                     likes += 1;
                 }
             }
