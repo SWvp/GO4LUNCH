@@ -11,7 +11,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 
 import com.kardabel.go4lunch.R;
-import com.kardabel.go4lunch.model.WorkmateWhoMadeRestaurantChoice;
+import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.pojo.Close;
 import com.kardabel.go4lunch.pojo.Geometry;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
@@ -24,8 +24,8 @@ import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.pojo.RestaurantLatLngLiteral;
 import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.repository.UsersSearchRepository;
-import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
+import com.kardabel.go4lunch.repository.UserSearchRepository;
+import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
@@ -55,10 +55,10 @@ public class RestaurantsViewModelTest {
 
     private final LocationRepository locationRepository =
             Mockito.mock(LocationRepository.class);
-    private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository =
-            Mockito.mock(WorkmatesWhoMadeRestaurantChoiceRepository.class);
-    private final UsersSearchRepository usersSearchRepository =
-            Mockito.mock(UsersSearchRepository.class);
+    private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository =
+            Mockito.mock(UsersWhoMadeRestaurantChoiceRepository.class);
+    private final UserSearchRepository mUserSearchRepository =
+            Mockito.mock(UserSearchRepository.class);
 
     private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase =
             Mockito.mock(GetNearbySearchResultsUseCase.class);
@@ -103,7 +103,7 @@ public class RestaurantsViewModelTest {
             new MutableLiveData<>();
     private final MutableLiveData<List<RestaurantDetailsResult>> restaurantDetailsResultsUseCaseMutableLiveData =
             new MutableLiveData<>();
-    private final MutableLiveData<List<WorkmateWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceMutableLiveData =
+    private final MutableLiveData<List<UserWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceMutableLiveData =
             new MutableLiveData<>();
     private final MutableLiveData<String> usersSearchMutableLiveData =
             new MutableLiveData<>();
@@ -150,15 +150,15 @@ public class RestaurantsViewModelTest {
                 .getLocationLiveData();
         Mockito.doReturn(nearbySearchResultsMutableLiveData)
                 .when(getNearbySearchResultsUseCase)
-                .getNearbySearchResultsLiveData();
+                .invoke();
         Mockito.doReturn(restaurantDetailsResultsUseCaseMutableLiveData)
                 .when(getRestaurantDetailsResultsUseCase)
-                .getPlaceDetailsResultLiveData();
+                .invoke();
         Mockito.doReturn(workmatesWhoMadeRestaurantChoiceMutableLiveData)
-                .when(workmatesWhoMadeRestaurantChoiceRepository)
+                .when(mUsersWhoMadeRestaurantChoiceRepository)
                 .getWorkmatesWhoMadeRestaurantChoice();
         Mockito.doReturn(usersSearchMutableLiveData)
-                .when(usersSearchRepository)
+                .when(mUserSearchRepository)
                 .getUsersSearchLiveData();
 
 
@@ -208,8 +208,8 @@ public class RestaurantsViewModelTest {
                 locationRepository,
                 getNearbySearchResultsUseCase,
                 getRestaurantDetailsResultsUseCase,
-                workmatesWhoMadeRestaurantChoiceRepository,
-                usersSearchRepository,
+                mUsersWhoMadeRestaurantChoiceRepository,
+                mUserSearchRepository,
                 clock);
     }
 
@@ -221,9 +221,12 @@ public class RestaurantsViewModelTest {
             assertEquals(RestaurantsViewModelTest.this.getDefaultRestaurantViewState(), restaurantsWrapperViewState);
 
             verify(locationRepository).getLocationLiveData();
-            verify(getNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
-            verify(getRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
-            verifyNoMoreInteractions(locationRepository, getNearbySearchResultsUseCase, getRestaurantDetailsResultsUseCase);
+            verify(getNearbySearchResultsUseCase).invoke();
+            verify(getRestaurantDetailsResultsUseCase).invoke();
+            verifyNoMoreInteractions(
+                    locationRepository,
+                    getNearbySearchResultsUseCase,
+                    getRestaurantDetailsResultsUseCase);
         });
     }
 
@@ -273,8 +276,8 @@ public class RestaurantsViewModelTest {
             assertEquals(getRestaurantsClosingSoon(), restaurantsWrapperViewState);
 
             verify(locationRepository).getLocationLiveData();
-            verify(getNearbySearchResultsUseCase).getNearbySearchResultsLiveData();
-            verify(getRestaurantDetailsResultsUseCase).getPlaceDetailsResultLiveData();
+            verify(getNearbySearchResultsUseCase).invoke();
+            verify(getRestaurantDetailsResultsUseCase).invoke();
             verifyNoMoreInteractions(locationRepository, getNearbySearchResultsUseCase, getRestaurantDetailsResultsUseCase);
         });
 
@@ -532,8 +535,8 @@ public class RestaurantsViewModelTest {
                 locationRepository,
                 getNearbySearchResultsUseCase,
                 getRestaurantDetailsResultsUseCase,
-                workmatesWhoMadeRestaurantChoiceRepository,
-                usersSearchRepository,
+                mUsersWhoMadeRestaurantChoiceRepository,
+                mUserSearchRepository,
                 clockNewMonth);
 
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
@@ -589,8 +592,8 @@ public class RestaurantsViewModelTest {
                 locationRepository,
                 getNearbySearchResultsUseCase,
                 getRestaurantDetailsResultsUseCase,
-                workmatesWhoMadeRestaurantChoiceRepository,
-                usersSearchRepository,
+                mUsersWhoMadeRestaurantChoiceRepository,
+                mUserSearchRepository,
                 clockNewYear);
 
         restaurantDetailsResultsUseCaseMutableLiveData.setValue(getDefaultRestaurantsDetails(
@@ -730,7 +733,7 @@ public class RestaurantsViewModelTest {
     String secondNumber = "Second_Phone_Number";
     String secondSite = "Second_Website";
 
-    String photo = "photo";
+    String photoReference = "photo";
     String photoApiUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=300&photo_reference=photo&key=AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8";
     String distance = "0m";
 
@@ -757,7 +760,7 @@ public class RestaurantsViewModelTest {
                         firstRestaurantId,
                         firstRestaurantName,
                         firstAddress,
-                        getPhoto(),
+                        getPhotoReference(),
                         new Geometry(new RestaurantLatLngLiteral(30.0, 42.1)),
                         new OpeningHours(true, null),
                         2,
@@ -773,7 +776,7 @@ public class RestaurantsViewModelTest {
                         secondRestaurantId,
                         secondRestaurantName,
                         secondAddress,
-                        getPhoto(),
+                        getPhotoReference(),
                         new Geometry(new RestaurantLatLngLiteral(32.1, 42.2)),
                         new OpeningHours(true, null),
                         4,
@@ -794,7 +797,7 @@ public class RestaurantsViewModelTest {
                         firstRestaurantId,
                         firstRestaurantName,
                         firstAddress,
-                        getPhoto(),
+                        getPhotoReference(),
                         new Geometry(new RestaurantLatLngLiteral(30.0, 42.1)),
                         new OpeningHours(true, null),
                         2,
@@ -809,7 +812,7 @@ public class RestaurantsViewModelTest {
                         secondRestaurantId,
                         secondRestaurantName,
                         secondAddress,
-                        getPhoto(),
+                        getPhotoReference(),
                         new Geometry(new RestaurantLatLngLiteral(32.1, 42.2)),
                         new OpeningHours(true, null),
                         4,
@@ -830,7 +833,7 @@ public class RestaurantsViewModelTest {
                         firstRestaurantId,
                         firstRestaurantName,
                         firstAddress,
-                        getPhoto(),
+                        getPhotoReference(),
                         new Geometry(new RestaurantLatLngLiteral(30.0, 42.1)),
                         new OpeningHours(true, null),
                         4,
@@ -845,7 +848,7 @@ public class RestaurantsViewModelTest {
                         secondRestaurantId,
                         secondRestaurantName,
                         secondAddress,
-                        getPhoto(),
+                        getPhotoReference(),
                         new Geometry(new RestaurantLatLngLiteral(32.1, 42.2)),
                         new OpeningHours(true, null),
                         1,
@@ -902,7 +905,7 @@ public class RestaurantsViewModelTest {
                         firstRestaurantId,
                         firstRestaurantName,
                         firstAddress,
-                        getPhoto(),
+                        getPhotoReference(),
                         new Geometry(new RestaurantLatLngLiteral(30.0, 42.1)),
                         new OpeningHours(true, null),
                         2,
@@ -917,7 +920,7 @@ public class RestaurantsViewModelTest {
                         secondRestaurantId,
                         secondRestaurantName,
                         secondAddress,
-                        getPhoto(),
+                        getPhotoReference(),
                         new Geometry(new RestaurantLatLngLiteral(32.1, 42.2)),
                         new OpeningHours(false, null),
                         4,
@@ -931,34 +934,34 @@ public class RestaurantsViewModelTest {
 
     }
 
-    private List<WorkmateWhoMadeRestaurantChoice> workmatesWhoMadeChoice() {
-        List<WorkmateWhoMadeRestaurantChoice> workmateWhoMadeRestaurantChoices = new ArrayList<>();
-        workmateWhoMadeRestaurantChoices.add(
-                new WorkmateWhoMadeRestaurantChoice(
+    private List<UserWhoMadeRestaurantChoice> workmatesWhoMadeChoice() {
+        List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoices = new ArrayList<>();
+        userWhoMadeRestaurantChoices.add(
+                new UserWhoMadeRestaurantChoice(
                         firstRestaurantId,
                         firstRestaurantName,
                         firstUserId
 
                 )
         );
-        workmateWhoMadeRestaurantChoices.add(
-                new WorkmateWhoMadeRestaurantChoice(
+        userWhoMadeRestaurantChoices.add(
+                new UserWhoMadeRestaurantChoice(
                         firstRestaurantId,
                         secondRestaurantName,
                         secondUserId
 
                 )
         );
-        return workmateWhoMadeRestaurantChoices;
+        return userWhoMadeRestaurantChoices;
     }
 
-    private List<Photo> getPhoto() {
+    private List<Photo> getPhotoReference() {
         return Collections.singletonList(
                 new Photo(
                         400,
                         400,
                         new ArrayList<>(),
-                        photo
+                        photoReference
 
                 )
         );
