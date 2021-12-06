@@ -14,15 +14,16 @@ import com.kardabel.go4lunch.repository.FavoriteRestaurantsRepository;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 import com.kardabel.go4lunch.repository.RestaurantDetailsResponseRepository;
-import com.kardabel.go4lunch.repository.UsersSearchRepository;
+import com.kardabel.go4lunch.repository.UserSearchRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
-import com.kardabel.go4lunch.repository.WorkmatesWhoMadeRestaurantChoiceRepository;
+import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 import com.kardabel.go4lunch.ui.chat.ChatViewModel;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
+import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsByIdUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
@@ -41,9 +42,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 
     private final LocationRepository locationRepository;
     private final WorkmatesRepository workmatesRepository;
-    private final UsersSearchRepository usersSearchRepository;
+    private final UserSearchRepository mUserSearchRepository;
     private final FavoriteRestaurantsRepository favoriteRestaurantsRepository;
-    private final WorkmatesWhoMadeRestaurantChoiceRepository workmatesWhoMadeRestaurantChoiceRepository;
+    private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository;
     private final ChatMessageRepository chatMessageRepository;
 
     private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase;
@@ -51,6 +52,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase;
     private final GetRestaurantDetailsResultsByIdUseCase getRestaurantDetailsResultsByIdUseCase;
     private final GetPredictionsUseCase getPredictionsUseCase;
+    private final GetCurrentUserIdUseCase getCurrentUserIdUseCase;
 
     public static ViewModelFactory getInstance() {
         if (factory == null) {
@@ -83,9 +85,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                 application);
         this.locationRepository = new LocationRepository();
         this.workmatesRepository = new WorkmatesRepository();
-        this.usersSearchRepository = new UsersSearchRepository();
+        this.mUserSearchRepository = new UserSearchRepository();
         this.favoriteRestaurantsRepository = new FavoriteRestaurantsRepository();
-        this.workmatesWhoMadeRestaurantChoiceRepository = new WorkmatesWhoMadeRestaurantChoiceRepository(Clock.systemDefaultZone());
+        this.mUsersWhoMadeRestaurantChoiceRepository = new UsersWhoMadeRestaurantChoiceRepository(Clock.systemDefaultZone());
         this.chatMessageRepository = new ChatMessageRepository();
 
         this.getNearbySearchResultsUseCase = new GetNearbySearchResultsUseCase(
@@ -104,6 +106,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.getPredictionsUseCase = new GetPredictionsUseCase(
                 locationRepository,
                 autocompleteRepository);
+        this.getCurrentUserIdUseCase = new GetCurrentUserIdUseCase();
     }
 
 
@@ -117,39 +120,43 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     locationRepository,
                     getNearbySearchResultsUseCase,
                     getRestaurantDetailsResultsUseCase,
-                    workmatesWhoMadeRestaurantChoiceRepository,
-                    usersSearchRepository,
+                    mUsersWhoMadeRestaurantChoiceRepository,
+                    mUserSearchRepository,
                     Clock.systemDefaultZone());
         } else if (modelClass.isAssignableFrom(MapViewModel.class)) {
             return (T) new MapViewModel(
                     locationRepository,
                     getNearbySearchResultsUseCase,
-                    workmatesWhoMadeRestaurantChoiceRepository,
-                    usersSearchRepository);
+                    mUsersWhoMadeRestaurantChoiceRepository,
+                    mUserSearchRepository);
         } else if (modelClass.isAssignableFrom(MainActivityViewModel.class)) {
             return (T) new MainActivityViewModel(
                     application,
                     locationRepository,
                     getPredictionsUseCase,
-                    usersSearchRepository
+                    mUserSearchRepository,
+                    mUsersWhoMadeRestaurantChoiceRepository,
+                    getCurrentUserIdUseCase
             );
         } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
             return (T) new RestaurantDetailsViewModel(
                     application,
                     getNearbySearchResultsByIdUseCase,
                     getRestaurantDetailsResultsByIdUseCase,
-                    workmatesWhoMadeRestaurantChoiceRepository,
+                    mUsersWhoMadeRestaurantChoiceRepository,
                     workmatesRepository,
-                    favoriteRestaurantsRepository);
+                    favoriteRestaurantsRepository,
+                    getCurrentUserIdUseCase);
         } else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
             return (T) new WorkMatesViewModel(
                     application,
                     workmatesRepository,
-                    workmatesWhoMadeRestaurantChoiceRepository
+                    mUsersWhoMadeRestaurantChoiceRepository
             );
         } else if (modelClass.isAssignableFrom(ChatViewModel.class)) {
             return (T) new ChatViewModel(
-                    chatMessageRepository
+                    chatMessageRepository,
+                    getCurrentUserIdUseCase
             );
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
