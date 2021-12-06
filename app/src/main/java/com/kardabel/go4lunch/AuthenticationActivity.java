@@ -39,13 +39,13 @@ public class AuthenticationActivity extends BaseActivity<AuthenticationBinding> 
 
     // Update Login Button when activity is resuming
     private void updateLoginButton() {
-        binding.loginButton.setText(GetCurrentUserUseCase.getCurrentUser() != null ? getString(R.string.button_login_text_logged) : getString(R.string.button_login_text_not_logged));
+        binding.loginButton.setText(GetCurrentUserUseCase.invoke() != null ? getString(R.string.button_login_text_logged) : getString(R.string.button_login_text_not_logged));
     }
 
     private void setupListeners() {
         // Login/Profile Button
         binding.loginButton.setOnClickListener(view -> {
-            if (GetCurrentUserUseCase.getCurrentUser() != null) {
+            if (GetCurrentUserUseCase.invoke() != null) {
                 startProfileActivity();
             } else {
                 startSignInActivity();
