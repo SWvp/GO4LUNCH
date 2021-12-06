@@ -1,6 +1,7 @@
 package com.kardabel.go4lunch.usecase;
 
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -22,14 +23,13 @@ public class ClickOnChoseRestaurantButtonUseCase {
             String restaurantId,
             String restaurantName) {
 
-        String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
+        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         Map<String, Object> userGotRestaurant = new HashMap<>();
         userGotRestaurant.put("restaurantId", restaurantId);
         userGotRestaurant.put("restaurantName", restaurantName);
         userGotRestaurant.put("userId", userId);
 
-        assert userId != null;
         getDayCollection()
                 .document(userId)
                 .get()

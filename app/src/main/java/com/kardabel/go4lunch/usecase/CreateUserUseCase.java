@@ -17,7 +17,7 @@ public class CreateUserUseCase {
 
     // CREATE CURRENT USER IN FIRESTORE
     public static void createUser() {
-        FirebaseUser user = GetCurrentUserUseCase.getCurrentUser();
+        FirebaseUser user = GetCurrentUserUseCase.invoke();
         if (user != null) {
             String userUrlPicture = (user.getPhotoUrl() != null) ? user.getPhotoUrl().toString() : null;
             String userName = user.getDisplayName();

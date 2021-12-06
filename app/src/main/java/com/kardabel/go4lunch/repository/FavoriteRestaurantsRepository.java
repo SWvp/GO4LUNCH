@@ -7,22 +7,22 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.kardabel.go4lunch.model.WorkmateWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.pojo.FavoriteRestaurant;
-import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FavoriteRestaurantsRepository {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
+    private String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
 
     // GET THE FAVORITE RESTAURANTS FOR ALL USERS

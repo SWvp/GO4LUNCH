@@ -29,5 +29,5 @@ public class GetNearbySearchResultsUseCase {
             }
         });
     }
-    public LiveData<NearbySearchResults> getNearbySearchResultsLiveData() { return NearbySearchResultsLiveData; }
+    public LiveData<NearbySearchResults> invoke() { return NearbySearchResultsLiveData; }
 }

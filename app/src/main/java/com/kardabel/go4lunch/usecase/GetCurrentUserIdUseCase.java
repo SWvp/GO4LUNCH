@@ -1,11 +1,13 @@
 package com.kardabel.go4lunch.usecase;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 public class GetCurrentUserIdUseCase {
 
-    public static String getCurrentUserUID() {
-        FirebaseUser user = GetCurrentUserUseCase.getCurrentUser();
-        return (user != null) ? user.getUid() : null;
+    public String invoke() {
+        return Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
     }
 }

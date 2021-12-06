@@ -71,7 +71,7 @@ public class GetRestaurantDetailsResultsUseCase {
         }
     }
 
-    public LiveData<List<RestaurantDetailsResult>> getPlaceDetailsResultLiveData() {
+    public LiveData<List<RestaurantDetailsResult>> invoke() {
         return placeDetailsMediatorLiveData;
     }
 

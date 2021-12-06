@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class GetCurrentUserUseCase {
 
-    public static FirebaseUser getCurrentUser() {
+    public static FirebaseUser invoke() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 }

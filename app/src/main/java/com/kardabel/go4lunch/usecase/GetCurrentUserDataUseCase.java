@@ -1,9 +1,12 @@
 package com.kardabel.go4lunch.usecase;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Objects;
 
 public class GetCurrentUserDataUseCase {
 
@@ -16,11 +19,7 @@ public class GetCurrentUserDataUseCase {
 
     // GET USER DATA FROM FIRESTORE
     public static Task<DocumentSnapshot> getUserData() {
-        String uid = GetCurrentUserIdUseCase.getCurrentUserUID();
-        if (uid != null) {
-            return getUsersCollection().document(uid).get();
-        } else {
-            return null;
-        }
+        String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        return getUsersCollection().document(uid).get();
     }
 }
