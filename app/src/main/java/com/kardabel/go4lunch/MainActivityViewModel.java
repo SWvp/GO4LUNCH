@@ -13,11 +13,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.pojo.Prediction;
 import com.kardabel.go4lunch.pojo.Predictions;
 import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.repository.UsersSearchRepository;
+import com.kardabel.go4lunch.repository.UserSearchRepository;
+import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.ui.autocomplete.PredictionsViewState;
+import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 import com.kardabel.go4lunch.util.PermissionsViewAction;
 import com.kardabel.go4lunch.util.SingleLiveEvent;
@@ -27,28 +30,36 @@ import java.util.List;
 
 public class MainActivityViewModel extends ViewModel {
 
-    private final MediatorLiveData<List<PredictionsViewState>> predictionsMediatorLiveData = new MediatorLiveData<>();
-
-    private final SingleLiveEvent<PermissionsViewAction> actionSingleLiveEvent = new SingleLiveEvent<>();
-
     private final Application application;
 
     private final LocationRepository locationRepository;
     private final GetPredictionsUseCase getPredictionsUseCase;
-    private final UsersSearchRepository usersSearchRepository;
+    private final UserSearchRepository mUserSearchRepository;
+    private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository;
+    private final GetCurrentUserIdUseCase getCurrentUserIdUseCase;
+
+    private final MediatorLiveData<List<PredictionsViewState>> predictionsMediatorLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<MainActivityYourLunchViewState> mainActivityYourLunchViewStateMediatorLiveData = new MediatorLiveData<>();
+
+    private final SingleLiveEvent<PermissionsViewAction> actionSingleLiveEvent = new SingleLiveEvent<>();
+
 
 
     public MainActivityViewModel(
             @NonNull Application application,
             @NonNull LocationRepository locationRepository,
             @NonNull GetPredictionsUseCase getPredictionsUseCase,
-            @NonNull UsersSearchRepository usersSearchRepository) {
+            @NonNull UserSearchRepository userSearchRepository,
+            @NonNull UsersWhoMadeRestaurantChoiceRepository usersWhoMadeRestaurantChoiceRepository,
+            @NonNull GetCurrentUserIdUseCase getCurrentUserIdUseCase) {
+
         super();
         this.application = application;
         this.locationRepository = locationRepository;
         this.getPredictionsUseCase = getPredictionsUseCase;
-        this.usersSearchRepository = usersSearchRepository;
-
+        this.mUserSearchRepository = userSearchRepository;
+        this.mUsersWhoMadeRestaurantChoiceRepository = usersWhoMadeRestaurantChoiceRepository;
+        this.getCurrentUserIdUseCase = getCurrentUserIdUseCase;
 
     }
 
@@ -64,13 +75,13 @@ public class MainActivityViewModel extends ViewModel {
         }
     }
 
-    // WHEN PERMISSION IS GRANTED, LETS RETRIEVE LOCATION AND USER DATA BASE
+    // WHEN PERMISSION IS GRANTED, RETRIEVE USER LOCATION
     private void permissionGranted() {
         locationRepository.StartLocationRequest();
 
     }
 
-    // WHEN CLICKING ON SEARCHVIEW WE PASSED THE TEXT TO USECASE AND THEN OBSERVE IT
+    // WHEN CLICKING ON SEARCHVIEW WE PASSED THE TEXT TO USE CASE AND THEN OBSERVE IT
     public void sendTextToAutocomplete(String text) {
         LiveData<Predictions> predictionsLiveData = getPredictionsUseCase.invoke(text);
         predictionsMediatorLiveData.addSource(predictionsLiveData, this::combine);
@@ -101,8 +112,36 @@ public class MainActivityViewModel extends ViewModel {
 
     }
 
-    public void usersChoice(String predictionText) {
-        usersSearchRepository.usersSearch(predictionText);
+    // RETRIEVE THE CURRENT USER RESTAURANT CHOICE
+    public void getUserRestaurantChoice() {
+        LiveData<List<UserWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceLiveData =
+                mUsersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
+
+        mainActivityYourLunchViewStateMediatorLiveData.addSource(workmatesWhoMadeRestaurantChoiceLiveData, this::mapUserRestaurantChoice);
+    }
+
+    private void mapUserRestaurantChoice(List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoices) {
+
+        String currentUserId = getCurrentUserIdUseCase.invoke();
+        MainActivityYourLunchViewState yourLunch = new MainActivityYourLunchViewState(
+                "no current user restaurant choice",
+                0
+        );
+
+        for (UserWhoMadeRestaurantChoice workmate : userWhoMadeRestaurantChoices) {
+            if (workmate.getUserId().equals(currentUserId)) {
+                yourLunch = new MainActivityYourLunchViewState(
+                        workmate.getRestaurantId(),
+                        1
+                );
+
+            }
+        }
+        mainActivityYourLunchViewStateMediatorLiveData.setValue(yourLunch);
+    }
+
+    public void userSearch(String predictionText) {
+        mUserSearchRepository.usersSearch(predictionText);
 
     }
 
@@ -111,8 +150,14 @@ public class MainActivityViewModel extends ViewModel {
 
     }
 
+    public LiveData<MainActivityYourLunchViewState> getCurrentUserRestaurantChoice() {
+        return mainActivityYourLunchViewStateMediatorLiveData;
+
+    }
+
     public LiveData<List<PredictionsViewState>> getPredictionsLiveData() {
         return predictionsMediatorLiveData;
 
     }
+
 }
