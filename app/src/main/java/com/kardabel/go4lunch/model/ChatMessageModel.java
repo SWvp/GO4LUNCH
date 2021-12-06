@@ -5,11 +5,11 @@ public class ChatMessageModel {
     private String message;
     private String sender;
     private String date;
-    private String timestamp;
+    private Long timestamp;
 
     public ChatMessageModel() {}
 
-    public ChatMessageModel(String message, String sender, String date, String timestamp) {
+    public ChatMessageModel(String message, String sender, String date, Long timestamp) {
         this.message = message;
         this.sender = sender;
         this.date = date;
@@ -21,5 +21,9 @@ public class ChatMessageModel {
     public String getSender() { return sender; }
 
     public String getDate() { return date; }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
 
 }

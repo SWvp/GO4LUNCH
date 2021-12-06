@@ -6,8 +6,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDateTime;
@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class AddChatMessageToFirestoreUseCase {
 
@@ -27,7 +28,7 @@ public class AddChatMessageToFirestoreUseCase {
 
     public static void createChatMessage(String message, String mateId) {
 
-        String userId = GetCurrentUserIdUseCase.getCurrentUserUID();
+        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         // CREATE A LIST OF USER TO SORT THEM
         List<String> ids = new ArrayList<>();
@@ -35,7 +36,7 @@ public class AddChatMessageToFirestoreUseCase {
         ids.add(mateId);
         Collections.sort(ids);
 
-        // RETRIEVE THE CURRENT DATE AND TIME AND FORMAT TO HUMAN READABLE
+        // RETRIEVE THE CURRENT DATE AND TIME, AND FORMAT TO HUMAN READABLE
         LocalDateTime currentDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd à HH:mm:ss");
         String formatDateTime = currentDateTime.format(formatter);
@@ -45,7 +46,7 @@ public class AddChatMessageToFirestoreUseCase {
         chatMessage.put("message", message);
         chatMessage.put("sender", userId);
         chatMessage.put("date", formatDateTime);
-        chatMessage.put("timestamp" , FieldValue.serverTimestamp());
+        chatMessage.put("timestamp" , System.currentTimeMillis()); // HERE IS THE TIMESTAMP NEEDED TO SORT THE CHAT MESSAGE
 
         // CREATE MESSAGE IN DATA BASE
         getChatCollection()
