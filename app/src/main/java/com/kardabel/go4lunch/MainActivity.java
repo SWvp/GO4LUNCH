@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements
     private PredictionsAdapter adapter;
 
     private String restaurantId;
+    private int currentUserRestaurantChoiceStatus;
 
     private static final int LOCATION_PERMISSION_CODE = 100;
 
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements
                 appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        // RECEIVE SINGLE LIVEDATA EVENT FROM VM TO KNOW WHICH ACTION IS REQUIRED
+        // RECEIVE SINGLE LIVEDATA EVENT FROM VM TO KNOW WHICH ACTION IS REQUIRED FOR PERMISSION
         mainActivityViewModel.getActionSingleLiveEvent().observe(this, action -> {
             switch (action) {
                 case PERMISSION_ASKED:
@@ -124,9 +125,11 @@ public class MainActivity extends AppCompatActivity implements
                     break;
             }
         });
-        configureRecyclerView();
         updateUIWhenCreating();
+        configureYourLunch();
+        configureRecyclerView();
     }
+
 
     // HERE WE UPDATE INTERFACE WITH USERS INFORMATION
     private void updateUIWhenCreating() {
@@ -135,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements
         TextView profileUsername = header.findViewById(R.id.header_name);
         TextView profileUserEmail = header.findViewById(R.id.header_email);
 
-        FirebaseUser currentUser = GetCurrentUserUseCase.getCurrentUser();
+        FirebaseUser currentUser = GetCurrentUserUseCase.invoke();
         if (currentUser != null) {
 
             //Get picture URL from Firebase
@@ -157,18 +160,26 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    // OBSERVE RESTAURANT ID FOR CURRENT USER RESTAURANT CHOICE
+    private void configureYourLunch() {
+        mainActivityViewModel.getUserRestaurantChoice();
+
+        mainActivityViewModel.getCurrentUserRestaurantChoice().observe(this, mainActivityYourLunchViewState -> {
+            restaurantId = mainActivityYourLunchViewState.getRestaurantId();
+            currentUserRestaurantChoiceStatus = mainActivityYourLunchViewState.getCurrentUserRestaurantChoiceStatus();
+        });
+
+    }
+
     // WHEN USER CLICK ON HIS PERSONAL MENU, IN DRAWER
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // 4 - Handle Navigation Item Click
         int id = item.getItemId();
 
         switch (id) {
             case R.id.your_lunch:
-                startActivity(RestaurantDetailsActivity.navigate(
-                        MainActivity.this,
-                        restaurantId));
+                checkUserRestaurantChoice();
                 break;
             case R.id.settings:
                 final Intent intentSetting = new Intent(this, SettingActivity.class);
@@ -187,6 +198,24 @@ public class MainActivity extends AppCompatActivity implements
         this.drawerLayout.closeDrawer(GravityCompat.START);
         return true;
 
+    }
+
+    // THE OBSERVER WILL UPDATE VAR IF USER CHOSE OR HAS CHOSEN A RESTAURANT
+    private void checkUserRestaurantChoice() {
+        switch (currentUserRestaurantChoiceStatus) {
+
+            case 0:
+                Toast.makeText(
+                        MainActivity.this,
+                        "No restaurant has been selected",
+                        Toast.LENGTH_SHORT).show();
+                break;
+            case 1:
+                startActivity(RestaurantDetailsActivity.navigate(
+                        MainActivity.this,
+                        restaurantId));
+                break;
+        }
     }
 
     private void configureToolBar() {
@@ -229,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements
         mainActivityViewModel.getPredictionsLiveData().observe(this, predictions -> adapter.submitList(predictions));
     }
 
+
     // CREATE AND CONFIGURE SEARCHVIEW
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -270,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                mainActivityViewModel.usersChoice("");
+                mainActivityViewModel.userSearch("");
                 return true;
             }
         });
@@ -281,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements
     // WHEN A PREDICTION IS CHOSEN BY USER
     @Override
     public void onPredictionItemClicked(String predictionText) {
-        mainActivityViewModel.usersChoice(predictionText);
+        mainActivityViewModel.userSearch(predictionText);
         initAutocomplete();
 
     }
