@@ -2,16 +2,16 @@ package com.kardabel.go4lunch.model;
 
 import java.util.Objects;
 
-public class WorkmateWhoMadeRestaurantChoice {
+public class UserWhoMadeRestaurantChoice {
 
     private String restaurantId;
     private String restaurantName;
     private String userId;
 
-    public WorkmateWhoMadeRestaurantChoice() {
+    public UserWhoMadeRestaurantChoice() {
     }
 
-    public WorkmateWhoMadeRestaurantChoice(String restaurantId, String restaurantName, String userId) {
+    public UserWhoMadeRestaurantChoice(String restaurantId, String restaurantName, String userId) {
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.userId = userId;
@@ -45,7 +45,7 @@ public class WorkmateWhoMadeRestaurantChoice {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        WorkmateWhoMadeRestaurantChoice that = (WorkmateWhoMadeRestaurantChoice) o;
+        UserWhoMadeRestaurantChoice that = (UserWhoMadeRestaurantChoice) o;
         return Objects.equals(restaurantId, that.restaurantId) && Objects.equals(restaurantName, that.restaurantName) && Objects.equals(userId, that.userId);
     }
 

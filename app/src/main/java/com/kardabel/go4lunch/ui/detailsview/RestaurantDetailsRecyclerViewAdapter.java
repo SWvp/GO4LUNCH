@@ -12,9 +12,9 @@ import com.kardabel.go4lunch.databinding.ItemWorkmateBinding;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailsRecyclerViewAdapter extends RecyclerView.Adapter<DetailsRecyclerViewAdapter.ViewHolder> {
+public class RestaurantDetailsRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantDetailsRecyclerViewAdapter.ViewHolder> {
 
-    private List<DetailsWorkmatesViewState> workmatesList= new ArrayList<>();
+    private List<RestaurantDetailsWorkmatesViewState> workmatesList= new ArrayList<>();
 
     @NonNull
     @Override
@@ -29,7 +29,7 @@ public class DetailsRecyclerViewAdapter extends RecyclerView.Adapter<DetailsRecy
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        DetailsWorkmatesViewState workMate = workmatesList.get(position);
+        RestaurantDetailsWorkmatesViewState workMate = workmatesList.get(position);
 
         holder.viewHolderBinding.itemWorkmateDescription.setText(workMate.getWorkmateName());
         Glide.with(holder.viewHolderBinding.itemWorkmateAvatar.getContext())
@@ -49,7 +49,7 @@ public class DetailsRecyclerViewAdapter extends RecyclerView.Adapter<DetailsRecy
 
     }
 
-    public void setWorkmatesListData(List<DetailsWorkmatesViewState> workMates){
+    public void setWorkmatesListData(List<RestaurantDetailsWorkmatesViewState> workMates){
         this.workmatesList = workMates;
         notifyDataSetChanged();
 

@@ -2,12 +2,12 @@ package com.kardabel.go4lunch.ui.detailsview;
 
 import java.util.Objects;
 
-public class DetailsWorkmatesViewState {
+public class RestaurantDetailsWorkmatesViewState {
 
     private final String workmateName;
     private final String workmateDetailPhoto;
 
-    public DetailsWorkmatesViewState(String workmateName, String workmateDetailPhoto) {
+    public RestaurantDetailsWorkmatesViewState(String workmateName, String workmateDetailPhoto) {
         this.workmateName = workmateName;
         this.workmateDetailPhoto = workmateDetailPhoto;
     }
@@ -24,7 +24,7 @@ public class DetailsWorkmatesViewState {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DetailsWorkmatesViewState that = (DetailsWorkmatesViewState) o;
+        RestaurantDetailsWorkmatesViewState that = (RestaurantDetailsWorkmatesViewState) o;
         return Objects.equals(
                 workmateName, that.workmateName) &&
                 Objects.equals(workmateDetailPhoto, that.workmateDetailPhoto);

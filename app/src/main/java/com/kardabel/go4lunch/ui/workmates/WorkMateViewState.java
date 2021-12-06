@@ -26,8 +26,8 @@ public class WorkMateViewState {
         this.workmateName = workmateName;
         this.workmateDescription = workmateDescription;
         this.workmatePhoto = workmatePhoto;
-        this.gotRestaurant = gotRestaurant;
         this.workmateId = workmateId;
+        this.gotRestaurant = gotRestaurant;
         this.textColor = textColor;
 
     }
@@ -55,28 +55,17 @@ public class WorkMateViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WorkMateViewState that = (WorkMateViewState) o;
-        return gotRestaurant == that.gotRestaurant &&
-                textColor == that.textColor &&
-                Objects.equals(workmateName, that.workmateName) &&
-                Objects.equals(workmateDescription, that.workmateDescription) &&
-                Objects.equals(workmatePhoto, that.workmatePhoto) &&
-                Objects.equals(workmateId, that.workmateId);
+        return gotRestaurant == that.gotRestaurant && textColor == that.textColor && Objects.equals(workmateName, that.workmateName) && Objects.equals(workmateDescription, that.workmateDescription) && Objects.equals(workmatePhoto, that.workmatePhoto) && Objects.equals(workmateId, that.workmateId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                workmateName,
-                workmateDescription,
-                workmatePhoto,
-                workmateId,
-                gotRestaurant,
-                textColor);
+        return Objects.hash(workmateName, workmateDescription, workmatePhoto, workmateId, gotRestaurant, textColor);
     }
 
     @Override
     public String toString() {
-        return "WorkMatesViewState{" +
+        return "WorkMateViewState{" +
                 "workmateName='" + workmateName + '\'' +
                 ", workmateDescription='" + workmateDescription + '\'' +
                 ", workmatePhoto='" + workmatePhoto + '\'' +

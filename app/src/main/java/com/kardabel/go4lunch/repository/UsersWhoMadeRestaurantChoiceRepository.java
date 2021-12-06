@@ -7,29 +7,29 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.kardabel.go4lunch.model.WorkmateWhoMadeRestaurantChoice;
+import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorkmatesWhoMadeRestaurantChoiceRepository {
+public class UsersWhoMadeRestaurantChoiceRepository {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final Clock clock;
 
-    public WorkmatesWhoMadeRestaurantChoiceRepository(Clock clock) {
+    public UsersWhoMadeRestaurantChoiceRepository(Clock clock) {
         this.clock = clock;
     }
 
     // GET WORKMATES WHO DECIDED WHERE THEY WOULD EAT
-    public LiveData<List<WorkmateWhoMadeRestaurantChoice>> getWorkmatesWhoMadeRestaurantChoice() {
-        MutableLiveData<List<WorkmateWhoMadeRestaurantChoice>> userModelMutableLiveData = new MutableLiveData<>();
+    public LiveData<List<UserWhoMadeRestaurantChoice>> getWorkmatesWhoMadeRestaurantChoice() {
+        MutableLiveData<List<UserWhoMadeRestaurantChoice>> userModelMutableLiveData = new MutableLiveData<>();
 
         LocalDate today = LocalDate.now(clock);
 
-        List<WorkmateWhoMadeRestaurantChoice> usersWithRestaurant = new ArrayList<>();
+        List<UserWhoMadeRestaurantChoice> usersWithRestaurant = new ArrayList<>();
 
         db.collection(today.toString())
                 .addSnapshotListener((value, error) -> {
@@ -41,30 +41,30 @@ public class WorkmatesWhoMadeRestaurantChoiceRepository {
 
                     assert value != null;
                     for (DocumentChange document : value.getDocumentChanges()) {
-                        Log.d("pipo", "onEvent() called with: value = [" + document.getDocument().toObject(WorkmateWhoMadeRestaurantChoice.class) + "], error = [" + error + "]");
+                        Log.d("pipo", "onEvent() called with: value = [" + document.getDocument().toObject(UserWhoMadeRestaurantChoice.class) + "], error = [" + error + "]");
                         if (document.getType() == DocumentChange.Type.ADDED ) {
 
-                            usersWithRestaurant.add(document.getDocument().toObject(WorkmateWhoMadeRestaurantChoice.class));
+                            usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
 
                         }
 
                         else if (document.getType() == DocumentChange.Type.MODIFIED ) {
 
                             for (int i = 0; i < usersWithRestaurant.size(); i++) {
-                                if(usersWithRestaurant.get(i).getUserId().equals(document.getDocument().toObject(WorkmateWhoMadeRestaurantChoice.class).getUserId())){
+                                if(usersWithRestaurant.get(i).getUserId().equals(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class).getUserId())){
                                     usersWithRestaurant.remove(usersWithRestaurant.get(i));
                                 }
 
                             }
 
-                            usersWithRestaurant.add(document.getDocument().toObject(WorkmateWhoMadeRestaurantChoice.class));
+                            usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
 
                         }
 
                         else if(document.getType() == DocumentChange.Type.REMOVED){
 
 
-                            usersWithRestaurant.remove(document.getDocument().toObject(WorkmateWhoMadeRestaurantChoice.class));
+                            usersWithRestaurant.remove(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
 
                         }
 

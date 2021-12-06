@@ -13,7 +13,7 @@ import com.kardabel.go4lunch.databinding.ItemRestaurantBinding;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantRecyclerViewAdapter.ViewHolder> {
+public class RestaurantsRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantsRecyclerViewAdapter.ViewHolder> {
 
     private List<RestaurantsViewState> restaurantList = new ArrayList<>();
     private OnRestaurantItemClickListener onRestaurantItemClickListener;

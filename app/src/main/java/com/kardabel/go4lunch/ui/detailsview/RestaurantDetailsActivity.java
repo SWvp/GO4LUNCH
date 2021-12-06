@@ -43,7 +43,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         binding = RestaurantDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        DetailsRecyclerViewAdapter adapter = new DetailsRecyclerViewAdapter();
+        RestaurantDetailsRecyclerViewAdapter adapter = new RestaurantDetailsRecyclerViewAdapter();
 
         binding.detailRecyclerView.setAdapter(adapter);
         binding.detailRecyclerView.setLayoutManager(
@@ -86,9 +86,9 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         });
 
         // FEED THE ADAPTER IF NEEDED
-        restaurantDetailsViewModel.getWorkmatesLikeThisRestaurant().observe(this, new Observer<List<DetailsWorkmatesViewState>>() {
+        restaurantDetailsViewModel.getWorkmatesLikeThisRestaurant().observe(this, new Observer<List<RestaurantDetailsWorkmatesViewState>>() {
             @Override
-            public void onChanged(List<DetailsWorkmatesViewState> workMates) {
+            public void onChanged(List<RestaurantDetailsWorkmatesViewState> workMates) {
                 adapter.setWorkmatesListData(workMates);
             }
         });
