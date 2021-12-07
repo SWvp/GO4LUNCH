@@ -86,7 +86,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         });
 
         // FEED THE ADAPTER IF NEEDED
-        restaurantDetailsViewModel.getWorkmatesLikeThisRestaurant().observe(this, new Observer<List<RestaurantDetailsWorkmatesViewState>>() {
+        restaurantDetailsViewModel.getWorkmatesWhoChoseThisRestaurant().observe(this, new Observer<List<RestaurantDetailsWorkmatesViewState>>() {
             @Override
             public void onChanged(List<RestaurantDetailsWorkmatesViewState> workMates) {
                 adapter.setWorkmatesListData(workMates);

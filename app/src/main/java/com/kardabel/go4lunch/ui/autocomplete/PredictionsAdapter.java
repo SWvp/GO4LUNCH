@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.kardabel.go4lunch.R;
 
 public class PredictionsAdapter extends
-        ListAdapter<PredictionsViewState,
+        ListAdapter<PredictionViewState,
                 PredictionsAdapter.ViewHolder> {
 
     @NonNull
@@ -55,7 +55,7 @@ public class PredictionsAdapter extends
         }
 
         public void bind(
-                @NonNull final PredictionsViewState item,
+                @NonNull final PredictionViewState item,
                 @NonNull final OnPredictionItemClickedListener listener) {
 
             predictionText.setText(item.getPredictionDescription());
@@ -72,19 +72,19 @@ public class PredictionsAdapter extends
 
 
     // THIS CLASS ALLOW TO VERIFY THE LIST SUBMIT BY ACTIVITY, IF OLDER, THE LIST IS UPDATED BY NEW ONE
-    private static class PredictionsAdapterDiffCallBack extends DiffUtil.ItemCallback<PredictionsViewState> {
+    private static class PredictionsAdapterDiffCallBack extends DiffUtil.ItemCallback<PredictionViewState> {
 
         @Override
         public boolean areItemsTheSame(
-                @NonNull PredictionsViewState oldItem,
-                @NonNull PredictionsViewState newItem) {
+                @NonNull PredictionViewState oldItem,
+                @NonNull PredictionViewState newItem) {
             return false;
         }
 
         @Override
         public boolean areContentsTheSame(
-                @NonNull PredictionsViewState oldItem,
-                @NonNull PredictionsViewState newItem) {
+                @NonNull PredictionViewState oldItem,
+                @NonNull PredictionViewState newItem) {
             return false;
         }
     }

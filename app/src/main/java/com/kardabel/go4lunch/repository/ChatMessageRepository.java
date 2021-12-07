@@ -21,7 +21,7 @@ public class ChatMessageRepository {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public LiveData<List<ChatMessageModel>> getChatMessages(String mateId) {
+    public LiveData<List<ChatMessageModel>> getChatMessages(String workmateId) {
 
         String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
@@ -33,7 +33,7 @@ public class ChatMessageRepository {
         // CREATE A LIST OF USER TO SORT THEM
         List<String> ids = new ArrayList<>();
         ids.add(userId);
-        ids.add(mateId);
+        ids.add(workmateId);
         Collections.sort(ids);
 
         db.collection("chat")

@@ -1,13 +1,9 @@
 package com.kardabel.go4lunch.usecase;
 
-import android.location.Location;
-
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
-import com.kardabel.go4lunch.pojo.NearbySearchResults;
-import com.kardabel.go4lunch.pojo.RestaurantSearch;
+import com.kardabel.go4lunch.pojo.Restaurant;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 
@@ -27,7 +23,7 @@ public class GetNearbySearchResultsByIdUseCase {
     }
 
 
-    public LiveData<RestaurantSearch> invoke(String placeId) {
+    public LiveData<Restaurant> invoke(String placeId) {
         return Transformations.switchMap(locationRepository.getLocationLiveData(), input -> {
             String locationAsText = input.getLatitude() + "," + input.getLongitude();
             return Transformations.map(nearbySearchResponseRepository.getRestaurantListLiveData(
@@ -35,9 +31,9 @@ public class GetNearbySearchResultsByIdUseCase {
                     locationAsText,
                     "1000"),
                     nearbySearchResults -> {
-                        for (RestaurantSearch restaurantSearch : nearbySearchResults.getResults()) {
-                            if (restaurantSearch.getRestaurantId().equals(placeId)) {
-                                return restaurantSearch;
+                        for (Restaurant restaurant : nearbySearchResults.getResults()) {
+                            if (restaurant.getRestaurantId().equals(placeId)) {
+                                return restaurant;
 
                             }
                         }

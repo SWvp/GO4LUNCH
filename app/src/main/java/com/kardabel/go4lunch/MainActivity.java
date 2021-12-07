@@ -44,7 +44,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.ui.autocomplete.PredictionsAdapter;
-import com.kardabel.go4lunch.ui.autocomplete.PredictionsViewState;
+import com.kardabel.go4lunch.ui.autocomplete.PredictionViewState;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 import com.kardabel.go4lunch.ui.setting.SettingActivity;
 import com.kardabel.go4lunch.usecase.GetCurrentUserUseCase;
@@ -124,8 +124,6 @@ public class MainActivity extends AppCompatActivity implements
                         alertDialogBuilder.setTitle("WARNING");
                         alertDialogBuilder.setMessage(MainActivity.this.getString(R.string.rational));
                         alertDialogBuilder.show();
-
-
                         break;
                 }
             }
@@ -324,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements
     // CLEAR THE AUTOCOMPLETE ADAPTER WITH EMPTY LIST WHEN USER FINISHED HIS RESEARCH
     // TO CLEAN THE AUTOCOMPLETE RECYCLERVIEW
     private void initAutocomplete() {
-        List<PredictionsViewState> emptyList = new ArrayList<>();
+        List<PredictionViewState> emptyList = new ArrayList<>();
         adapter.submitList(emptyList);
     }
 

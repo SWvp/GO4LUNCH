@@ -1,13 +1,13 @@
 package com.kardabel.go4lunch.ui.autocomplete;
 
 
-public class PredictionsViewState {
+public class PredictionViewState {
 
     private final String predictionDescription;
     private final String predictionPlaceId;
     private final String predictionName;
 
-    public PredictionsViewState(
+    public PredictionViewState(
             String predictionDescription,
             String predictionPlaceId,
             String predictionName) {

@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 import java.util.Objects;
 
-public class RestaurantSearch {
+public class Restaurant {
 
     // RESULT FROM NEARBY SEARCH
 
@@ -54,26 +54,26 @@ public class RestaurantSearch {
     @Expose
     private String website;
 
-    public RestaurantSearch(){
+    public Restaurant(){
 
     }
 
-    public RestaurantSearch(String placeID){
+    public Restaurant(String placeID){
         this.restaurantId = placeID;
     }
 
 
-    public RestaurantSearch(String restaurantId,
-                            String restaurantName,
-                            String restaurantAddress,
-                            List<Photo> restaurantPhotos,
-                            Geometry restaurantGeometry,
-                            OpeningHours openingHours,
-                            double rating,
-                            int totalRatings,
-                            boolean permanentlyClosed,
-                            String formattedPhoneNumber,
-                            String website) {
+    public Restaurant(String restaurantId,
+                      String restaurantName,
+                      String restaurantAddress,
+                      List<Photo> restaurantPhotos,
+                      Geometry restaurantGeometry,
+                      OpeningHours openingHours,
+                      double rating,
+                      int totalRatings,
+                      boolean permanentlyClosed,
+                      String formattedPhoneNumber,
+                      String website) {
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.restaurantAddress = restaurantAddress;
@@ -118,7 +118,7 @@ public class RestaurantSearch {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RestaurantSearch that = (RestaurantSearch) o;
+        Restaurant that = (Restaurant) o;
         return Double.compare(that.rating, rating) == 0 &&
                 totalRatings == that.totalRatings &&
                 permanentlyClosed == that.permanentlyClosed &&

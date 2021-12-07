@@ -16,7 +16,7 @@ import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.OpeningHours;
 import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantLatLngLiteral;
-import com.kardabel.go4lunch.pojo.RestaurantSearch;
+import com.kardabel.go4lunch.pojo.Restaurant;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UserSearchRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
@@ -156,10 +156,10 @@ public class MapViewModelTest {
     String secondUserId = "Second_user_Id";
 
     // region IN
-    private List<RestaurantSearch> getDefaultRestaurants() {
-        List<RestaurantSearch> restaurants = new ArrayList<>();
+    private List<Restaurant> getDefaultRestaurants() {
+        List<Restaurant> restaurants = new ArrayList<>();
         restaurants.add(
-                new RestaurantSearch(
+                new Restaurant(
                         firstRestaurantId,
                         firstRestaurantName,
                         firstAddress,
@@ -174,7 +174,7 @@ public class MapViewModelTest {
                 )
         );
         restaurants.add(
-                new RestaurantSearch(
+                new Restaurant(
                         secondRestaurantId,
                         secondRestaurantName,
                         secondAddress,

@@ -63,13 +63,13 @@ public class ChatViewModel extends ViewModel {
     }
 
     private int isSender(String sender) {
-        int isSender = 1;
+        int senderType = 1;
         String userId = getCurrentUserIdUseCase.invoke();
         assert userId != null;
         if (userId.equals(sender)) {
-            isSender = 2;
+            senderType = 2;
         }
-        return isSender;
+        return senderType;
     }
 
     public LiveData<List<ChatViewState>> getChatMessages() {

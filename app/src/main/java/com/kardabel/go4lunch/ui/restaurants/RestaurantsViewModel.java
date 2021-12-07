@@ -17,7 +17,7 @@ import com.kardabel.go4lunch.pojo.OpeningHours;
 import com.kardabel.go4lunch.pojo.Periods;
 import com.kardabel.go4lunch.pojo.Photo;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
-import com.kardabel.go4lunch.pojo.RestaurantSearch;
+import com.kardabel.go4lunch.pojo.Restaurant;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UserSearchRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
@@ -322,7 +322,7 @@ public class RestaurantsViewModel extends ViewModel {
         List<RestaurantsViewState> restaurantList = new ArrayList<>();
 
 
-        for (RestaurantSearch restaurant : nearbySearchResults.getResults()) {
+        for (Restaurant restaurant : nearbySearchResults.getResults()) {
             for (int i = 0; i < restaurantDetailsResults.size(); i++) {
                 if (restaurantDetailsResults.get(i).getDetailsResult().getPlaceId().equals(restaurant.getRestaurantId())) {
 

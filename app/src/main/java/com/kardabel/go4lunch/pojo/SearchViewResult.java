@@ -6,10 +6,10 @@ import com.google.gson.annotations.SerializedName;
 public class SearchViewResult {
 
     @SerializedName("result")
-    private final RestaurantSearch result;
+    private final Restaurant result;
 
 
-    public SearchViewResult(RestaurantSearch result) { this.result = result; }
+    public SearchViewResult(Restaurant result) { this.result = result; }
 
-    public RestaurantSearch getSearchViewResult() { return result; }
+    public Restaurant getSearchViewResult() { return result; }
 }

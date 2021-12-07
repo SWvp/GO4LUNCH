@@ -38,7 +38,7 @@ public class WorkmatesViewModelTest {
 
     private final MutableLiveData<List<UserModel>> workmatesRepositoryMutableLiveData =
             new MutableLiveData<>();
-    private final MutableLiveData<List<UserWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceRepositoryMutableLiveData =
+    private final MutableLiveData<List<UserWhoMadeRestaurantChoice>> usersWhoMadeRestaurantChoiceRepositoryMutableLiveData =
             new MutableLiveData<>();
 
     private WorkMatesViewModel workMatesViewModel;
@@ -55,13 +55,13 @@ public class WorkmatesViewModelTest {
         Mockito.doReturn(workmatesRepositoryMutableLiveData)
                 .when(workmatesRepository)
                 .getWorkmates();
-        Mockito.doReturn(workmatesWhoMadeRestaurantChoiceRepositoryMutableLiveData)
+        Mockito.doReturn(usersWhoMadeRestaurantChoiceRepositoryMutableLiveData)
                 .when(mUsersWhoMadeRestaurantChoiceRepository)
                 .getWorkmatesWhoMadeRestaurantChoice();
 
         // SET LIVEDATA VALUES
         workmatesRepositoryMutableLiveData.setValue(workmates());
-        workmatesWhoMadeRestaurantChoiceRepositoryMutableLiveData.setValue(workmatesWhoMadeChoice());
+        usersWhoMadeRestaurantChoiceRepositoryMutableLiveData.setValue(workmatesWhoMadeChoice());
 
         // SET THE VIEW MODEL WITH THE MOCKED CLASS
         workMatesViewModel = new WorkMatesViewModel(
@@ -90,7 +90,7 @@ public class WorkmatesViewModelTest {
     @Test
     public void no_workmate_have_chose_restaurant_yet_should_display_only_has_not_decided_status() {
         // GIVEN
-        workmatesWhoMadeRestaurantChoiceRepositoryMutableLiveData.setValue(new ArrayList<>());
+        usersWhoMadeRestaurantChoiceRepositoryMutableLiveData.setValue(new ArrayList<>());
         // WHEN
         LiveDataTestUtils.observeForTesting(workMatesViewModel.getWorkmatesViewStateLiveData(), new LiveDataTestUtils.OnObservedListener<List<WorkMateViewState>>() {
             @Override

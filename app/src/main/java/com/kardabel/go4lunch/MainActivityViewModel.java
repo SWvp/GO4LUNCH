@@ -19,7 +19,7 @@ import com.kardabel.go4lunch.pojo.Predictions;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UserSearchRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
-import com.kardabel.go4lunch.ui.autocomplete.PredictionsViewState;
+import com.kardabel.go4lunch.ui.autocomplete.PredictionViewState;
 import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 import com.kardabel.go4lunch.util.PermissionsViewAction;
@@ -38,7 +38,7 @@ public class MainActivityViewModel extends ViewModel {
     private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository;
     private final GetCurrentUserIdUseCase getCurrentUserIdUseCase;
 
-    private final MediatorLiveData<List<PredictionsViewState>> predictionsMediatorLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<List<PredictionViewState>> predictionsMediatorLiveData = new MediatorLiveData<>();
     private final MediatorLiveData<MainActivityYourLunchViewState> mainActivityYourLunchViewStateMediatorLiveData = new MediatorLiveData<>();
 
     private final SingleLiveEvent<PermissionsViewAction> actionSingleLiveEvent = new SingleLiveEvent<>();
@@ -81,14 +81,13 @@ public class MainActivityViewModel extends ViewModel {
 
     }
 
-    // WHEN CLICKING ON SEARCHVIEW WE PASSED THE TEXT TO USE CASE AND THEN OBSERVE IT
+    // WHEN CLICKING ON SEARCH VIEW WE PASSED THE TEXT TO USE CASE AND THEN OBSERVE IT
     public void sendTextToAutocomplete(String text) {
         LiveData<Predictions> predictionsLiveData = getPredictionsUseCase.invoke(text);
         predictionsMediatorLiveData.addSource(predictionsLiveData, this::combine);
 
     }
 
-    // IN CASE WE ADD A SOURCE
     private void combine(Predictions predictions) {
         if (predictions != null) {
             predictionsMediatorLiveData.setValue(map(predictions));
@@ -96,12 +95,12 @@ public class MainActivityViewModel extends ViewModel {
     }
 
     // MAP THE PREDICTIONS RESULT TO VIEW STATE
-    private List<PredictionsViewState> map(Predictions predictions) {
+    private List<PredictionViewState> map(Predictions predictions) {
 
-        List<PredictionsViewState> predictionsList = new ArrayList<>();
+        List<PredictionViewState> predictionsList = new ArrayList<>();
 
         for (Prediction prediction : predictions.getPredictions()) {
-            predictionsList.add(new PredictionsViewState(
+            predictionsList.add(new PredictionViewState(
                     prediction.getDescription(),
                     prediction.getPlaceId(),
                     prediction.getStructuredFormatting().getName()
@@ -124,7 +123,7 @@ public class MainActivityViewModel extends ViewModel {
 
         String currentUserId = getCurrentUserIdUseCase.invoke();
         MainActivityYourLunchViewState yourLunch = new MainActivityYourLunchViewState(
-                "no current user restaurant choice",
+                application.getString(R.string.no_current_user_restaurant_choice),
                 0
         );
 
@@ -155,7 +154,7 @@ public class MainActivityViewModel extends ViewModel {
 
     }
 
-    public LiveData<List<PredictionsViewState>> getPredictionsLiveData() {
+    public LiveData<List<PredictionViewState>> getPredictionsLiveData() {
         return predictionsMediatorLiveData;
 
     }

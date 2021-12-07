@@ -8,13 +8,16 @@ import java.util.List;
 public class RestaurantDetailsResult {
 
     @SerializedName("result")
-       private final RestaurantDetails result;
+    private final RestaurantDetails result;
 
 
-    public RestaurantDetailsResult(RestaurantDetails result) { this.result = result; }
+    public RestaurantDetailsResult(RestaurantDetails result) {
+        this.result = result;
+    }
 
-    public RestaurantDetails getDetailsResult() { return result; }
-
+    public RestaurantDetails getDetailsResult() {
+        return result;
+    }
 
 
 }

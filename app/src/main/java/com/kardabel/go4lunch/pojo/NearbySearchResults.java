@@ -10,10 +10,10 @@ public class NearbySearchResults {
     // ADD EACH RESTAURANTS SEARCH IN A LIST
     @SerializedName("results")
     @Expose
-    private final List<RestaurantSearch> results;
+    private final List<Restaurant> results;
 
-    public NearbySearchResults(List<RestaurantSearch> results) { this.results = results; }
+    public NearbySearchResults(List<Restaurant> results) { this.results = results; }
 
-    public List<RestaurantSearch> getResults() { return results; }
+    public List<Restaurant> getResults() { return results; }
 
 }
