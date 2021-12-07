@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.ui.chat;
 
+import java.util.Objects;
+
 public class ChatViewState {
 
     private final String chatMessageViewState;
@@ -22,5 +24,28 @@ public class ChatViewState {
 
     public Long getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChatViewState that = (ChatViewState) o;
+        return isSender == that.isSender && Objects.equals(chatMessageViewState, that.chatMessageViewState) && Objects.equals(chatMessageTimeViewState, that.chatMessageTimeViewState) && Objects.equals(timestamp, that.timestamp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(chatMessageViewState, isSender, chatMessageTimeViewState, timestamp);
+    }
+
+    @Override
+    public String toString() {
+        return "ChatViewState{" +
+                "chatMessageViewState='" + chatMessageViewState + '\'' +
+                ", isSender=" + isSender +
+                ", chatMessageTimeViewState='" + chatMessageTimeViewState + '\'' +
+                ", timestamp=" + timestamp +
+                '}';
     }
 }
