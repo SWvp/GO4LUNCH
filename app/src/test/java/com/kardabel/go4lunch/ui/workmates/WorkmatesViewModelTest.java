@@ -206,22 +206,6 @@ public class WorkmatesViewModelTest {
     private List<WorkMateViewState> getDefaultWorkmatesViewState() {
         List<WorkMateViewState> workMateViewStates = new ArrayList<>();
         workMateViewStates.add(new WorkMateViewState(
-                firstUserName,
-                firstUserName + " "  + hasNotDecidedYet,
-                firstAvatar,
-                firstUserId,
-                false,
-                gray
-        ));
-        workMateViewStates.add(new WorkMateViewState(
-                secondUserName,
-                secondUserName + " "  + hasNotDecidedYet,
-                secondAvatar,
-                secondUserId,
-                false,
-                gray
-        ));
-        workMateViewStates.add(new WorkMateViewState(
                 thirdUserName,
                 thirdUserName + " "  + "(" + firstRestaurantName + ")",
                 thirdAvatar,
@@ -236,6 +220,22 @@ public class WorkmatesViewModelTest {
                 fourthUserId,
                 true,
                 black
+        ));
+        workMateViewStates.add(new WorkMateViewState(
+                firstUserName,
+                firstUserName + " "  + hasNotDecidedYet,
+                firstAvatar,
+                firstUserId,
+                false,
+                gray
+        ));
+        workMateViewStates.add(new WorkMateViewState(
+                secondUserName,
+                secondUserName + " "  + hasNotDecidedYet,
+                secondAvatar,
+                secondUserId,
+                false,
+                gray
         ));
         return workMateViewStates;
     }

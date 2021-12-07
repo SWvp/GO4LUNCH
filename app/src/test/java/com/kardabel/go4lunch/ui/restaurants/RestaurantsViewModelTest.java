@@ -28,6 +28,7 @@ import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UserSearchRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
 
 import org.junit.Before;
@@ -53,22 +54,18 @@ public class RestaurantsViewModelTest {
     @Rule
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
+    private final Application application =
+            Mockito.mock(Application.class);
     private final LocationRepository locationRepository =
             Mockito.mock(LocationRepository.class);
+    private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase =
+            Mockito.mock(GetNearbySearchResultsUseCase.class);
+    private final GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase =
+            Mockito.mock(GetRestaurantDetailsResultsUseCase.class);
     private final UsersWhoMadeRestaurantChoiceRepository usersWhoMadeRestaurantChoiceRepository =
             Mockito.mock(UsersWhoMadeRestaurantChoiceRepository.class);
     private final UserSearchRepository userSearchRepository =
             Mockito.mock(UserSearchRepository.class);
-
-    private final com.kardabel.go4lunch.usecase.getNearbySearchResultsUseCase getNearbySearchResultsUseCase =
-            Mockito.mock(com.kardabel.go4lunch.usecase.getNearbySearchResultsUseCase.class);
-    private final GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase =
-            Mockito.mock(GetRestaurantDetailsResultsUseCase.class);
-
-    private final Application application =
-            Mockito.mock(Application.class);
-    private final Location location =
-            Mockito.mock(Location.class);
     private final Clock clock = Clock.fixed(
             LocalDateTime
                     .of(
@@ -96,6 +93,8 @@ public class RestaurantsViewModelTest {
                     .toInstant(ZoneOffset.UTC),
             ZoneOffset.UTC
     );
+    private final Location location =
+            Mockito.mock(Location.class);
 
     private final MutableLiveData<Location> locationMutableLiveData =
             new MutableLiveData<>();

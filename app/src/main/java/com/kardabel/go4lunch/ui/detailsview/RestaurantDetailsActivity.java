@@ -107,12 +107,12 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             }
         });
 
-        // CALL THE RESTAURANT
+         // CALL THE RESTAURANT
         binding.callIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (restaurantPhoneNumber) {
-                    case "0":
+                    case "no phone number":
                         Toast.makeText(RestaurantDetailsActivity.this, "This restaurant doesn't have phone number", Toast.LENGTH_SHORT).show();
                         break;
                     default:

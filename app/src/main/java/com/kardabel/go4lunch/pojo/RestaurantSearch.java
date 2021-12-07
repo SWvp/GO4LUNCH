@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class RestaurantSearch {
 
-    // TEMPLATE CLASS FOR RESTAURANT FIRST DATA WE ARE GOING TO PARSE
+    // RESULT FROM NEARBY SEARCH
 
     @SerializedName("place_id")
     @Expose

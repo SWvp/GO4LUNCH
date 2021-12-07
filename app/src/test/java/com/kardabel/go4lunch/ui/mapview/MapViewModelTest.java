@@ -21,6 +21,7 @@ import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UserSearchRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,8 +43,8 @@ public class MapViewModelTest {
 
     private final LocationRepository locationRepository =
             Mockito.mock(LocationRepository.class);
-    private final com.kardabel.go4lunch.usecase.getNearbySearchResultsUseCase getNearbySearchResultsUseCase =
-            Mockito.mock(com.kardabel.go4lunch.usecase.getNearbySearchResultsUseCase.class);
+    private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase =
+            Mockito.mock(GetNearbySearchResultsUseCase.class);
     private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository =
             Mockito.mock(UsersWhoMadeRestaurantChoiceRepository.class);
     private final UserSearchRepository mUserSearchRepository =

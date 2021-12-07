@@ -21,7 +21,7 @@ import com.kardabel.go4lunch.pojo.RestaurantSearch;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UserSearchRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
-import com.kardabel.go4lunch.usecase.getNearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsUseCase;
 
 import java.time.Clock;
@@ -44,7 +44,7 @@ public class RestaurantsViewModel extends ViewModel {
     public RestaurantsViewModel(
             @NonNull Application application,
             @NonNull LocationRepository locationRepository,
-            @NonNull getNearbySearchResultsUseCase getNearbySearchResultsUseCase,
+            @NonNull GetNearbySearchResultsUseCase getNearbySearchResultsUseCase,
             @NonNull GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase,
             @NonNull UsersWhoMadeRestaurantChoiceRepository usersWhoMadeRestaurantChoiceRepository,
             @NonNull UserSearchRepository userSearchRepository,
@@ -99,12 +99,13 @@ public class RestaurantsViewModel extends ViewModel {
                         userWithFavoriteRestaurants,
                         usersSearchLiveData.getValue()));
 
-        restaurantsWrapperViewStateMediatorLiveData.addSource(usersSearchLiveData, usersSearch -> RestaurantsViewModel.this.combine(
-                nearbySearchResultsLiveData.getValue(),
-                restaurantsDetailsResultLiveData.getValue(),
-                locationLiveData.getValue(),
-                workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
-                usersSearch));
+        restaurantsWrapperViewStateMediatorLiveData.addSource(usersSearchLiveData, usersSearch ->
+                combine(
+                        nearbySearchResultsLiveData.getValue(),
+                        restaurantsDetailsResultLiveData.getValue(),
+                        locationLiveData.getValue(),
+                        workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
+                        usersSearch));
     }
 
     private void combine(@Nullable NearbySearchResults nearbySearchResults,
@@ -525,14 +526,14 @@ public class RestaurantsViewModel extends ViewModel {
 
     // GET LOCATION DISTANCE FROM USER TO RESTAURANT
     private int distance(Location userLocation, double lat, double lng) {
-            float[] results = new float[1];
-            Location.distanceBetween(
-                    userLocation.getLatitude(),
-                    userLocation.getLongitude(),
-                    lat,
-                    lng,
-                    results);
-            return (int) results[0];
+        float[] results = new float[1];
+        Location.distanceBetween(
+                userLocation.getLatitude(),
+                userLocation.getLongitude(),
+                lat,
+                lng,
+                results);
+        return (int) results[0];
 
     }
 
@@ -671,7 +672,7 @@ public class RestaurantsViewModel extends ViewModel {
     // TEXT COLOR RESOURCE
     private int getTextColor(String openingHours) {
         int textColor = Color.GRAY;
-        if(openingHours.equals(application.getString(R.string.closing_soon))){
+        if (openingHours.equals(application.getString(R.string.closing_soon))) {
             textColor = Color.RED;
         }
         return textColor;

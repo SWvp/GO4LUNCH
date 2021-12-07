@@ -14,7 +14,7 @@ import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UserSearchRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
-import com.kardabel.go4lunch.usecase.getNearbySearchResultsUseCase;
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class MapViewModel extends ViewModel {
     private final MediatorLiveData<MapViewState> mapViewStatePoiMediatorLiveData = new MediatorLiveData<>();
 
     public MapViewModel(@NonNull LocationRepository locationRepository,
-                        @NonNull getNearbySearchResultsUseCase getNearbySearchResultsUseCase,
+                        @NonNull GetNearbySearchResultsUseCase getNearbySearchResultsUseCase,
                         @NonNull UsersWhoMadeRestaurantChoiceRepository usersWhoMadeRestaurantChoiceRepository,
                         @NonNull UserSearchRepository userSearchRepository) {
 
