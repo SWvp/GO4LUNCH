@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.kardabel.go4lunch.BuildConfig;
 import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
@@ -32,7 +33,7 @@ public class NearbySearchResponseRepository {
     public LiveData<NearbySearchResults> getRestaurantListLiveData(String type,
                                                                    String location,
                                                                    String radius){
-        String key = application.getString(R.string.google_map_key);
+        String key = BuildConfig.GOOGLE_PLACES_KEY;
 
         MutableLiveData<NearbySearchResults> NearbySearchResultsMutableLiveData = new MutableLiveData<>();
 

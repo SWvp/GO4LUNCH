@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.kardabel.go4lunch.BuildConfig;
 import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
@@ -421,7 +422,7 @@ public class RestaurantsViewModel extends ViewModel {
                             + application.getString(R.string.photo_reference)
                             + photo.getPhotoReference()
                             + application.getString(R.string.and_key)
-                            + application.getString(R.string.google_map_key);
+                            + BuildConfig.GOOGLE_PLACES_KEY;
 
                 }
             }

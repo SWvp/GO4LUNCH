@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">GO4LUNCH</string>
 
-    <!-- GOOGLE MAP API KEY -->
-    <string name="google_map_key">1234</string>
-
     <!-- RATIONAL SENTENCE -->
     <string name="rational">if you want to take full advantage of GO4LUNCH, please closed your app, select appInfo and go to permissions, then allow GO4LUNCH to access to your location. Reload GO4LUNCH, enjoy your lunch, thank you !</string>
 

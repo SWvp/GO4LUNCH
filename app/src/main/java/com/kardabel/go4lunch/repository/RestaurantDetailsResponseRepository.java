@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.kardabel.go4lunch.BuildConfig;
 import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
@@ -32,7 +33,7 @@ public class RestaurantDetailsResponseRepository {
 
     public LiveData<RestaurantDetailsResult> getRestaurantDetailsLiveData(String place_id) {
 
-        String key = application.getString(R.string.google_map_key);
+        String key = BuildConfig.GOOGLE_PLACES_KEY;
         String FIELDS = application.getString(R.string.restaurant_details_fields);
 
         MutableLiveData<RestaurantDetailsResult> placeDetailsResultMutableLiveData = new MutableLiveData<>();
