@@ -94,6 +94,14 @@
     <string name="left_bracket">(</string>
     <string name="right_bracket">)</string>
 
+    <!-- RESTAURANT DETAILS VIEW MODEL -->
+    <string name="phone_number_unavailable">Phone number unavailable</string>
+    <string name="website_unavailable">https://www.google.com/</string>
+    <string name="is_joining">is joining !</string>
+
+    <!-- MAIN ACTIVITY VIEW MODEL -->
+    <string name="no_current_user_restaurant_choice">No current user restaurant choice</string>
+
 
 
 
