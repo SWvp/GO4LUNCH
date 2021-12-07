@@ -14,7 +14,10 @@ public class Predictions {
     @Expose
     private String status;
 
-
+    public Predictions(List<Prediction> prediction, String status) {
+        this.predictions = prediction;
+        this.status = status;
+    }
 
 
     public List<Prediction> getPredictions() {
