@@ -27,6 +27,8 @@ import com.kardabel.go4lunch.repository.FavoriteRestaurantsRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
+import com.kardabel.go4lunch.usecase.ClickOnChoseRestaurantButtonUseCase;
+import com.kardabel.go4lunch.usecase.ClickOnFavoriteRestaurantUseCase;
 import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsByIdUseCase;
 import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsByIdUseCase;
@@ -60,6 +62,10 @@ public class RestaurantDetailsViewModelTest {
             Mockito.mock(FavoriteRestaurantsRepository.class);
     private final GetCurrentUserIdUseCase getCurrentUserIdUseCase =
             Mockito.mock(GetCurrentUserIdUseCase.class);
+    private final ClickOnChoseRestaurantButtonUseCase clickOnChoseRestaurantButtonUseCase =
+            Mockito.mock(ClickOnChoseRestaurantButtonUseCase.class);
+    private final ClickOnFavoriteRestaurantUseCase clickOnFavoriteRestaurantUseCase =
+            Mockito.mock(ClickOnFavoriteRestaurantUseCase.class);
 
     private final MutableLiveData<Restaurant> restaurantLiveData =
             new MutableLiveData<>();
@@ -124,7 +130,9 @@ public class RestaurantDetailsViewModelTest {
                 usersWhoMadeRestaurantChoiceRepository,
                 workmatesRepository,
                 favoriteRestaurantsRepository,
-                getCurrentUserIdUseCase
+                getCurrentUserIdUseCase,
+                clickOnChoseRestaurantButtonUseCase,
+                clickOnFavoriteRestaurantUseCase
         );
     }
 

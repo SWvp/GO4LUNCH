@@ -15,26 +15,37 @@ import java.util.Objects;
 
 public class ClickOnFavoriteRestaurantUseCase {
 
-    public static CollectionReference getDayCollection() {
-        return FirebaseFirestore.getInstance().collection("users");
+    private final FirebaseFirestore firebaseFirestore;
+
+    public static final String USERS = "users";
+    public static final String FAVORITE_RESTAURANTS = "favorite restaurants";
+    public static final String RESTAURANT_NAME = "restaurantName";
+    public static final String RESTAURANT_ID = "restaurantId";
+
+    public ClickOnFavoriteRestaurantUseCase(FirebaseFirestore firebaseFirestore) {
+        this.firebaseFirestore = firebaseFirestore;
+
+    }
+
+    public  CollectionReference getDayCollection() {
+        return firebaseFirestore.collection(USERS);
     }
 
     // WHEN FAVORITE ICON FROM DETAIL VIEW IS CLICKED,
     // ADD OR REMOVE THE RESTAURANT FROM THE LIST (DOCUMENT IN FIRESTORE) OF USER'S FAVORITE
-    public static void onFavoriteRestaurantClick(
+    public void onFavoriteRestaurantClick(
             String restaurantId,
             String restaurantName) {
 
         String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         Map<String, Object> favoriteRestaurant = new HashMap<>();
-        favoriteRestaurant.put("restaurantId", restaurantId);
-        favoriteRestaurant.put("restaurantName", restaurantName);
+        favoriteRestaurant.put(RESTAURANT_ID, restaurantId);
+        favoriteRestaurant.put(RESTAURANT_NAME, restaurantName);
 
-        assert userId != null;
         getDayCollection()
                 .document(userId)
-                .collection("favorite restaurants")
+                .collection(FAVORITE_RESTAURANTS)
                 .document(restaurantId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

@@ -26,6 +26,8 @@ import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
 import com.kardabel.go4lunch.usecase.AddChatMessageToFirestoreUseCase;
+import com.kardabel.go4lunch.usecase.ClickOnChoseRestaurantButtonUseCase;
+import com.kardabel.go4lunch.usecase.ClickOnFavoriteRestaurantUseCase;
 import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsByIdUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
@@ -57,6 +59,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final GetPredictionsUseCase getPredictionsUseCase;
     private final GetCurrentUserIdUseCase getCurrentUserIdUseCase;
     private final AddChatMessageToFirestoreUseCase addChatMessageToFirestoreUseCase;
+    private final ClickOnChoseRestaurantButtonUseCase clickOnChoseRestaurantButtonUseCase;
+    private final ClickOnFavoriteRestaurantUseCase clickOnFavoriteRestaurantUseCase;
 
     public static ViewModelFactory getInstance() {
         if (factory == null) {
@@ -113,6 +117,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                 autocompleteRepository);
         this.getCurrentUserIdUseCase = new GetCurrentUserIdUseCase();
         this.addChatMessageToFirestoreUseCase = new AddChatMessageToFirestoreUseCase(firebaseFirestore);
+        this.clickOnChoseRestaurantButtonUseCase = new ClickOnChoseRestaurantButtonUseCase(firebaseFirestore, Clock.systemDefaultZone());
+        this.clickOnFavoriteRestaurantUseCase = new ClickOnFavoriteRestaurantUseCase(firebaseFirestore);
     }
 
 
@@ -152,7 +158,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     mUsersWhoMadeRestaurantChoiceRepository,
                     workmatesRepository,
                     favoriteRestaurantsRepository,
-                    getCurrentUserIdUseCase);
+                    getCurrentUserIdUseCase,
+                    clickOnChoseRestaurantButtonUseCase,
+                    clickOnFavoriteRestaurantUseCase);
         } else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
             return (T) new WorkMatesViewModel(
                     application,

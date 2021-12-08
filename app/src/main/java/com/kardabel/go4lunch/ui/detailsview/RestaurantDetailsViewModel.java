@@ -44,6 +44,10 @@ public class RestaurantDetailsViewModel extends ViewModel {
     private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository;
     @NonNull
     private final GetCurrentUserIdUseCase getCurrentUserIdUseCase;
+    @NonNull
+    private final ClickOnChoseRestaurantButtonUseCase clickOnChoseRestaurantButtonUseCase;
+    @NonNull
+    private final ClickOnFavoriteRestaurantUseCase clickOnFavoriteRestaurantUseCase;
 
     private final MediatorLiveData<RestaurantDetailsViewState> restaurantDetailsViewStateMediatorLiveData = new MediatorLiveData<>();
     private final MediatorLiveData<List<RestaurantDetailsWorkmatesViewState>> workmatesLikeThisRestaurantMediatorLiveData = new MediatorLiveData<>();
@@ -54,7 +58,9 @@ public class RestaurantDetailsViewModel extends ViewModel {
                                       @NonNull UsersWhoMadeRestaurantChoiceRepository usersWhoMadeRestaurantChoiceRepository,
                                       @NonNull WorkmatesRepository workmatesRepository,
                                       @NonNull FavoriteRestaurantsRepository favoriteRestaurantsRepository,
-                                      @NonNull GetCurrentUserIdUseCase getCurrentUserIdUseCase) {
+                                      @NonNull GetCurrentUserIdUseCase getCurrentUserIdUseCase,
+                                      @NonNull ClickOnChoseRestaurantButtonUseCase clickOnChoseRestaurantButtonUseCase,
+                                      @NonNull ClickOnFavoriteRestaurantUseCase clickOnFavoriteRestaurantUseCase) {
 
         this.application = application;
         this.getNearbySearchResultsByIdUseCase = getNearbySearchResultsByIdUseCase;
@@ -63,6 +69,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
         this.workmatesRepository = workmatesRepository;
         this.favoriteRestaurantsRepository = favoriteRestaurantsRepository;
         this.getCurrentUserIdUseCase = getCurrentUserIdUseCase;
+        this.clickOnChoseRestaurantButtonUseCase = clickOnChoseRestaurantButtonUseCase;
+        this.clickOnFavoriteRestaurantUseCase = clickOnFavoriteRestaurantUseCase;
 
     }
 
@@ -81,43 +89,53 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
         // OBSERVERS FOR RESTAURANT DETAILS
 
-        restaurantDetailsViewStateMediatorLiveData.addSource(restaurantLiveData, restaurant -> combine(
-                restaurant,
-                workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
-                restaurantDetailsLiveData.getValue(),
-                favoriteRestaurantsLiveData.getValue()));
+        restaurantDetailsViewStateMediatorLiveData.addSource(restaurantLiveData, restaurant ->
+                combine(
+                        restaurant,
+                        workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
+                        restaurantDetailsLiveData.getValue(),
+                        favoriteRestaurantsLiveData.getValue()));
 
-        restaurantDetailsViewStateMediatorLiveData.addSource(workmatesWhoMadeRestaurantChoiceLiveData, workmatesWithFavoriteRestaurant -> combine(
-                restaurantLiveData.getValue(),
-                workmatesWithFavoriteRestaurant,
-                restaurantDetailsLiveData.getValue(),
-                favoriteRestaurantsLiveData.getValue()));
+        restaurantDetailsViewStateMediatorLiveData.addSource(workmatesWhoMadeRestaurantChoiceLiveData, workmatesWithFavoriteRestaurant ->
+                combine(
+                        restaurantLiveData.getValue(),
+                        workmatesWithFavoriteRestaurant,
+                        restaurantDetailsLiveData.getValue(),
+                        favoriteRestaurantsLiveData.getValue()));
 
-        restaurantDetailsViewStateMediatorLiveData.addSource(restaurantDetailsLiveData, restaurantDetailsResults -> combine(
-                restaurantLiveData.getValue(),
-                workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
-                restaurantDetailsResults,
-                favoriteRestaurantsLiveData.getValue()));
+        restaurantDetailsViewStateMediatorLiveData.addSource(restaurantDetailsLiveData, restaurantDetailsResults ->
+                combine(
+                        restaurantLiveData.getValue(),
+                        workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
+                        restaurantDetailsResults,
+                        favoriteRestaurantsLiveData.getValue()));
 
-        restaurantDetailsViewStateMediatorLiveData.addSource(favoriteRestaurantsLiveData, favoriteRestaurants -> combine(
-                restaurantLiveData.getValue(),
-                workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
-                restaurantDetailsLiveData.getValue(),
-                favoriteRestaurants));
+        restaurantDetailsViewStateMediatorLiveData.addSource(favoriteRestaurantsLiveData, favoriteRestaurants ->
+                combine(
+                        restaurantLiveData.getValue(),
+                        workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
+                        restaurantDetailsLiveData.getValue(),
+                        favoriteRestaurants));
 
 
         // OBSERVERS FOR WORKMATES RECYCLERVIEW
 
-        workmatesLikeThisRestaurantMediatorLiveData.addSource(restaurantLiveData, restaurantSearch -> combineWorkmates(restaurantSearch, workmatesWhoMadeRestaurantChoiceLiveData.getValue(), workMatesLiveData.getValue()));
-        workmatesLikeThisRestaurantMediatorLiveData.addSource(workmatesWhoMadeRestaurantChoiceLiveData, userWithFavoriteRestaurants -> combineWorkmates(
-                restaurantLiveData.getValue(),
-                userWithFavoriteRestaurants,
-                workMatesLiveData.getValue()));
+        workmatesLikeThisRestaurantMediatorLiveData.addSource(restaurantLiveData, restaurantSearch ->
+                combineWorkmates(
+                        restaurantSearch,
+                        workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
+                        workMatesLiveData.getValue()));
+        workmatesLikeThisRestaurantMediatorLiveData.addSource(workmatesWhoMadeRestaurantChoiceLiveData, userWithFavoriteRestaurants ->
+                combineWorkmates(
+                        restaurantLiveData.getValue(),
+                        userWithFavoriteRestaurants,
+                        workMatesLiveData.getValue()));
 
-        workmatesLikeThisRestaurantMediatorLiveData.addSource(workMatesLiveData, userModels -> RestaurantDetailsViewModel.this.combineWorkmates(
-                restaurantLiveData.getValue(),
-                workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
-                userModels));
+        workmatesLikeThisRestaurantMediatorLiveData.addSource(workMatesLiveData, userModels ->
+                combineWorkmates(
+                        restaurantLiveData.getValue(),
+                        workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
+                        userModels));
 
     }
 
@@ -330,13 +348,13 @@ public class RestaurantDetailsViewModel extends ViewModel {
 
     // CLICK ON THE CHOSE FAB
     public void onChoseRestaurantButtonClick(String restaurantId, String restaurantName) {
-        ClickOnChoseRestaurantButtonUseCase.onRestaurantSelectedClick(restaurantId, restaurantName);
+        clickOnChoseRestaurantButtonUseCase.onRestaurantSelectedClick(restaurantId, restaurantName);
 
     }
 
     // CLICK ON THE FAVORITE ICON
     public void onFavoriteIconClick(String restaurantId, String restaurantName) {
-        ClickOnFavoriteRestaurantUseCase.onFavoriteRestaurantClick(restaurantId, restaurantName);
+        clickOnFavoriteRestaurantUseCase.onFavoriteRestaurantClick(restaurantId, restaurantName);
 
     }
 

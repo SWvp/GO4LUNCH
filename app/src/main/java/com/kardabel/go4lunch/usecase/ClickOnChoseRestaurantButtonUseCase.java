@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,14 +13,24 @@ import java.util.Objects;
 
 public class ClickOnChoseRestaurantButtonUseCase {
 
-    public static CollectionReference getDayCollection() {
-        return FirebaseFirestore.getInstance().collection(LocalDate.now().toString());
+    private final FirebaseFirestore firebaseFirestore;
+    private final Clock clock;
+
+    public ClickOnChoseRestaurantButtonUseCase(FirebaseFirestore firebaseFirestore,
+                                               Clock clock) {
+        this.firebaseFirestore = firebaseFirestore;
+        this.clock = clock;
+
+    }
+
+    public CollectionReference getDayCollection() {
+        return FirebaseFirestore.getInstance().collection(LocalDate.now(clock).toString());
     }
 
     // CHECK IF USER HAVE ALREADY SET THE CHOSEN RESTAURANT,
     // IF YES, JUST DELETE,
     // IF NO, DELETE OLD ONE AND CREATE A NEW CHOSEN RESTAURANT
-    public static void onRestaurantSelectedClick(
+    public void onRestaurantSelectedClick(
             String restaurantId,
             String restaurantName) {
 
