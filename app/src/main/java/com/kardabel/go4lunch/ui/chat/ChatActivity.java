@@ -95,7 +95,7 @@ public class ChatActivity extends AppCompatActivity {
                         if (!Objects.requireNonNull(binding.chatMessageEditText.getText()).toString().isEmpty()) {
                             String message = binding.chatMessageEditText.getText().toString();
                             // TODO : envoyer tout ça à un usecase ou un repo
-                            AddChatMessageToFirestoreUseCase.createChatMessage(message, intent.getStringExtra(WORKMATE_ID));
+                            chatViewModel.createChatMessage(message, intent.getStringExtra(WORKMATE_ID));
                             binding.chatMessageEditText.getText().clear();
                             hideSoftKeyboard(ChatActivity.this);
 

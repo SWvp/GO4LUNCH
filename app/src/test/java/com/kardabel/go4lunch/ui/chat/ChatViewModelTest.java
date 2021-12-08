@@ -1,8 +1,6 @@
 package com.kardabel.go4lunch.ui.chat;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
@@ -10,7 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.kardabel.go4lunch.model.ChatMessageModel;
 import com.kardabel.go4lunch.repository.ChatMessageRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
-import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModelTest;
+import com.kardabel.go4lunch.usecase.AddChatMessageToFirestoreUseCase;
 import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 
 import org.junit.Before;
@@ -23,8 +21,8 @@ import java.util.List;
 
 public class ChatViewModelTest {
 
-    private String workmateId = "workmate_Id";
-    private String currentUserId = "current_User_Id";
+    private final String workmateId = "workmate_Id";
+    private final String currentUserId = "current_User_Id";
 
     @Rule
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -33,6 +31,8 @@ public class ChatViewModelTest {
             Mockito.mock(ChatMessageRepository.class);
     private final GetCurrentUserIdUseCase getCurrentUserIdUseCase =
             Mockito.mock(GetCurrentUserIdUseCase.class);
+    private final AddChatMessageToFirestoreUseCase addChatMessageToFirestoreUseCase =
+            Mockito.mock(AddChatMessageToFirestoreUseCase.class);
 
     private final MutableLiveData<List<ChatMessageModel>>  chatMessagesLiveData =
             new MutableLiveData<>();
@@ -56,7 +56,8 @@ public class ChatViewModelTest {
 
         chatViewModel = new ChatViewModel(
                 chatMessageRepository,
-                getCurrentUserIdUseCase
+                getCurrentUserIdUseCase,
+                addChatMessageToFirestoreUseCase
         );
     }
 
@@ -64,17 +65,12 @@ public class ChatViewModelTest {
     public void retrieveChatMessages(){
         // WHEN
         chatViewModel.init(workmateId);
-        LiveDataTestUtils.observeForTesting(chatViewModel.getChatMessages(), new LiveDataTestUtils.OnObservedListener<List<ChatViewState>>() {
-            @Override
-            public void onObserved(List<ChatViewState> chatMessages) {
-                // THEN
-                assertEquals(ChatViewModelTest.this.getDefaultChatMessagesViewState(), chatMessages);
+        LiveDataTestUtils.observeForTesting(chatViewModel.getChatMessages(), chatMessages -> {
+            // THEN
+            assertEquals(ChatViewModelTest.this.getDefaultChatMessagesViewState(), chatMessages);
 
-            }
         });
     }
-
-
 
     // region IN
 
@@ -184,5 +180,4 @@ public class ChatViewModelTest {
     }
 
     // endregion
-
 }

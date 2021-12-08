@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.kardabel.go4lunch.model.ChatMessageModel;
 import com.kardabel.go4lunch.repository.ChatMessageRepository;
+import com.kardabel.go4lunch.usecase.AddChatMessageToFirestoreUseCase;
 import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 
 import java.util.ArrayList;
@@ -19,13 +20,17 @@ public class ChatViewModel extends ViewModel {
     @NonNull
     private final ChatMessageRepository chatMessageRepository;
     private final GetCurrentUserIdUseCase getCurrentUserIdUseCase;
+    private final AddChatMessageToFirestoreUseCase addChatMessageToFirestoreUseCase;
 
     private final MediatorLiveData<List<ChatViewState>> chatMessagesMediatorLiveData = new MediatorLiveData<>();
 
     public ChatViewModel(@NonNull ChatMessageRepository chatMessageRepository,
-                         @NonNull GetCurrentUserIdUseCase getCurrentUserIdUseCase) {
+                         @NonNull GetCurrentUserIdUseCase getCurrentUserIdUseCase,
+                         @NonNull AddChatMessageToFirestoreUseCase addChatMessageToFirestoreUseCase) {
+
         this.chatMessageRepository = chatMessageRepository;
         this.getCurrentUserIdUseCase = getCurrentUserIdUseCase;
+        this.addChatMessageToFirestoreUseCase = addChatMessageToFirestoreUseCase;
 
     }
 
@@ -70,6 +75,10 @@ public class ChatViewModel extends ViewModel {
             senderType = 2;
         }
         return senderType;
+    }
+
+    public void createChatMessage(String message, String workmateId) {
+        addChatMessageToFirestoreUseCase.createChatMessage(message, workmateId);
     }
 
     public LiveData<List<ChatViewState>> getChatMessages() {

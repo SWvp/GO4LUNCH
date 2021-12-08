@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.kardabel.go4lunch.MainActivityViewModel;
 import com.kardabel.go4lunch.MainApplication;
 import com.kardabel.go4lunch.repository.AutocompleteRepository;
@@ -23,6 +25,7 @@ import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
 import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
+import com.kardabel.go4lunch.usecase.AddChatMessageToFirestoreUseCase;
 import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsByIdUseCase;
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
@@ -53,6 +56,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final GetRestaurantDetailsResultsByIdUseCase getRestaurantDetailsResultsByIdUseCase;
     private final GetPredictionsUseCase getPredictionsUseCase;
     private final GetCurrentUserIdUseCase getCurrentUserIdUseCase;
+    private final AddChatMessageToFirestoreUseCase addChatMessageToFirestoreUseCase;
 
     public static ViewModelFactory getInstance() {
         if (factory == null) {
@@ -73,6 +77,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         GoogleMapsApi googleMapsApi = retrofit.create(GoogleMapsApi.class);
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         this.application = MainApplication.getApplication();
         NearbySearchResponseRepository nearbySearchResponseRepository = new NearbySearchResponseRepository(
                 googleMapsApi,
@@ -107,6 +112,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                 locationRepository,
                 autocompleteRepository);
         this.getCurrentUserIdUseCase = new GetCurrentUserIdUseCase();
+        this.addChatMessageToFirestoreUseCase = new AddChatMessageToFirestoreUseCase(firebaseFirestore);
     }
 
 
@@ -156,7 +162,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         } else if (modelClass.isAssignableFrom(ChatViewModel.class)) {
             return (T) new ChatViewModel(
                     chatMessageRepository,
-                    getCurrentUserIdUseCase
+                    getCurrentUserIdUseCase,
+                    addChatMessageToFirestoreUseCase
             );
         }
         throw new IllegalArgumentException("Unknown ViewModel class");

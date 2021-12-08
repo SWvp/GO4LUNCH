@@ -19,14 +19,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import io.grpc.android.BuildConfig;
+
 public class AddChatMessageToFirestoreUseCase {
 
-    @NonNull
-    public static CollectionReference getChatCollection() {
-        return FirebaseFirestore.getInstance().collection("chat");
+    private final FirebaseFirestore firebaseFirestore;
+
+    public static final String MESSAGE = "message";
+    public static final String SENDER = "sender";
+    public static final String DATE = "date";
+    public static final String TIMESTAMP = "timestamp";
+    public static final String COLLECTION_CHAT = "chat";
+
+    public AddChatMessageToFirestoreUseCase(FirebaseFirestore firebaseFirestore) {
+        this.firebaseFirestore = firebaseFirestore;
     }
 
-    public static void createChatMessage(String message, String mateId) {
+    @NonNull
+    public CollectionReference getChatCollection() {
+        return firebaseFirestore.collection(COLLECTION_CHAT);
+    }
+
+    public void createChatMessage(String message, String mateId) {
 
         String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
@@ -43,10 +57,10 @@ public class AddChatMessageToFirestoreUseCase {
 
         // CREATE MAP TO SEND TO FIRESTORE
         Map<String, Object> chatMessage = new HashMap<>();
-        chatMessage.put("message", message);
-        chatMessage.put("sender", userId);
-        chatMessage.put("date", formatDateTime);
-        chatMessage.put("timestamp" , System.currentTimeMillis()); // HERE IS THE TIMESTAMP NEEDED TO SORT THE CHAT MESSAGE
+        chatMessage.put(MESSAGE, message);
+        chatMessage.put(SENDER, userId);
+        chatMessage.put(DATE, formatDateTime);
+        chatMessage.put(TIMESTAMP, System.currentTimeMillis()); // HERE IS THE TIMESTAMP NEEDED TO SORT THE CHAT MESSAGE
 
         // CREATE MESSAGE IN DATA BASE
         getChatCollection()
