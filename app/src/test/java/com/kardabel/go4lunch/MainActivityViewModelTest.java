@@ -31,7 +31,7 @@ import java.util.List;
 public class MainActivityViewModelTest {
 
     private String currentUserId = "current_User_Id";
-    private String userTypeText = "user_Text";
+    private String userTypeText = "first_name";
 
     @Rule
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -106,49 +106,64 @@ public class MainActivityViewModelTest {
     }
 
     @Test
-    public void type_Text_In_Search_View() {
+    public void type_Text_In_Search_View_Should_Display_Predictions() {
         // WHEN
-        mainActivityViewModel.sendTextToAutocomplete("firs");
+        mainActivityViewModel.sendTextToAutocomplete(userTypeText);
         LiveDataTestUtils.observeForTesting(mainActivityViewModel.getPredictionsLiveData(), new LiveDataTestUtils.OnObservedListener<List<PredictionViewState>>() {
             @Override
             public void onObserved(List<PredictionViewState> predictions) {
+                // THEN
                 assertEquals(MainActivityViewModelTest.this.getDefaultPredictionsViewState(), predictions);
-
 
             }
         });
-
-
     }
 
+    @Test
+    public void user_choice() {
+        // WHEN
+        mainActivityViewModel.getUserRestaurantChoice();
+        LiveDataTestUtils.observeForTesting(mainActivityViewModel.getCurrentUserRestaurantChoice(), new LiveDataTestUtils.OnObservedListener<MainActivityYourLunchViewState>() {
+            @Override
+            public void onObserved(MainActivityYourLunchViewState yourLunch) {
+                // THEN
+                assertEquals(MainActivityViewModelTest.this.getDefaultYourLunchViewState(), yourLunch);
 
+            }
+        });
+    }
 
     // VAL FOR TESTING //
+    String firstDescription = "first_description";
     String firstRestaurantId = "First_Restaurant_Id";
     String firstRestaurantName = "First_Restaurant_Name";
+    String nameOne = "name_one";
 
+    String secondDescription = "second_description";
     String secondRestaurantId = "Second_Restaurant_Id";
     String secondRestaurantName = "Second_Restaurant_Name";
+    String nameTwo = "name_two";
 
     String secondUserId = "Second_user_Id";
+
 
     // region In
 
     private Predictions getDefaultPrediction() {
         List<Prediction> prediction = new ArrayList<>();
         prediction.add(new Prediction(
-                        "first_description",
-                        "first_retaurant_Id",
+                firstDescription,
+                firstRestaurantId,
                         new PlaceAutocompleteStructuredFormat(
-                                "first_name"
+                                nameOne
                         )
                 )
         );
         prediction.add(new Prediction(
-                        "second_description",
-                        "second_restaurant_Id",
+                secondDescription,
+                secondRestaurantId,
                         new PlaceAutocompleteStructuredFormat(
-                                "second_name"
+                                nameTwo
                         )
                 )
         );
@@ -185,11 +200,24 @@ public class MainActivityViewModelTest {
     private List<PredictionViewState> getDefaultPredictionsViewState() {
         List<PredictionViewState> predictions = new ArrayList<>();
         predictions.add(new PredictionViewState(
+                firstDescription,
                 firstRestaurantId,
-                firstRestaurantId,
-                firstRestaurantId
+                nameOne
+        ));
+        predictions.add(new PredictionViewState(
+                secondDescription,
+                secondRestaurantId,
+                nameTwo
         ));
         return predictions;
+    }
+
+    private MainActivityYourLunchViewState getDefaultYourLunchViewState() {
+
+        return new MainActivityYourLunchViewState(
+                firstRestaurantId,
+                1
+        );
     }
 
     // endregion
