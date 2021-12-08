@@ -34,14 +34,17 @@ public class MainActivityViewModel extends ViewModel {
 
     private final LocationRepository locationRepository;
     private final GetPredictionsUseCase getPredictionsUseCase;
-    private final UserSearchRepository mUserSearchRepository;
-    private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository;
+    private final UserSearchRepository userSearchRepository;
+    private final UsersWhoMadeRestaurantChoiceRepository usersWhoMadeRestaurantChoiceRepository;
     private final GetCurrentUserIdUseCase getCurrentUserIdUseCase;
 
-    private final MediatorLiveData<List<PredictionViewState>> predictionsMediatorLiveData = new MediatorLiveData<>();
-    private final MediatorLiveData<MainActivityYourLunchViewState> mainActivityYourLunchViewStateMediatorLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<List<PredictionViewState>> predictionsMediatorLiveData =
+            new MediatorLiveData<>();
+    private final MediatorLiveData<MainActivityYourLunchViewState> mainActivityYourLunchViewStateMediatorLiveData =
+            new MediatorLiveData<>();
 
-    private final SingleLiveEvent<PermissionsViewAction> actionSingleLiveEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<PermissionsViewAction> actionSingleLiveEvent =
+            new SingleLiveEvent<>();
 
 
 
@@ -57,8 +60,8 @@ public class MainActivityViewModel extends ViewModel {
         this.application = application;
         this.locationRepository = locationRepository;
         this.getPredictionsUseCase = getPredictionsUseCase;
-        this.mUserSearchRepository = userSearchRepository;
-        this.mUsersWhoMadeRestaurantChoiceRepository = usersWhoMadeRestaurantChoiceRepository;
+        this.userSearchRepository = userSearchRepository;
+        this.usersWhoMadeRestaurantChoiceRepository = usersWhoMadeRestaurantChoiceRepository;
         this.getCurrentUserIdUseCase = getCurrentUserIdUseCase;
 
     }
@@ -114,7 +117,7 @@ public class MainActivityViewModel extends ViewModel {
     // RETRIEVE THE CURRENT USER RESTAURANT CHOICE
     public void getUserRestaurantChoice() {
         LiveData<List<UserWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceLiveData =
-                mUsersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
+                usersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
 
         mainActivityYourLunchViewStateMediatorLiveData.addSource(workmatesWhoMadeRestaurantChoiceLiveData, this::mapUserRestaurantChoice);
     }
@@ -140,7 +143,7 @@ public class MainActivityViewModel extends ViewModel {
     }
 
     public void userSearch(String predictionText) {
-        mUserSearchRepository.usersSearch(predictionText);
+        userSearchRepository.usersSearch(predictionText);
 
     }
 
