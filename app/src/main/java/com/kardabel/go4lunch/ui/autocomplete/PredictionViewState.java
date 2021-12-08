@@ -1,6 +1,8 @@
 package com.kardabel.go4lunch.ui.autocomplete;
 
 
+import java.util.Objects;
+
 public class PredictionViewState {
 
     private final String predictionDescription;
@@ -23,4 +25,26 @@ public class PredictionViewState {
     public String getPredictionPlaceId() { return predictionPlaceId; }
 
     public String getPredictionName() { return predictionName; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PredictionViewState that = (PredictionViewState) o;
+        return Objects.equals(predictionDescription, that.predictionDescription) && Objects.equals(predictionPlaceId, that.predictionPlaceId) && Objects.equals(predictionName, that.predictionName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(predictionDescription, predictionPlaceId, predictionName);
+    }
+
+    @Override
+    public String toString() {
+        return "PredictionViewState{" +
+                "predictionDescription='" + predictionDescription + '\'' +
+                ", predictionPlaceId='" + predictionPlaceId + '\'' +
+                ", predictionName='" + predictionName + '\'' +
+                '}';
+    }
 }
