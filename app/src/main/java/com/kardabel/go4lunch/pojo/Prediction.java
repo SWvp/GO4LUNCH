@@ -24,6 +24,7 @@ public class Prediction {
                       PlaceAutocompleteStructuredFormat structuredFormatting) {
         this.description = description;
         this.placeId = placeId;
+        this.structuredFormatting =structuredFormatting;
     }
 
     public String getDescription() {
