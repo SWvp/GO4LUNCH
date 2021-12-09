@@ -2,7 +2,7 @@
     <string name="app_name">GO4LUNCH</string>
 
     <!-- GOOGLE MAP API KEY -->
-    <string name="google_map_key">1234</string>
+    <string name="google_map_key">AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8</string>
 
     <!-- MAIN ACTIVITY -->
     <string name="need_your_position">Needed for retrieve your position, thank you</string>
