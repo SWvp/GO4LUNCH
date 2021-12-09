@@ -17,8 +17,8 @@ import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 import com.kardabel.go4lunch.repository.RestaurantDetailsResponseRepository;
 import com.kardabel.go4lunch.repository.UserSearchRepository;
-import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
+import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 import com.kardabel.go4lunch.ui.chat.ChatViewModel;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
@@ -81,44 +81,72 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         GoogleMapsApi googleMapsApi = retrofit.create(GoogleMapsApi.class);
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        this.application = MainApplication.getApplication();
-        NearbySearchResponseRepository nearbySearchResponseRepository = new NearbySearchResponseRepository(
-                googleMapsApi,
-                application);
-        RestaurantDetailsResponseRepository restaurantDetailsResponseRepository = new RestaurantDetailsResponseRepository(
-                googleMapsApi,
-                application);
-        AutocompleteRepository autocompleteRepository = new AutocompleteRepository(
-                googleMapsApi,
-                application);
-        this.locationRepository = new LocationRepository();
-        this.workmatesRepository = new WorkmatesRepository();
-        this.mUserSearchRepository = new UserSearchRepository();
-        this.favoriteRestaurantsRepository = new FavoriteRestaurantsRepository();
-        this.mUsersWhoMadeRestaurantChoiceRepository = new UsersWhoMadeRestaurantChoiceRepository(Clock.systemDefaultZone());
-        this.chatMessageRepository = new ChatMessageRepository();
 
-        this.getNearbySearchResultsUseCase = new GetNearbySearchResultsUseCase(
-                locationRepository,
-                nearbySearchResponseRepository);
-        this.getNearbySearchResultsByIdUseCase = new GetNearbySearchResultsByIdUseCase(
-                locationRepository,
-                nearbySearchResponseRepository);
-        this.getRestaurantDetailsResultsUseCase = new GetRestaurantDetailsResultsUseCase(
-                locationRepository,
-                nearbySearchResponseRepository,
-                restaurantDetailsResponseRepository);
-        this.getRestaurantDetailsResultsByIdUseCase = new GetRestaurantDetailsResultsByIdUseCase(
-                restaurantDetailsResponseRepository
-        );
-        this.getPredictionsUseCase = new GetPredictionsUseCase(
-                locationRepository,
-                autocompleteRepository);
-        this.getCurrentUserIdUseCase = new GetCurrentUserIdUseCase();
-        this.addChatMessageToFirestoreUseCase = new AddChatMessageToFirestoreUseCase(firebaseFirestore);
-        this.clickOnChoseRestaurantButtonUseCase = new ClickOnChoseRestaurantButtonUseCase(firebaseFirestore, Clock.systemDefaultZone());
-        this.clickOnFavoriteRestaurantUseCase = new ClickOnFavoriteRestaurantUseCase(firebaseFirestore);
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+        this.application = MainApplication.getApplication();
+
+        NearbySearchResponseRepository nearbySearchResponseRepository =
+                new NearbySearchResponseRepository(
+                        googleMapsApi,
+                        application);
+        RestaurantDetailsResponseRepository restaurantDetailsResponseRepository =
+                new RestaurantDetailsResponseRepository(
+                        googleMapsApi,
+                        application);
+        AutocompleteRepository autocompleteRepository =
+                new AutocompleteRepository(
+                        googleMapsApi,
+                        application);
+        this.locationRepository =
+                new LocationRepository();
+        this.workmatesRepository =
+                new WorkmatesRepository();
+        this.mUserSearchRepository =
+                new UserSearchRepository();
+        this.favoriteRestaurantsRepository =
+                new FavoriteRestaurantsRepository();
+        this.mUsersWhoMadeRestaurantChoiceRepository =
+                new UsersWhoMadeRestaurantChoiceRepository(Clock.systemDefaultZone());
+        this.chatMessageRepository =
+                new ChatMessageRepository();
+
+        this.getNearbySearchResultsUseCase =
+                new GetNearbySearchResultsUseCase(
+                        locationRepository,
+                        nearbySearchResponseRepository);
+        this.getNearbySearchResultsByIdUseCase =
+                new GetNearbySearchResultsByIdUseCase(
+                        locationRepository,
+                        nearbySearchResponseRepository);
+        this.getRestaurantDetailsResultsUseCase =
+                new GetRestaurantDetailsResultsUseCase(
+                        locationRepository,
+                        nearbySearchResponseRepository,
+                        restaurantDetailsResponseRepository);
+        this.getRestaurantDetailsResultsByIdUseCase =
+                new GetRestaurantDetailsResultsByIdUseCase(
+                        restaurantDetailsResponseRepository
+                );
+        this.getPredictionsUseCase =
+                new GetPredictionsUseCase(
+                        locationRepository,
+                        autocompleteRepository);
+        this.getCurrentUserIdUseCase =
+                new GetCurrentUserIdUseCase();
+        this.addChatMessageToFirestoreUseCase =
+                new AddChatMessageToFirestoreUseCase(
+                        firebaseFirestore,
+                        firebaseAuth,
+                        Clock.systemDefaultZone());
+        this.clickOnChoseRestaurantButtonUseCase =
+                new ClickOnChoseRestaurantButtonUseCase(
+                        firebaseFirestore,
+                        Clock.systemDefaultZone());
+        this.clickOnFavoriteRestaurantUseCase =
+                new ClickOnFavoriteRestaurantUseCase(firebaseFirestore);
     }
 
 

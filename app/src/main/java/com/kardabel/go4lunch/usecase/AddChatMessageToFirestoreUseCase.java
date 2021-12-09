@@ -10,6 +10,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ import io.grpc.android.BuildConfig;
 public class AddChatMessageToFirestoreUseCase {
 
     private final FirebaseFirestore firebaseFirestore;
+    private final FirebaseAuth firebaseAuth;
+    private final Clock clock;
 
     public static final String MESSAGE = "message";
     public static final String SENDER = "sender";
@@ -31,8 +35,14 @@ public class AddChatMessageToFirestoreUseCase {
     public static final String TIMESTAMP = "timestamp";
     public static final String COLLECTION_CHAT = "chat";
 
-    public AddChatMessageToFirestoreUseCase(FirebaseFirestore firebaseFirestore) {
+    public AddChatMessageToFirestoreUseCase(FirebaseFirestore firebaseFirestore,
+                                            FirebaseAuth firebaseAuth,
+                                            Clock clock) {
+
         this.firebaseFirestore = firebaseFirestore;
+        this.firebaseAuth = firebaseAuth;
+        this.clock = clock;
+
     }
 
     @NonNull
@@ -40,18 +50,18 @@ public class AddChatMessageToFirestoreUseCase {
         return firebaseFirestore.collection(COLLECTION_CHAT);
     }
 
-    public void createChatMessage(String message, String mateId) {
+    public void createChatMessage(String message, String workmateId) {
 
-        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        String userId = firebaseAuth.getCurrentUser().getUid();
 
         // CREATE A LIST OF USER TO SORT THEM
         List<String> ids = new ArrayList<>();
         ids.add(userId);
-        ids.add(mateId);
+        ids.add(workmateId);
         Collections.sort(ids);
 
         // RETRIEVE THE CURRENT DATE AND TIME, AND FORMAT TO HUMAN READABLE
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime currentDateTime = LocalDateTime.now(clock);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd à HH:mm:ss");
         String formatDateTime = currentDateTime.format(formatter);
 
@@ -60,7 +70,7 @@ public class AddChatMessageToFirestoreUseCase {
         chatMessage.put(MESSAGE, message);
         chatMessage.put(SENDER, userId);
         chatMessage.put(DATE, formatDateTime);
-        chatMessage.put(TIMESTAMP, System.currentTimeMillis()); // HERE IS THE TIMESTAMP NEEDED TO SORT THE CHAT MESSAGE
+        chatMessage.put(TIMESTAMP, Instant.now(clock).toEpochMilli()); // HERE IS THE TIMESTAMP NEEDED TO SORT THE CHAT MESSAGE
 
         // CREATE MESSAGE IN DATA BASE
         getChatCollection()
@@ -71,5 +81,6 @@ public class AddChatMessageToFirestoreUseCase {
                         Log.d(TAG, "DocumentSnapshot written with message: " + message))
                 .addOnFailureListener(e ->
                         Log.d(TAG, "Error adding document", e));
+
     }
 }
