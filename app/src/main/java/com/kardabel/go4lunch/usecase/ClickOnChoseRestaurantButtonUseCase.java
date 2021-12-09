@@ -34,7 +34,7 @@ public class ClickOnChoseRestaurantButtonUseCase {
             String restaurantId,
             String restaurantName) {
 
-        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         Map<String, Object> userGotRestaurant = new HashMap<>();
         userGotRestaurant.put("restaurantId", restaurantId);
