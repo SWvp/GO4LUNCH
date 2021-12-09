@@ -17,7 +17,7 @@ public class ClickOnFavoriteRestaurantUseCase {
 
     private final FirebaseFirestore firebaseFirestore;
 
-    public static final String USERS = "users";
+    public static final String COLLECTION_USERS = "users";
     public static final String FAVORITE_RESTAURANTS = "favorite restaurants";
     public static final String RESTAURANT_NAME = "restaurantName";
     public static final String RESTAURANT_ID = "restaurantId";
@@ -28,7 +28,7 @@ public class ClickOnFavoriteRestaurantUseCase {
     }
 
     public  CollectionReference getDayCollection() {
-        return firebaseFirestore.collection(USERS);
+        return firebaseFirestore.collection(COLLECTION_USERS);
     }
 
     // WHEN FAVORITE ICON FROM DETAIL VIEW IS CLICKED,
