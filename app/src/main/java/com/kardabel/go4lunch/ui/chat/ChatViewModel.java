@@ -22,7 +22,8 @@ public class ChatViewModel extends ViewModel {
     private final GetCurrentUserIdUseCase getCurrentUserIdUseCase;
     private final AddChatMessageToFirestoreUseCase addChatMessageToFirestoreUseCase;
 
-    private final MediatorLiveData<List<ChatViewState>> chatMessagesMediatorLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<List<ChatViewState>> chatMessagesMediatorLiveData =
+            new MediatorLiveData<>();
 
     public ChatViewModel(@NonNull ChatMessageRepository chatMessageRepository,
                          @NonNull GetCurrentUserIdUseCase getCurrentUserIdUseCase,

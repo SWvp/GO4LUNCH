@@ -8,9 +8,9 @@ public class UserSearchRepository {
 
     private final MutableLiveData<String> searchViewResultLiveData = new MutableLiveData<>();
 
-    public void usersSearch(String place_id) {
+    public void usersSearch(String restaurantId) {
 
-        searchViewResultLiveData.setValue(place_id);
+        searchViewResultLiveData.setValue(restaurantId);
     }
 
     public LiveData<String> getUsersSearchLiveData() {

@@ -18,7 +18,18 @@ public class RestaurantsViewState {
     @ColorRes
     private final int textColor;
 
-    public RestaurantsViewState(int distanceInt, String name, String address, String photo, String distanceText, String openingHours, double rating, String placeId, String usersWhoChoseThisRestaurant, int textColor) {
+    public RestaurantsViewState(
+            int distanceInt,
+            String name,
+            String address,
+            String photo,
+            String distanceText,
+            String openingHours,
+            double rating,
+            String placeId,
+            String usersWhoChoseThisRestaurant,
+            int textColor) {
+
         this.distanceInt = distanceInt;
         this.name = name;
         this.address = address;
@@ -29,6 +40,7 @@ public class RestaurantsViewState {
         this.placeId = placeId;
         this.usersWhoChoseThisRestaurant = usersWhoChoseThisRestaurant;
         this.textColor = textColor;
+
     }
 
     public int getDistanceInt() { return distanceInt; }
@@ -56,12 +68,32 @@ public class RestaurantsViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantsViewState that = (RestaurantsViewState) o;
-        return distanceInt == that.distanceInt && Double.compare(that.rating, rating) == 0 && textColor == that.textColor && Objects.equals(name, that.name) && Objects.equals(address, that.address) && Objects.equals(photo, that.photo) && Objects.equals(distanceText, that.distanceText) && Objects.equals(openingHours, that.openingHours) && Objects.equals(placeId, that.placeId) && Objects.equals(usersWhoChoseThisRestaurant, that.usersWhoChoseThisRestaurant);
+        return distanceInt == that.distanceInt &&
+                Double.compare(that.rating, rating) == 0 &&
+                textColor == that.textColor &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(address, that.address) &&
+                Objects.equals(photo, that.photo) &&
+                Objects.equals(distanceText, that.distanceText) &&
+                Objects.equals(openingHours, that.openingHours) &&
+                Objects.equals(placeId, that.placeId) &&
+                Objects.equals(usersWhoChoseThisRestaurant, that.usersWhoChoseThisRestaurant);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(distanceInt, name, address, photo, distanceText, openingHours, rating, placeId, usersWhoChoseThisRestaurant, textColor);
+        return Objects.hash(
+                distanceInt,
+                name,
+                address,
+                photo,
+                distanceText,
+                openingHours,
+                rating,
+                placeId,
+                usersWhoChoseThisRestaurant,
+                textColor);
+
     }
 
     @Override
@@ -78,6 +110,7 @@ public class RestaurantsViewState {
                 ", usersWhoChoseThisRestaurant='" + usersWhoChoseThisRestaurant + '\'' +
                 ", textColor=" + textColor +
                 '}';
+
     }
 }
 

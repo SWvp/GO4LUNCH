@@ -20,21 +20,23 @@ import retrofit2.Response;
 public class NearbySearchResponseRepository {
 
     private final GoogleMapsApi googleMapsApi;
-    private final  Application application;
+    private final Application application;
 
+    // THIS MAP WILL ALLOW DEVICE TO CACHE DATA TO AVOID USELESS DATA CALL
     private final Map<String, NearbySearchResults> cache = new HashMap<>(2000);
 
-    public NearbySearchResponseRepository(GoogleMapsApi googleMapsApi, Application application){
+    public NearbySearchResponseRepository(GoogleMapsApi googleMapsApi, Application application) {
         this.googleMapsApi = googleMapsApi;
         this.application = application;
     }
 
     public LiveData<NearbySearchResults> getRestaurantListLiveData(String type,
                                                                    String location,
-                                                                   String radius){
-        String key = application.getString(R.string.google_map_key);
+                                                                   String radius) {
 
-        MutableLiveData<NearbySearchResults> NearbySearchResultsMutableLiveData = new MutableLiveData<>();
+        String key = application.getString(R.string.google_map_key);
+        MutableLiveData<NearbySearchResults> NearbySearchResultsMutableLiveData =
+                new MutableLiveData<>();
 
         NearbySearchResults nearbySearchResults = cache.get(location);
         if (nearbySearchResults != null) {
@@ -43,16 +45,17 @@ public class NearbySearchResponseRepository {
             googleMapsApi.searchRestaurant(key, type, location, radius).enqueue(
                     new Callback<NearbySearchResults>() {
                         @Override
-                        public void onResponse(@NonNull Call<NearbySearchResults> call, @NonNull Response<NearbySearchResults> response) {
+                        public void onResponse(@NonNull Call<NearbySearchResults> call,
+                                               @NonNull Response<NearbySearchResults> response) {
                             if (response.body() != null) {
                                 cache.put(location, response.body());
                                 NearbySearchResultsMutableLiveData.setValue(response.body());
 
                             }
                         }
-
                         @Override
-                        public void onFailure(@NonNull Call<NearbySearchResults> call, @NonNull Throwable t) {
+                        public void onFailure(@NonNull Call<NearbySearchResults> call,
+                                              @NonNull Throwable t) {
                             t.printStackTrace();
 
                         }

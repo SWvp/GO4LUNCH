@@ -26,17 +26,16 @@ public class WorkMatesFragment extends Fragment {
             @NonNull LayoutInflater inflater,
             ViewGroup container,
             Bundle savedInstanceState) {
-        binding = RecyclerviewWorkmatesBinding.inflate(
-                inflater,
-                container,
-                false);
+        binding = RecyclerviewWorkmatesBinding.inflate(inflater, container, false);
         return binding.getRoot();
+
     }
 
     @Override
     public void onViewCreated(
             @NonNull View view,
             @Nullable Bundle savedInstanceState) {
+
         super.onViewCreated(view, savedInstanceState);
         Context context = view.getContext();
 
@@ -63,11 +62,13 @@ public class WorkMatesFragment extends Fragment {
                         workMatesViewState.getWorkmateId(),
                         workMatesViewState.getWorkmateName(),
                         workMatesViewState.getWorkmatePhoto())));
+
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+
     }
 }

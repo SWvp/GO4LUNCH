@@ -1,7 +1,6 @@
 package com.kardabel.go4lunch.ui.workmates;
 
 
-
 import androidx.annotation.ColorRes;
 
 import java.util.Objects;
@@ -23,6 +22,7 @@ public class WorkMateViewState {
             String workmateId,
             boolean gotRestaurant,
             int textColor) {
+
         this.workmateName = workmateName;
         this.workmateDescription = workmateDescription;
         this.workmatePhoto = workmatePhoto;
@@ -32,7 +32,9 @@ public class WorkMateViewState {
 
     }
 
-    public String getWorkmateName() { return workmateName; }
+    public String getWorkmateName() {
+        return workmateName;
+    }
 
     public String getWorkmateDescription() {
         return workmateDescription;
@@ -42,25 +44,42 @@ public class WorkMateViewState {
         return workmatePhoto;
     }
 
-    public String getWorkmateId() { return workmateId; }
+    public String getWorkmateId() {
+        return workmateId;
+    }
 
     public boolean isUserHasDecided() {
         return gotRestaurant;
     }
 
-    public int getTextColor() { return textColor; }
+    public int getTextColor() {
+        return textColor;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WorkMateViewState that = (WorkMateViewState) o;
-        return gotRestaurant == that.gotRestaurant && textColor == that.textColor && Objects.equals(workmateName, that.workmateName) && Objects.equals(workmateDescription, that.workmateDescription) && Objects.equals(workmatePhoto, that.workmatePhoto) && Objects.equals(workmateId, that.workmateId);
+        return gotRestaurant == that.gotRestaurant &&
+                textColor == that.textColor &&
+                Objects.equals(workmateName, that.workmateName) &&
+                Objects.equals(workmateDescription, that.workmateDescription) &&
+                Objects.equals(workmatePhoto, that.workmatePhoto) &&
+                Objects.equals(workmateId, that.workmateId);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(workmateName, workmateDescription, workmatePhoto, workmateId, gotRestaurant, textColor);
+        return Objects.hash(
+                workmateName,
+                workmateDescription,
+                workmatePhoto,
+                workmateId,
+                gotRestaurant,
+                textColor);
+
     }
 
     @Override
@@ -73,5 +92,6 @@ public class WorkMateViewState {
                 ", gotRestaurant=" + gotRestaurant +
                 ", textColor=" + textColor +
                 '}';
+
     }
 }

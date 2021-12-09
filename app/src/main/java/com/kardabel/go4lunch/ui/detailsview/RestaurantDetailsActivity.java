@@ -62,7 +62,8 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         restaurantDetailsViewModel.init(intent.getStringExtra(RESTAURANT_ID));
 
         // FEED THE DETAILS VIEW
-        restaurantDetailsViewModel.getRestaurantDetailsViewStateLiveData().observe(this, new Observer<RestaurantDetailsViewState>() {
+        restaurantDetailsViewModel.getRestaurantDetailsViewStateLiveData()
+                .observe(this, new Observer<RestaurantDetailsViewState>() {
             @Override
             public void onChanged(RestaurantDetailsViewState details) {
 
@@ -86,7 +87,8 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         });
 
         // FEED THE ADAPTER IF NEEDED
-        restaurantDetailsViewModel.getWorkmatesWhoChoseThisRestaurant().observe(this, new Observer<List<RestaurantDetailsWorkmatesViewState>>() {
+        restaurantDetailsViewModel.getWorkmatesWhoChoseThisRestaurant()
+                .observe(this, new Observer<List<RestaurantDetailsWorkmatesViewState>>() {
             @Override
             public void onChanged(List<RestaurantDetailsWorkmatesViewState> workMates) {
                 adapter.setWorkmatesListData(workMates);
@@ -113,11 +115,15 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (restaurantPhoneNumber) {
                     case "no phone number":
-                        Toast.makeText(RestaurantDetailsActivity.this, "This restaurant doesn't have phone number", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(
+                                RestaurantDetailsActivity.this,
+                                "This restaurant doesn't have phone number",
+                                Toast.LENGTH_SHORT).show();
                         break;
                     default:
                         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + restaurantPhoneNumber));
                         startActivity(intent);
+
                 }
             }
         });
@@ -128,11 +134,15 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (restaurantWebsite) {
                     case "https://www.google.com/":
-                        Toast.makeText(RestaurantDetailsActivity.this, "It seems your restaurant isn't on the web, but you can try on google !", Toast.LENGTH_LONG).show();
+                        Toast.makeText(
+                                RestaurantDetailsActivity.this,
+                                "It seems your restaurant isn't on the web, but you can try on google !",
+                                Toast.LENGTH_LONG).show();
                         break;
                     default:
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(restaurantWebsite));
                         startActivity(intent);
+
                 }
             }
         });

@@ -21,22 +21,25 @@ import java.util.Objects;
 
 public class FavoriteRestaurantsRepository {
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+    public static final String COLLECTION_USERS = "users";
+    public static final String COLLECTION_FAVORITE_RESTAURANTS = "favorite restaurants";
 
-
-    // GET THE FAVORITE RESTAURANTS FOR ALL USERS
+    // GET THE FAVORITE RESTAURANTS FOR CURRENT USER
     public LiveData<List<FavoriteRestaurant>> getFavoriteRestaurants() {
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         MutableLiveData<List<FavoriteRestaurant>> favoriteRestaurantsLiveData = new MutableLiveData<>();
 
-        db.collection("users")
+        db.collection(COLLECTION_USERS)
                 .document(userId)
-                .collection("favorite restaurants")
+                .collection(COLLECTION_FAVORITE_RESTAURANTS)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         if (error != null) {
-                            Log.e("no favorite today", error.getMessage());
+                            Log.e("no favorite", error.getMessage());
                             return;
                         }
                         List<FavoriteRestaurant> favoriteRestaurants = new ArrayList<>();
@@ -46,8 +49,7 @@ public class FavoriteRestaurantsRepository {
 
                                 favoriteRestaurants.add(document.getDocument().toObject(FavoriteRestaurant.class));
 
-                            }else if(document.getType() == DocumentChange.Type.REMOVED){
-
+                            } else if (document.getType() == DocumentChange.Type.REMOVED) {
 
                                 favoriteRestaurants.remove(document.getDocument().toObject(FavoriteRestaurant.class));
 

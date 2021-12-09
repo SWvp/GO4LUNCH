@@ -39,7 +39,8 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
 
             // CONFIGURE MAPVIEWMODEL
             ViewModelFactory listViewModelFactory = ViewModelFactory.getInstance();
-            MapViewModel mapViewModel = new ViewModelProvider(this, listViewModelFactory).get(MapViewModel.class);
+            MapViewModel mapViewModel =
+                    new ViewModelProvider(this, listViewModelFactory).get(MapViewModel.class);
 
             mapViewModel.getMapViewStateLiveData().observe(this, mapViewState -> {
                 googleMap.clear();

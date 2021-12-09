@@ -115,13 +115,13 @@ public class MainActivity extends AppCompatActivity implements
                                 new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
                         Toast.makeText(
                                 MainActivity.this,
-                                "Needed for retrieve your position, thank you",
+                                MainActivity.this.getString(R.string.need_your_position),
                                 Toast.LENGTH_SHORT).show();
                         break;
                     case PERMISSION_DENIED:
                         MaterialAlertDialogBuilder alertDialogBuilder =
                                 new MaterialAlertDialogBuilder(MainActivity.this);
-                        alertDialogBuilder.setTitle("WARNING");
+                        alertDialogBuilder.setTitle(MainActivity.this.getString(R.string.title_alert));
                         alertDialogBuilder.setMessage(MainActivity.this.getString(R.string.rational));
                         alertDialogBuilder.show();
                         break;
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements
         TextView profileUsername = header.findViewById(R.id.header_name);
         TextView profileUserEmail = header.findViewById(R.id.header_email);
 
-        FirebaseUser currentUser = GetCurrentUserUseCase.invoke();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
 
             //Get picture URL from Firebase
@@ -154,8 +154,10 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             //Get email & username from Firebase
-            String email = TextUtils.isEmpty(currentUser.getEmail()) ? getString(R.string.info_no_email_found) : currentUser.getEmail();
-            String username = TextUtils.isEmpty(currentUser.getDisplayName()) ? getString(R.string.info_no_username_found) : currentUser.getDisplayName();
+            String email =
+                    TextUtils.isEmpty(currentUser.getEmail()) ? getString(R.string.info_no_email_found) : currentUser.getEmail();
+            String username =
+                    TextUtils.isEmpty(currentUser.getDisplayName()) ? getString(R.string.info_no_username_found) : currentUser.getDisplayName();
 
             //Update views with data
             profileUsername.setText(username);
@@ -167,9 +169,12 @@ public class MainActivity extends AppCompatActivity implements
     private void configureYourLunch() {
         mainActivityViewModel.getUserRestaurantChoice();
 
-        mainActivityViewModel.getCurrentUserRestaurantChoice().observe(this, mainActivityYourLunchViewState -> {
+        mainActivityViewModel
+                .getCurrentUserRestaurantChoice()
+                .observe(this, mainActivityYourLunchViewState -> {
             restaurantId = mainActivityYourLunchViewState.getRestaurantId();
-            currentUserRestaurantChoiceStatus = mainActivityYourLunchViewState.getCurrentUserRestaurantChoiceStatus();
+            currentUserRestaurantChoiceStatus =
+                    mainActivityYourLunchViewState.getCurrentUserRestaurantChoiceStatus();
         });
 
     }
@@ -178,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
         int id = item.getItemId();
 
         switch (id) {
@@ -210,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements
             case 0:
                 Toast.makeText(
                         MainActivity.this,
-                        "No restaurant has been selected",
+                        MainActivity.this.getString(R.string.no_restaurant_selected),
                         Toast.LENGTH_SHORT).show();
                 break;
             case 1:
@@ -258,7 +264,9 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        mainActivityViewModel.getPredictionsLiveData().observe(this, predictions -> adapter.submitList(predictions));
+        mainActivityViewModel
+                .getPredictionsLiveData()
+                .observe(this, predictions -> adapter.submitList(predictions));
     }
 
 

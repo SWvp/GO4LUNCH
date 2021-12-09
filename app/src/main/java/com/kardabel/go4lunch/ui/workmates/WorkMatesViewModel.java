@@ -21,9 +21,11 @@ import java.util.List;
 
 public class WorkMatesViewModel extends ViewModel {
 
-    private final MediatorLiveData<List<WorkMateViewState>> workMatesViewStateMediatorLiveData = new MediatorLiveData<>();
-
     private final Application application;
+
+    private final MediatorLiveData<List<WorkMateViewState>> workMatesViewStateMediatorLiveData =
+            new MediatorLiveData<>();
+
 
     public WorkMatesViewModel(
             @NonNull Application application,
@@ -69,6 +71,7 @@ public class WorkMatesViewModel extends ViewModel {
     // MAP TO WORKMATE VIEW STATE
     private List<WorkMateViewState> mapWorkmates(List<UserModel> workmates,
                                                  List<UserWhoMadeRestaurantChoice> workmatesWhoMadeRestaurantChoices) {
+
         List<WorkMateViewState> workMateViewStateList = new ArrayList<>();
 
         for (int i = 0; i < workmates.size(); i++) {
@@ -99,6 +102,7 @@ public class WorkMatesViewModel extends ViewModel {
             @Override
             public int compare(WorkMateViewState o1, WorkMateViewState o2) {
                 return Boolean.compare(!o1.isUserHasDecided(), !o2.isUserHasDecided());
+
             }
         });
         return workMateViewStateList;
@@ -108,6 +112,7 @@ public class WorkMatesViewModel extends ViewModel {
     // GET THE LUNCH CHOICE STATUS OF EVERY WORKMATES
     private boolean isUserHasDecided(String workmateId,
                                      List<UserWhoMadeRestaurantChoice> workmatesWhoMadeRestaurantChoices) {
+
         boolean state = false;
 
         for (int i = 0; i < workmatesWhoMadeRestaurantChoices.size(); i++) {

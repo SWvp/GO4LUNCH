@@ -19,24 +19,25 @@ import java.util.Set;
 
 public class ChatMessageRepository {
 
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    public static final String COLLECTION_CHAT = "chat";
 
     public LiveData<List<ChatMessageModel>> getChatMessages(String workmateId) {
 
         String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         MutableLiveData<List<ChatMessageModel>> chatMessagesMutableLiveData = new MutableLiveData<>();
 
         Set<ChatMessageModel> chatMessages = new HashSet<>();
 
-
-        // CREATE A LIST OF USER TO SORT THEM
+        // CREATE A LIST OF USER TO SORT THEM,
+        // IT WILL GIVE THE INDEX FOR DOCUMENT AND COLLECTION
         List<String> ids = new ArrayList<>();
         ids.add(userId);
         ids.add(workmateId);
         Collections.sort(ids);
 
-        db.collection("chat")
+        db.collection(COLLECTION_CHAT)
                 .document(ids.get(0) + "_" + ids.get(1))
                 .collection(ids.get(0) + "_" + ids.get(1))
                 .addSnapshotListener((value, error) -> {
@@ -47,18 +48,17 @@ public class ChatMessageRepository {
 
                     assert value != null;
                     for (DocumentChange document : value.getDocumentChanges()) {
-                            if (document.getType() == DocumentChange.Type.ADDED) {
+                        if (document.getType() == DocumentChange.Type.ADDED) {
 
-                                chatMessages.add(document.getDocument().toObject(ChatMessageModel.class));
+                            chatMessages.add(document.getDocument().toObject(ChatMessageModel.class));
 
-                            }
+                        }
                     }
-
                     List<ChatMessageModel> chatMessageModels = new ArrayList<>(chatMessages);
                     chatMessagesMutableLiveData.setValue(chatMessageModels);
+
                 });
-
-
         return chatMessagesMutableLiveData;
+
     }
 }

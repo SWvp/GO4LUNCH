@@ -23,6 +23,7 @@ public class RestaurantDetailsResponseRepository {
     private final GoogleMapsApi googleMapsApi;
     private final  Application application;
 
+    // THIS MAP WILL ALLOW DEVICE TO CACHE DATA TO AVOID USELESS DATA CALL
     private final Map<String, RestaurantDetailsResult> cache = new HashMap<>(2000);
 
     public RestaurantDetailsResponseRepository(GoogleMapsApi googleMapsApi, Application application) {
@@ -30,31 +31,35 @@ public class RestaurantDetailsResponseRepository {
         this.application = application;
     }
 
-    public LiveData<RestaurantDetailsResult> getRestaurantDetailsLiveData(String place_id) {
+    public LiveData<RestaurantDetailsResult> getRestaurantDetailsLiveData(String restaurantId) {
 
         String key = application.getString(R.string.google_map_key);
         String FIELDS = application.getString(R.string.restaurant_details_fields);
 
-        MutableLiveData<RestaurantDetailsResult> placeDetailsResultMutableLiveData = new MutableLiveData<>();
+        MutableLiveData<RestaurantDetailsResult> placeDetailsResultMutableLiveData =
+                new MutableLiveData<>();
 
-        RestaurantDetailsResult restaurantDetailsResult = cache.get(place_id);
+        RestaurantDetailsResult restaurantDetailsResult = cache.get(restaurantId);
         if (restaurantDetailsResult != null) {
+
             placeDetailsResultMutableLiveData.setValue(restaurantDetailsResult);
+
         } else {
-            Call<RestaurantDetailsResult> call = googleMapsApi.searchRestaurantDetails(key, place_id, FIELDS);
+
+            Call<RestaurantDetailsResult> call = googleMapsApi.searchRestaurantDetails(key, restaurantId, FIELDS);
+
             call.enqueue(new Callback<RestaurantDetailsResult>() {
                 @Override
                 public void onResponse(@NonNull Call<RestaurantDetailsResult> call,
                                        @NonNull Response<RestaurantDetailsResult> response) {
                     if (response.body() != null) {
-                        cache.put(place_id, response.body());
+                        cache.put(restaurantId, response.body());
                         placeDetailsResultMutableLiveData.setValue(response.body());
 
                     }else{
                         Log.d("Response errorBody", String.valueOf(response.errorBody()));
                     }
                 }
-
                 @Override
                 public void onFailure(Call<RestaurantDetailsResult> call, Throwable t) {
                     Log.d("pipo", "Detail called issues");

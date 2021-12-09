@@ -38,12 +38,19 @@ public class MapViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MapViewState that = (MapViewState) o;
-        return Float.compare(that.zoom, zoom) == 0 && Objects.equals(poiList, that.poiList) && Objects.equals(latLng, that.latLng);
+        return Float.compare(that.zoom, zoom) == 0 &&
+                Objects.equals(poiList, that.poiList) &&
+                Objects.equals(latLng, that.latLng);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(poiList, latLng, zoom);
+        return Objects.hash(
+                poiList,
+                latLng,
+                zoom);
+
     }
 
     @Override
@@ -53,5 +60,6 @@ public class MapViewState {
                 ", latLng=" + latLng +
                 ", zoom=" + zoom +
                 '}';
+
     }
 }

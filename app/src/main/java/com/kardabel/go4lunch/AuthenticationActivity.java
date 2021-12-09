@@ -8,9 +8,15 @@ import androidx.annotation.Nullable;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.kardabel.go4lunch.databinding.AuthenticationBinding;
-import com.kardabel.go4lunch.usecase.CreateUserUseCase;
+import com.kardabel.go4lunch.model.UserModel;
 import com.kardabel.go4lunch.usecase.GetCurrentUserUseCase;
 
 import java.util.Arrays;
@@ -19,6 +25,7 @@ import java.util.List;
 public class AuthenticationActivity extends BaseActivity<AuthenticationBinding> {
 
     private static final int RC_SIGN_IN = 123;
+    private static final String COLLECTION_USERS = "users";
 
     @Override
     public AuthenticationBinding getViewBinding() {
@@ -39,7 +46,7 @@ public class AuthenticationActivity extends BaseActivity<AuthenticationBinding> 
 
     // Update Login Button when activity is resuming
     private void updateLoginButton() {
-        binding.loginButton.setText(GetCurrentUserUseCase.invoke() != null ? getString(R.string.button_login_text_logged) : getString(R.string.button_login_text_not_logged));
+        binding.loginButton.setText(FirebaseAuth.getInstance().getCurrentUser() != null ? getString(R.string.button_login_text_logged) : getString(R.string.button_login_text_not_logged));
     }
 
     private void setupListeners() {
@@ -73,8 +80,7 @@ public class AuthenticationActivity extends BaseActivity<AuthenticationBinding> 
                         .createSignInIntentBuilder()
                         .setTheme(R.style.LoginTheme)
                         .setAvailableProviders(providers)
-                        .setIsSmartLockEnabled(false, true)
-                        //.setLogo(R.drawable.ic_logo_auth)
+                        .setIsSmartLockEnabled(false)
                         .build(),
                 RC_SIGN_IN);
 
@@ -100,7 +106,7 @@ public class AuthenticationActivity extends BaseActivity<AuthenticationBinding> 
         if (requestCode == RC_SIGN_IN) {
             // SUCCESS
             if (resultCode == RESULT_OK) {
-                CreateUserUseCase.createUser();
+                createUser();
                 showSnackBar(getString(R.string.connection_succeed));
             } else {
                 // ERRORS
@@ -114,6 +120,28 @@ public class AuthenticationActivity extends BaseActivity<AuthenticationBinding> 
                     }
                 }
             }
+        }
+    }
+
+    private static CollectionReference getUsersCollection() {
+        return FirebaseFirestore.getInstance().collection(COLLECTION_USERS);
+    }
+
+    public void createUser() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userUrlPicture =
+                    (user.getPhotoUrl() != null) ? user.getPhotoUrl().toString() : null;
+            String userName = user.getDisplayName();
+            String uid = user.getUid();
+            String userEmail = user.getEmail();
+
+            UserModel userToCreate = new UserModel(uid, userName, userUrlPicture, userEmail);
+
+            Task<DocumentSnapshot> userData = getUsersCollection().document(uid).get();
+            // If the user already exist in Firestore, we get his data
+            userData.addOnSuccessListener(documentSnapshot ->
+                    getUsersCollection().document(uid).set(userToCreate));
         }
     }
 }

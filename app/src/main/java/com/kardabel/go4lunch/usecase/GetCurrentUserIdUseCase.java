@@ -8,6 +8,6 @@ import java.util.Objects;
 public class GetCurrentUserIdUseCase {
 
     public String invoke() {
-        return Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 }

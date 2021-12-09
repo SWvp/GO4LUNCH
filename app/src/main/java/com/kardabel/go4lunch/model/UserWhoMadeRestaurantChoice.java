@@ -11,7 +11,11 @@ public class UserWhoMadeRestaurantChoice {
     public UserWhoMadeRestaurantChoice() {
     }
 
-    public UserWhoMadeRestaurantChoice(String restaurantId, String restaurantName, String userId) {
+    public UserWhoMadeRestaurantChoice(
+            String restaurantId,
+            String restaurantName,
+            String userId) {
+
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.userId = userId;
@@ -46,7 +50,9 @@ public class UserWhoMadeRestaurantChoice {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserWhoMadeRestaurantChoice that = (UserWhoMadeRestaurantChoice) o;
-        return Objects.equals(restaurantId, that.restaurantId) && Objects.equals(restaurantName, that.restaurantName) && Objects.equals(userId, that.userId);
+        return Objects.equals(restaurantId, that.restaurantId) &&
+                Objects.equals(restaurantName, that.restaurantName) &&
+                Objects.equals(userId, that.userId);
     }
 
     @Override

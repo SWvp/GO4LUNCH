@@ -23,9 +23,14 @@ public class RestaurantsFragment extends Fragment {
 
     private RecyclerviewRestaurantsBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            ViewGroup container,
+            Bundle savedInstanceState) {
+
         binding = RecyclerviewRestaurantsBinding.inflate(inflater, container, false);
         return binding.getRoot();
+
     }
 
     @Override
@@ -36,28 +41,33 @@ public class RestaurantsFragment extends Fragment {
         RestaurantsRecyclerViewAdapter adapter = new RestaurantsRecyclerViewAdapter();
 
         binding.restaurantListRecyclerView.setAdapter(adapter);
-        binding.restaurantListRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        binding.restaurantListRecyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL,false));
+        binding.restaurantListRecyclerView.addItemDecoration(
+                new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        binding.restaurantListRecyclerView.setLayoutManager(
+                new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
 
         // INJECTION OF RESTAURANT VIEWMODEL
         ViewModelFactory restaurantsViewModelFactory = ViewModelFactory.getInstance();
         RestaurantsViewModel restaurantsViewModel =
                 new ViewModelProvider(this, restaurantsViewModelFactory)
-                .get(RestaurantsViewModel.class);
+                        .get(RestaurantsViewModel.class);
 
         // CONFIGURE RECYCLERVIEW
-        restaurantsViewModel.getRestaurantsViewStateLiveData().observe(getViewLifecycleOwner(), new Observer<RestaurantsWrapperViewState>() {
-            @Override
-            public void onChanged(RestaurantsWrapperViewState restaurantsWrapperViewState) {
-                adapter.setRestaurantListData(restaurantsWrapperViewState.getItemRestaurant());
-            }
-        });
+        restaurantsViewModel.getRestaurantsViewStateLiveData()
+                .observe(getViewLifecycleOwner(), new Observer<RestaurantsWrapperViewState>() {
+                    @Override
+                    public void onChanged(RestaurantsWrapperViewState restaurantsWrapperViewState) {
+                        adapter.setRestaurantListData(restaurantsWrapperViewState.getItemRestaurant());
+
+                    }
+                });
 
         // ON ITEM CLICK, GO TO DETAILS
         adapter.setOnItemClickListener(restaurantsViewState ->
                 startActivity(RestaurantDetailsActivity.navigate(
                         requireContext(),
                         restaurantsViewState.getPlaceId())));
+
     }
 
     @Override

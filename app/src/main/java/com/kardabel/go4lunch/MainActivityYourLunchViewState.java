@@ -7,9 +7,13 @@ public class MainActivityYourLunchViewState {
     private final String restaurantId;
     private final int currentUserRestaurantChoiceStatus;
 
-    public MainActivityYourLunchViewState(String restaurantId, int currentUserRestaurantChoiceStatus) {
+    public MainActivityYourLunchViewState(
+            String restaurantId,
+            int currentUserRestaurantChoiceStatus) {
+
         this.restaurantId = restaurantId;
         this.currentUserRestaurantChoiceStatus = currentUserRestaurantChoiceStatus;
+
     }
 
     public String getRestaurantId() {
@@ -25,12 +29,15 @@ public class MainActivityYourLunchViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MainActivityYourLunchViewState that = (MainActivityYourLunchViewState) o;
-        return currentUserRestaurantChoiceStatus == that.currentUserRestaurantChoiceStatus && Objects.equals(restaurantId, that.restaurantId);
+        return currentUserRestaurantChoiceStatus == that.currentUserRestaurantChoiceStatus &&
+                Objects.equals(restaurantId, that.restaurantId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(restaurantId, currentUserRestaurantChoiceStatus);
+        return Objects.hash(
+                restaurantId,
+                currentUserRestaurantChoiceStatus);
     }
 
     @Override

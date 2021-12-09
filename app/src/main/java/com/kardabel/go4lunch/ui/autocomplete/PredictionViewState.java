@@ -31,12 +31,19 @@ public class PredictionViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PredictionViewState that = (PredictionViewState) o;
-        return Objects.equals(predictionDescription, that.predictionDescription) && Objects.equals(predictionPlaceId, that.predictionPlaceId) && Objects.equals(predictionName, that.predictionName);
+        return Objects.equals(predictionDescription, that.predictionDescription) &&
+                Objects.equals(predictionPlaceId, that.predictionPlaceId) &&
+                Objects.equals(predictionName, that.predictionName);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(predictionDescription, predictionPlaceId, predictionName);
+        return Objects.hash(
+                predictionDescription,
+                predictionPlaceId,
+                predictionName);
+
     }
 
     @Override
@@ -46,5 +53,6 @@ public class PredictionViewState {
                 ", predictionPlaceId='" + predictionPlaceId + '\'' +
                 ", predictionName='" + predictionName + '\'' +
                 '}';
+
     }
 }

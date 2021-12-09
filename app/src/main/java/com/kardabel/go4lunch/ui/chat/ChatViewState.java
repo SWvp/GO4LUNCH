@@ -9,11 +9,17 @@ public class ChatViewState {
     private final String chatMessageTimeViewState;
     private final Long timestamp;
 
-    public ChatViewState(String chatMessageViewState, int isSender, String chatMessageTimeViewState, Long timestamp) {
+    public ChatViewState(
+            String chatMessageViewState,
+            int isSender,
+            String chatMessageTimeViewState,
+            Long timestamp) {
+
         this.chatMessageViewState = chatMessageViewState;
         this.isSender = isSender;
         this.chatMessageTimeViewState = chatMessageTimeViewState;
         this.timestamp = timestamp;
+
     }
 
     public String getChatMessageViewState() { return chatMessageViewState; }
@@ -31,12 +37,21 @@ public class ChatViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatViewState that = (ChatViewState) o;
-        return isSender == that.isSender && Objects.equals(chatMessageViewState, that.chatMessageViewState) && Objects.equals(chatMessageTimeViewState, that.chatMessageTimeViewState) && Objects.equals(timestamp, that.timestamp);
+        return isSender == that.isSender &&
+                Objects.equals(chatMessageViewState, that.chatMessageViewState) &&
+                Objects.equals(chatMessageTimeViewState, that.chatMessageTimeViewState) &&
+                Objects.equals(timestamp, that.timestamp);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(chatMessageViewState, isSender, chatMessageTimeViewState, timestamp);
+        return Objects.hash(
+                chatMessageViewState,
+                isSender,
+                chatMessageTimeViewState,
+                timestamp);
+
     }
 
     @Override
@@ -47,5 +62,6 @@ public class ChatViewState {
                 ", chatMessageTimeViewState='" + chatMessageTimeViewState + '\'' +
                 ", timestamp=" + timestamp +
                 '}';
+
     }
 }

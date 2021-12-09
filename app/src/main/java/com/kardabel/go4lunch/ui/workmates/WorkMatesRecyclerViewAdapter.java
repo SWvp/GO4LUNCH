@@ -36,11 +36,13 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
                 parent,
                 false);
         return new ViewHolder(binding);
+
     }
 
     // BIND THE VIEW WITH VIEW STATE VAL
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         WorkMateViewState workMate = workmatesList.get(position);
 
         holder
@@ -61,10 +63,11 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
                     .viewHolderBinding
                     .itemWorkmateDescription
                     .setTypeface(null, Typeface.ITALIC);
-        }
 
+        }
         holder.itemView.setOnClickListener(v ->
                 onWorkmateItemClickListener.onWorkmateItemClick(workMate));
+
     }
 
     @Override

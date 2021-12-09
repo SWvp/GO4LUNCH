@@ -6,7 +6,6 @@ import java.util.Objects;
 public class RestaurantsWrapperViewState {
 
     // WRAPPER OF RESTAURANTS ITEMS
-
     private final List<RestaurantsViewState> itemRestaurant;
 
     public RestaurantsWrapperViewState(List<RestaurantsViewState> itemRestaurant) {

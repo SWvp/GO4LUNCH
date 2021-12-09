@@ -45,7 +45,6 @@ public class AutocompleteRepository {
 
                         }
                     }
-
                     @Override
                     public void onFailure(Call<Predictions> call, Throwable t) {
                         t.printStackTrace();

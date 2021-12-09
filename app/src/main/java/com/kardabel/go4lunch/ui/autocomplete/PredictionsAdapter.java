@@ -12,9 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kardabel.go4lunch.R;
 
-public class PredictionsAdapter extends
-        ListAdapter<PredictionViewState,
-                PredictionsAdapter.ViewHolder> {
+public class PredictionsAdapter extends ListAdapter<PredictionViewState, PredictionsAdapter.ViewHolder> {
 
     @NonNull
     private final OnPredictionItemClickedListener listener;

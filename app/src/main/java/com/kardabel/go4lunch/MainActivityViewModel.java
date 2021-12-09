@@ -119,7 +119,8 @@ public class MainActivityViewModel extends ViewModel {
         LiveData<List<UserWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceLiveData =
                 usersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
 
-        mainActivityYourLunchViewStateMediatorLiveData.addSource(workmatesWhoMadeRestaurantChoiceLiveData, this::mapUserRestaurantChoice);
+        mainActivityYourLunchViewStateMediatorLiveData.addSource(
+                workmatesWhoMadeRestaurantChoiceLiveData, this::mapUserRestaurantChoice);
     }
 
     private void mapUserRestaurantChoice(List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoices) {

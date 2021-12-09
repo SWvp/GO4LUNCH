@@ -67,10 +67,11 @@ public class ChatActivity extends AppCompatActivity {
                 new ViewModelProvider(this, chatViewModelFactory).get(ChatViewModel.class);
 
         // INIT THE VIEW MODEL WITH THE WORKMATE ID PASSED IN INTENT
-        // (WE NEED USER ONE TO BUT IT WILL BE LATER)
+        // (WE NEED CURRENT USER TOO BUT IT WILL BE LATER, IN THE USECASE)
         Intent intent = getIntent();
         chatViewModel.init(intent.getStringExtra(WORKMATE_ID));
 
+        // FEED THE VIEW WITH MATE INFORMATION
         binding.mateName.setText(intent.getStringExtra(WORKMATE_NAME));
         Glide.with(binding.workmatePhoto.getContext())
                 .load(intent.getStringExtra(WORKMATE_PHOTO))
@@ -88,13 +89,11 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-
                 binding.activityChatSendButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (!Objects.requireNonNull(binding.chatMessageEditText.getText()).toString().isEmpty()) {
                             String message = binding.chatMessageEditText.getText().toString();
-                            // TODO : envoyer tout ça à un usecase ou un repo
                             chatViewModel.createChatMessage(message, intent.getStringExtra(WORKMATE_ID));
                             binding.chatMessageEditText.getText().clear();
                             hideSoftKeyboard(ChatActivity.this);
@@ -113,7 +112,9 @@ public class ChatActivity extends AppCompatActivity {
         if (activity == null) return;
         if (activity.getCurrentFocus() == null) return;
 
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+
     }
 }

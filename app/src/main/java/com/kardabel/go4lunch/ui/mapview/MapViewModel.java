@@ -75,7 +75,10 @@ public class MapViewModel extends ViewModel {
                     usersSearch));
 
         } else if (nearbySearchResults != null && location != null) {
-            mapViewStatePoiMediatorLiveData.setValue(map(nearbySearchResults, location, userWhoMadeRestaurantChoice));
+            mapViewStatePoiMediatorLiveData.setValue(map(
+                    nearbySearchResults,
+                    location,
+                    userWhoMadeRestaurantChoice));
         }
     }
 

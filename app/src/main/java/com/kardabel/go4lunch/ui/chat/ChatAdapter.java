@@ -31,13 +31,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // VIEW HOLDER FOR INCOMING MESSAGE
     private class MessageInViewHolder extends RecyclerView.ViewHolder {
 
-        TextView message,date;
+        TextView message, date;
 
         MessageInViewHolder(final View itemView) {
             super(itemView);
             message = itemView.findViewById(R.id.incoming_message_text);
             date = itemView.findViewById(R.id.incoming_message_date);
         }
+
         void bind(int position) {
             ChatViewState chatViewState = chatMessagesList.get(position);
             message.setText(chatViewState.getChatMessageViewState());
@@ -48,12 +49,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // VIEW HOLDER FOR OUTGOING MESSAGE
     private class MessageOutViewHolder extends RecyclerView.ViewHolder {
 
-        TextView message,date;
+        TextView message, date;
+
         MessageOutViewHolder(final View itemView) {
             super(itemView);
             message = itemView.findViewById(R.id.outgoing_message_text);
             date = itemView.findViewById(R.id.outgoing_message_date);
         }
+
         void bind(int position) {
             ChatViewState chatViewState = chatMessagesList.get(position);
             message.setText(chatViewState.getChatMessageViewState());
@@ -64,11 +67,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == MESSAGE_TYPE_IN) {
-            return new MessageInViewHolder(LayoutInflater.from(context).inflate(R.layout.item_chat_incoming, parent, false));
+            return new MessageInViewHolder(LayoutInflater
+                    .from(context)
+                    .inflate(R.layout.item_chat_incoming, parent, false));
         }
-        return new MessageOutViewHolder(LayoutInflater.from(context).inflate(R.layout.item_chat_outgoing, parent, false));
+        return new MessageOutViewHolder(LayoutInflater
+                .from(context)
+                .inflate(R.layout.item_chat_outgoing, parent, false));
     }
-
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {

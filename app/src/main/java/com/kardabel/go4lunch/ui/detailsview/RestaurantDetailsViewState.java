@@ -62,12 +62,31 @@ public class RestaurantDetailsViewState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantDetailsViewState that = (RestaurantDetailsViewState) o;
-        return Double.compare(that.rating, rating) == 0 && choseRestaurantButton == that.choseRestaurantButton && detailLikeButton == that.detailLikeButton && Objects.equals(detailsRestaurantName, that.detailsRestaurantName) && Objects.equals(detailsRestaurantAddress, that.detailsRestaurantAddress) && Objects.equals(detailsPhoto, that.detailsPhoto) && Objects.equals(detailsRestaurantNumber, that.detailsRestaurantNumber) && Objects.equals(detailsWebsite, that.detailsWebsite) && Objects.equals(detailsRestaurantId, that.detailsRestaurantId);
+        return Double.compare(that.rating, rating) == 0 &&
+                choseRestaurantButton == that.choseRestaurantButton &&
+                detailLikeButton == that.detailLikeButton &&
+                Objects.equals(detailsRestaurantName, that.detailsRestaurantName) &&
+                Objects.equals(detailsRestaurantAddress, that.detailsRestaurantAddress) &&
+                Objects.equals(detailsPhoto, that.detailsPhoto) &&
+                Objects.equals(detailsRestaurantNumber, that.detailsRestaurantNumber) &&
+                Objects.equals(detailsWebsite, that.detailsWebsite) &&
+                Objects.equals(detailsRestaurantId, that.detailsRestaurantId);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(detailsRestaurantName, detailsRestaurantAddress, detailsPhoto, detailsRestaurantNumber, detailsWebsite, detailsRestaurantId, rating, choseRestaurantButton, detailLikeButton);
+        return Objects.hash(
+                detailsRestaurantName,
+                detailsRestaurantAddress,
+                detailsPhoto,
+                detailsRestaurantNumber,
+                detailsWebsite,
+                detailsRestaurantId,
+                rating,
+                choseRestaurantButton,
+                detailLikeButton);
+
     }
 
     @Override
@@ -83,5 +102,6 @@ public class RestaurantDetailsViewState {
                 ", choseRestaurantButton=" + choseRestaurantButton +
                 ", detailLikeButton=" + detailLikeButton +
                 '}';
+
     }
 }
