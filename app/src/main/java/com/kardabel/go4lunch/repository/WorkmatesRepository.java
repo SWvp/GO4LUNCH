@@ -18,17 +18,17 @@ import java.util.Set;
 
 public class WorkmatesRepository {
 
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-
     // GET WORKMATES FROM FIRESTORE DATABASE
     public LiveData<List<UserModel>> getWorkmates() {
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         MutableLiveData<List<UserModel>> userModelMutableLiveData = new MutableLiveData<>();
 
         // WITH SET, WE ENSURE THERE IS NO DUPLICATE, FOR EXAMPLE WHEN ANOTHER USER CHANGE NAME FIELD
         Set<UserModel> workmates = new HashSet<>();
 
-        // TODO : order by "is restaurant been chosen"
         db.collection("users")
                 .orderBy("userName")
                 .addSnapshotListener((value, error) -> {
