@@ -1,6 +1,11 @@
 package com.kardabel.go4lunch.usecase;
 
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
@@ -24,6 +29,8 @@ public class AddChatMessageToFireStoreUseCaseTest {
 
     public static final String USER_ID = "2345";
     public static final String COLLECTION_CHAT = "chat";
+    public static final String MESSAGE = "message";
+    public static final String WORKMATE_ID = "1234";
     @Rule
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
@@ -65,9 +72,14 @@ public class AddChatMessageToFireStoreUseCaseTest {
     }
 
     @Test
-    public void when_Add_Message() {
+    public void when_Create_Chat_Message_Is_Called() {
 
-        addChatMessageToFirestoreUseCase.createChatMessage("message", "1234");
+        addChatMessageToFirestoreUseCase = mock(AddChatMessageToFirestoreUseCase.class);
+
+        doNothing().when(addChatMessageToFirestoreUseCase).createChatMessage(isA(String.class), isA(String.class));
+        addChatMessageToFirestoreUseCase.createChatMessage(MESSAGE, WORKMATE_ID);
+        verify(addChatMessageToFirestoreUseCase, times(1)).createChatMessage(MESSAGE, WORKMATE_ID);
+
 
 
 
