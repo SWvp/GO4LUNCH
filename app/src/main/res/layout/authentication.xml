@@ -3,24 +3,55 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/authentication_layout"
+    android:background="@color/orange"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/auth_pictures">
+    android:layout_height="match_parent">
 
 
     <Button
         android:id="@+id/loginButton"
-        style="?android:attr/borderlessButtonStyle"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="80dp"
-        android:background="@color/white"
+        android:background="@drawable/round_button"
+        android:fontFamily="serif"
         android:text="login"
+
         android:textColor="#fff"
-        android:textSize="12sp"
+        android:textSize="20sp"
+        app:backgroundTint="@color/orange_variant"
+        app:backgroundTintMode="src_in"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="400dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+
+        android:background="@drawable/go4lunch"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="128dp"
+        android:text="find a nice restaurant and invite your co-workers for lunch !"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/loginButton"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="@+id/imageView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
