@@ -1,9 +1,7 @@
 <resources>
     <string name="app_name">GO4LUNCH</string>
 
-
-
-    <!-- MAIN ACTIVITY -->
+        <!-- MAIN ACTIVITY -->
     <string name="need_your_position">Needed for retrieve your position, thank you</string>
     <string name="title_alert">WARING</string>
     <string name="rational">if you want to take full advantage of GO4LUNCH, please closed your app, select appInfo and go to permissions, then allow GO4LUNCH to access to your location. Reload GO4LUNCH, enjoy your lunch, thank you !</string>
@@ -14,25 +12,32 @@
     <string name="title_listview">List View</string>
     <string name="title_workmates">Workmates</string>
 
-    <!-- USED IN MENU-->
+    <!-- USED IN DRAWER MENU-->
     <string name="title_1">YOUR LUNCH</string>
     <string name="title_2">SETTINGS</string>
     <string name="title_3">LOGOUT</string>
 
+    <!-- USED IN NAVIGATION HEADER-->
+    <string name="header_name">Name</string>
+    <string name="header_picture">Avatar</string>
+    <string name="header_email">Email</string>
 
     <!-- USED IN AUTHENTICATION -->
-    <string name="button_login_text_logged">Display profile</string>
+    <string name="button_login_text_logged">Go!</string>
     <string name="button_login_text_not_logged">Connexion</string>
     <string name="connection_succeed">Authentication succeed !</string>
     <string name="error_authentication_canceled">Authentication canceled</string>
     <string name="error_no_internet">Internet unavailable</string>
     <string name="error_unknown_error">Unknown error</string>
+    <string name="auth_login_button">Login</string>
+    <string name="auth_logo">Logo</string>
+    <string name="auth_description">find a nice restaurant and invite your co-workers for lunch !</string>
 
     <!-- USED BY FACEBOOK AUTH -->
     <string name="facebook_application_id">303261874567043</string>
     <string name="fb_login_protocol_scheme">fb303261874567043</string>
 
-    <!-- USED IN NAVIGATIONDRAWER -->
+    <!-- USED IN NAVIGATION DRAWER -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="header_tittle">GO4LUNCH</string>
@@ -75,7 +80,17 @@
     <string name="call_button">CALL</string>
     <string name="restaurant_name">Restaurant name</string>
     <string name="restaurant_address">Restaurant address</string>
-    <string name="web_icon">Web icon</string>
+    <string name="web_icon">Web</string>
+    <string name="details_picture">Restaurant picture</string>
+    <string name="details_chose_button">Chose restaurant button</string>
+    <string name="details_favorite_button">Favorite button</string>
+
+    <!-- CHAT LAYOUT -->
+    <string name="chat_back_button">Back button</string>
+    <string name="chat_photo">Workmate avatar</string>
+    <string name="chat_mate_name">Melanie</string>
+    <string name="chat_text_input">Type your text here</string>
+    <string name="chat_send_button">Send button</string>
 
     <!-- AUTOCOMPLETE REPOSITORY -->
     <string name="autocomplete_type">establishment</string>
@@ -103,6 +118,17 @@
 
     <!-- MAIN ACTIVITY VIEW MODEL -->
     <string name="no_current_user_restaurant_choice">No current user restaurant choice</string>
+
+    <!-- ITEM RESTAURANT -->
+    <string name="item_restaurant_name">Restaurant name</string>
+    <string name="item_restaurant_address">Restaurant Address</string>
+    <string name="item_restaurant_opening_hours">Opening hours</string>
+    <string name="item_restaurant_distance">100m</string>
+    <string name="item_restaurant_picture">Picture</string>
+
+    <!-- SETTINGS LAYOUT-->
+    <string name="settings_notification_text">Notification text</string>
+    <string name="settings_notification_description">Enable if you want to be notified for your lunch</string>
 
 
 
