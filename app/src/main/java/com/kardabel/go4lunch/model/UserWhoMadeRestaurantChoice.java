@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.model;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 public class UserWhoMadeRestaurantChoice {
@@ -7,6 +9,7 @@ public class UserWhoMadeRestaurantChoice {
     private String restaurantId;
     private String restaurantName;
     private String userId;
+    private String restaurantAddress;
 
     public UserWhoMadeRestaurantChoice() {
     }
@@ -14,11 +17,13 @@ public class UserWhoMadeRestaurantChoice {
     public UserWhoMadeRestaurantChoice(
             String restaurantId,
             String restaurantName,
-            String userId) {
+            String userId,
+            String restaurantAddress) {
 
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.userId = userId;
+        this.restaurantAddress = restaurantAddress;
     }
 
     public String getRestaurantId() {
@@ -33,17 +38,12 @@ public class UserWhoMadeRestaurantChoice {
         return restaurantName;
     }
 
-    public void setRestaurantName(String restaurantName) {
-        this.restaurantName = restaurantName;
-    }
-
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    public String getRestaurantAddress() { return restaurantAddress; }
+
 
     @Override
     public boolean equals(Object o) {
@@ -52,20 +52,27 @@ public class UserWhoMadeRestaurantChoice {
         UserWhoMadeRestaurantChoice that = (UserWhoMadeRestaurantChoice) o;
         return Objects.equals(restaurantId, that.restaurantId) &&
                 Objects.equals(restaurantName, that.restaurantName) &&
-                Objects.equals(userId, that.userId);
+                Objects.equals(userId, that.userId) &&
+                Objects.equals(restaurantAddress, that.restaurantAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(restaurantId, restaurantName, userId);
+        return Objects.hash(
+                restaurantId,
+                restaurantName,
+                userId,
+                restaurantAddress);
     }
 
+    @NonNull
     @Override
     public String toString() {
-        return "WorkmateWhoMadeRestaurantChoice{" +
+        return "UserWhoMadeRestaurantChoice{" +
                 "restaurantId='" + restaurantId + '\'' +
                 ", restaurantName='" + restaurantName + '\'' +
                 ", userId='" + userId + '\'' +
+                ", restaurantAddress='" + restaurantAddress + '\'' +
                 '}';
     }
 }
