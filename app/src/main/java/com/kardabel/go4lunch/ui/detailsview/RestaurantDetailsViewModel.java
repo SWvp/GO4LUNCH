@@ -1,7 +1,9 @@
 package com.kardabel.go4lunch.ui.detailsview;
 
 import android.app.Application;
+import android.graphics.Color;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -179,9 +181,11 @@ public class RestaurantDetailsViewModel extends ViewModel {
                 }
             }
         }
-        int restaurantChoiceState = R.drawable.hasnt_decided;
+        int restaurantChoiceState = R.drawable.has_not_decided;
+        int backgroundVectorColor = Color.parseColor("#000000");
         if (isMyRestaurant) {
             restaurantChoiceState = R.drawable.has_decided;
+            backgroundVectorColor = Color.parseColor("#69F0AE");
         }
 
         // CHECK IF THIS RESTAURANT IS IN USERS FAVORITE
@@ -206,7 +210,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
                 restaurant.getRestaurantId(),
                 convertRatingStars(restaurant.getRating()),
                 restaurantChoiceState,
-                detailLikeButton
+                detailLikeButton,
+                backgroundVectorColor
 
         );
         return result;
@@ -238,9 +243,11 @@ public class RestaurantDetailsViewModel extends ViewModel {
             }
         }
 
-        int restaurantChoiceState = R.drawable.hasnt_decided;
+        int restaurantChoiceState = R.drawable.has_not_decided;
+        int backgroundVectorColor = Color.parseColor("#000000");
         if (isMyRestaurant) {
             restaurantChoiceState = R.drawable.has_decided;
+            backgroundVectorColor = Color.parseColor("#69F0AE");
         }
 
         // CHECK IF PHONE NUMBER IS AVAILABLE
@@ -279,7 +286,8 @@ public class RestaurantDetailsViewModel extends ViewModel {
                 restaurant.getRestaurantId(),
                 convertRatingStars(restaurant.getRating()),
                 restaurantChoiceState,
-                detailLikeButton
+                detailLikeButton,
+                backgroundVectorColor
 
         );
         return result;
@@ -348,8 +356,14 @@ public class RestaurantDetailsViewModel extends ViewModel {
     }
 
     // CLICK ON THE CHOSE FAB
-    public void onChoseRestaurantButtonClick(String restaurantId, String restaurantName) {
-        clickOnChoseRestaurantButtonUseCase.onRestaurantSelectedClick(restaurantId, restaurantName);
+    public void onChoseRestaurantButtonClick(
+            String restaurantId,
+            String restaurantName,
+            String restaurantAddress) {
+        clickOnChoseRestaurantButtonUseCase.onRestaurantSelectedClick(
+                restaurantId,
+                restaurantName,
+                restaurantAddress);
 
     }
 
