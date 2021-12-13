@@ -42,16 +42,14 @@ public class UsersWhoMadeRestaurantChoiceRepository {
                     assert value != null;
                     for (DocumentChange document : value.getDocumentChanges()) {
                         Log.d("pipo", "onEvent() called with: value = [" + document.getDocument().toObject(UserWhoMadeRestaurantChoice.class) + "], error = [" + error + "]");
-                        if (document.getType() == DocumentChange.Type.ADDED ) {
+                        if (document.getType() == DocumentChange.Type.ADDED) {
 
                             usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
 
-                        }
-
-                        else if (document.getType() == DocumentChange.Type.MODIFIED ) {
+                        } else if (document.getType() == DocumentChange.Type.MODIFIED) {
 
                             for (int i = 0; i < usersWithRestaurant.size(); i++) {
-                                if(usersWithRestaurant.get(i).getUserId().equals(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class).getUserId())){
+                                if (usersWithRestaurant.get(i).getUserId().equals(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class).getUserId())) {
                                     usersWithRestaurant.remove(usersWithRestaurant.get(i));
                                 }
 
@@ -59,20 +57,15 @@ public class UsersWhoMadeRestaurantChoiceRepository {
 
                             usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
 
-                        }
-
-                        else if(document.getType() == DocumentChange.Type.REMOVED){
+                        } else if (document.getType() == DocumentChange.Type.REMOVED) {
 
 
                             usersWithRestaurant.remove(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
 
                         }
-
-                       // TODO: SWITCH CASE
                     }
-
-                   // List<WorkmateWhoMadeRestaurantChoice> usersWhoChose = new ArrayList<>(usersWithRestaurant);
                     userModelMutableLiveData.setValue(usersWithRestaurant);
+
                 });
         return userModelMutableLiveData;
 
