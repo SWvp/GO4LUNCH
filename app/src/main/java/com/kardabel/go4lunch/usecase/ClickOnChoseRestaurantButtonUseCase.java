@@ -13,12 +13,9 @@ import java.util.Objects;
 
 public class ClickOnChoseRestaurantButtonUseCase {
 
-    private final FirebaseFirestore firebaseFirestore;
     private final Clock clock;
 
-    public ClickOnChoseRestaurantButtonUseCase(FirebaseFirestore firebaseFirestore,
-                                               Clock clock) {
-        this.firebaseFirestore = firebaseFirestore;
+    public ClickOnChoseRestaurantButtonUseCase(Clock clock) {
         this.clock = clock;
 
     }
@@ -32,14 +29,16 @@ public class ClickOnChoseRestaurantButtonUseCase {
     // IF NO, DELETE OLD ONE AND CREATE A NEW CHOSEN RESTAURANT
     public void onRestaurantSelectedClick(
             String restaurantId,
-            String restaurantName) {
+            String restaurantName,
+            String restaurantAddress) {
 
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         Map<String, Object> userGotRestaurant = new HashMap<>();
         userGotRestaurant.put("restaurantId", restaurantId);
         userGotRestaurant.put("restaurantName", restaurantName);
         userGotRestaurant.put("userId", userId);
+        userGotRestaurant.put("restaurantAddress", restaurantAddress);
 
         getDayCollection()
                 .document(userId)
