@@ -78,6 +78,7 @@ public class AuthenticationActivity extends BaseActivity<AuthenticationBinding> 
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
+                        .setLogo(R.drawable.go4lunch)
                         .setTheme(R.style.LoginTheme)
                         .setAvailableProviders(providers)
                         .setIsSmartLockEnabled(false)
