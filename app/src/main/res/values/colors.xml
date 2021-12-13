@@ -10,6 +10,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="red">#C41C00</color>
     <color name="orange">#FFFF8800</color>
-    <color name="orange_variant">#FF5100</color>
+    <color name="orange_variant">#cc541c</color>
     <color name="rating_star_gold">#FFDD00</color>
+
 </resources>
