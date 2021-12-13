@@ -150,6 +150,12 @@ public class MapViewModelTest {
     String secondNumber = "Second_Phone_Number";
     String secondSite = "Second_Website";
 
+    String thirdRestaurantId = "Third_Restaurant_Id";
+    String thirdRestaurantName = "Third_Restaurant_Name";
+    String thirdAddress = "Third_Address";
+    String thirdNumber = "Third_Phone_Number";
+    String thirdSite = "Third_Website";
+
     String photoReference = "photo";
 
     String firstUserId = "First_user_Id";
@@ -188,6 +194,21 @@ public class MapViewModelTest {
                         secondSite
                 )
         );
+        restaurants.add(
+                new Restaurant(
+                        thirdRestaurantId,
+                        thirdRestaurantName,
+                        thirdAddress,
+                        getPhoto(),
+                        new Geometry(new RestaurantLatLngLiteral(32.1, 42.2)),
+                        new OpeningHours(false, null),
+                        2,
+                        25,
+                        false,
+                        thirdNumber,
+                        thirdSite
+                )
+        );
         return restaurants;
 
     }
@@ -198,15 +219,17 @@ public class MapViewModelTest {
                 new UserWhoMadeRestaurantChoice(
                         firstRestaurantId,
                         firstRestaurantName,
-                        firstUserId
+                        firstUserId,
+                        firstAddress
 
                 )
         );
         userWhoMadeRestaurantChoices.add(
                 new UserWhoMadeRestaurantChoice(
-                        firstRestaurantId,
+                        secondRestaurantId,
                         secondRestaurantName,
-                        secondUserId
+                        secondUserId,
+                        secondAddress
 
                 )
         );
@@ -248,8 +271,16 @@ public class MapViewModelTest {
                 secondRestaurantId,
                 secondAddress,
                 new LatLng(32.1, 42.2),
+                true
+        ));
+        poi.add(new Poi(
+                thirdRestaurantName,
+                thirdRestaurantId,
+                thirdAddress,
+                new LatLng(32.1, 42.2),
                 false
         ));
+
         return poi;
     }
 
@@ -266,7 +297,7 @@ public class MapViewModelTest {
                 secondRestaurantId,
                 secondAddress,
                 new LatLng(32.1, 42.2),
-                false
+                true
         ));
         return poi;
     }

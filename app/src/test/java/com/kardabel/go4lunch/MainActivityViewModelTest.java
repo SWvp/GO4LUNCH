@@ -30,8 +30,8 @@ import java.util.List;
 
 public class MainActivityViewModelTest {
 
-    private String currentUserId = "current_User_Id";
-    private String userTypeText = "first_name";
+    private final String currentUserId = "current_User_Id";
+    private final String userTypeText = "first_name";
 
     @Rule
     public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -109,13 +109,10 @@ public class MainActivityViewModelTest {
     public void type_Text_In_Search_View_Should_Display_Predictions() {
         // WHEN
         mainActivityViewModel.sendTextToAutocomplete(userTypeText);
-        LiveDataTestUtils.observeForTesting(mainActivityViewModel.getPredictionsLiveData(), new LiveDataTestUtils.OnObservedListener<List<PredictionViewState>>() {
-            @Override
-            public void onObserved(List<PredictionViewState> predictions) {
-                // THEN
-                assertEquals(MainActivityViewModelTest.this.getDefaultPredictionsViewState(), predictions);
+        LiveDataTestUtils.observeForTesting(mainActivityViewModel.getPredictionsLiveData(), predictions -> {
+            // THEN
+            assertEquals(MainActivityViewModelTest.this.getDefaultPredictionsViewState(), predictions);
 
-            }
         });
     }
 
@@ -123,13 +120,10 @@ public class MainActivityViewModelTest {
     public void user_choice() {
         // WHEN
         mainActivityViewModel.getUserRestaurantChoice();
-        LiveDataTestUtils.observeForTesting(mainActivityViewModel.getCurrentUserRestaurantChoice(), new LiveDataTestUtils.OnObservedListener<MainActivityYourLunchViewState>() {
-            @Override
-            public void onObserved(MainActivityYourLunchViewState yourLunch) {
-                // THEN
-                assertEquals(MainActivityViewModelTest.this.getDefaultYourLunchViewState(), yourLunch);
+        LiveDataTestUtils.observeForTesting(mainActivityViewModel.getCurrentUserRestaurantChoice(), yourLunch -> {
+            // THEN
+            assertEquals(MainActivityViewModelTest.this.getDefaultYourLunchViewState(), yourLunch);
 
-            }
         });
     }
 
@@ -137,11 +131,13 @@ public class MainActivityViewModelTest {
     String firstDescription = "first_description";
     String firstRestaurantId = "First_Restaurant_Id";
     String firstRestaurantName = "First_Restaurant_Name";
+    String firstRestaurantAddress = "First_Restaurant_Address";
     String nameOne = "name_one";
 
     String secondDescription = "second_description";
     String secondRestaurantId = "Second_Restaurant_Id";
     String secondRestaurantName = "Second_Restaurant_Name";
+    String secondRestaurantAddress = "Second_Restaurant_Address";
     String nameTwo = "name_two";
 
     String secondUserId = "Second_user_Id";
@@ -178,7 +174,9 @@ public class MainActivityViewModelTest {
                 new UserWhoMadeRestaurantChoice(
                         firstRestaurantId,
                         firstRestaurantName,
-                        currentUserId
+                        currentUserId,
+                        firstRestaurantAddress
+
 
                 )
         );
@@ -186,7 +184,8 @@ public class MainActivityViewModelTest {
                 new UserWhoMadeRestaurantChoice(
                         secondRestaurantId,
                         secondRestaurantName,
-                        secondUserId
+                        secondUserId,
+                        secondRestaurantAddress
 
                 )
         );

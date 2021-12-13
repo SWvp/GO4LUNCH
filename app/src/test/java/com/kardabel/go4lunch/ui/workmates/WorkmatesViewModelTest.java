@@ -75,15 +75,12 @@ public class WorkmatesViewModelTest {
     @Test
     public void nominalCase() {
          // WHEN
-        LiveDataTestUtils.observeForTesting(workMatesViewModel.getWorkmatesViewStateLiveData(), new LiveDataTestUtils.OnObservedListener<List<WorkMateViewState>>() {
-            @Override
-            public void onObserved(List<WorkMateViewState> workmatesViewState) {
-                // THEN
-                assertEquals(WorkmatesViewModelTest.this.getDefaultWorkmatesViewState(), workmatesViewState);
+        LiveDataTestUtils.observeForTesting(workMatesViewModel.getWorkmatesViewStateLiveData(), workmatesViewState -> {
+            // THEN
+            assertEquals(WorkmatesViewModelTest.this.getDefaultWorkmatesViewState(), workmatesViewState);
 
-                verify(workmatesRepository).getWorkmates();
-                verify(mUsersWhoMadeRestaurantChoiceRepository).getWorkmatesWhoMadeRestaurantChoice();
-            }
+            verify(workmatesRepository).getWorkmates();
+            verify(mUsersWhoMadeRestaurantChoiceRepository).getWorkmatesWhoMadeRestaurantChoice();
         });
     }
 
@@ -92,15 +89,12 @@ public class WorkmatesViewModelTest {
         // GIVEN
         usersWhoMadeRestaurantChoiceRepositoryMutableLiveData.setValue(new ArrayList<>());
         // WHEN
-        LiveDataTestUtils.observeForTesting(workMatesViewModel.getWorkmatesViewStateLiveData(), new LiveDataTestUtils.OnObservedListener<List<WorkMateViewState>>() {
-            @Override
-            public void onObserved(List<WorkMateViewState> workmatesViewState) {
-                // THEN
-                assertEquals(WorkmatesViewModelTest.this.getWorkmatesHaveNotChosenYet(), workmatesViewState);
+        LiveDataTestUtils.observeForTesting(workMatesViewModel.getWorkmatesViewStateLiveData(), workmatesViewState -> {
+            // THEN
+            assertEquals(WorkmatesViewModelTest.this.getWorkmatesHaveNotChosenYet(), workmatesViewState);
 
-                verify(workmatesRepository).getWorkmates();
-                verify(mUsersWhoMadeRestaurantChoiceRepository).getWorkmatesWhoMadeRestaurantChoice();
-            }
+            verify(workmatesRepository).getWorkmates();
+            verify(mUsersWhoMadeRestaurantChoiceRepository).getWorkmatesWhoMadeRestaurantChoice();
         });
     }
 
@@ -130,9 +124,11 @@ public class WorkmatesViewModelTest {
 
     String firstRestaurantId = "First_Restaurant_Id";
     String firstRestaurantName = "First_Restaurant_Name";
+    String firstAddress = "First_Restaurant_Address";
 
     String secondRestaurantId = "Second_Restaurant_Id";
     String secondRestaurantName = "Second_Restaurant_Name";
+    String secondAddress = "Second_Restaurant_Address";
 
     private List<UserModel> workmates() {
         List<UserModel> workmates = new ArrayList<>();
@@ -177,7 +173,8 @@ public class WorkmatesViewModelTest {
                 new UserWhoMadeRestaurantChoice(
                         firstRestaurantId,
                         firstRestaurantName,
-                        thirdUserId
+                        thirdUserId,
+                        firstAddress
 
                 )
         );
@@ -185,7 +182,8 @@ public class WorkmatesViewModelTest {
                 new UserWhoMadeRestaurantChoice(
                         secondRestaurantId,
                         secondRestaurantName,
-                        fourthUserId
+                        fourthUserId,
+                        secondAddress
 
                 )
         );

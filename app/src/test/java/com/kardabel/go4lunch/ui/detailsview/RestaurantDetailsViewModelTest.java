@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class RestaurantDetailsViewModelTest {
+    public static final String CURRENT_USER_ID = "currentUserId";
     private final String firstRestaurantId = "First_Restaurant_Id";
 
     @Rule
@@ -73,7 +74,7 @@ public class RestaurantDetailsViewModelTest {
             new MutableLiveData<>();
     private final MutableLiveData<List<UserWhoMadeRestaurantChoice>> usersWhoMadeRestaurantChoiceLiveData =
             new MutableLiveData<>();
-    private final MutableLiveData<List<UserModel>> workMatesLiveData =
+    private final MutableLiveData<List<UserModel>> usersLiveData =
             new MutableLiveData<>();
     private final MutableLiveData<List<FavoriteRestaurant>> favoriteRestaurantsLiveData =
             new MutableLiveData<>();
@@ -104,22 +105,21 @@ public class RestaurantDetailsViewModelTest {
         Mockito.doReturn(usersWhoMadeRestaurantChoiceLiveData)
                 .when(usersWhoMadeRestaurantChoiceRepository)
                 .getWorkmatesWhoMadeRestaurantChoice();
-        Mockito.doReturn(workMatesLiveData)
+        Mockito.doReturn(usersLiveData)
                 .when(workmatesRepository)
                 .getWorkmates();
         Mockito.doReturn(favoriteRestaurantsLiveData)
                 .when(favoriteRestaurantsRepository)
                 .getFavoriteRestaurants();
-        String getCurrentUserId = "currentUserId";
-        Mockito.doReturn(getCurrentUserId)
+        Mockito.doReturn(CURRENT_USER_ID)
                 .when(getCurrentUserIdUseCase)
                 .invoke();
 
         // SET LIVEDATA VALUES
         restaurantLiveData.setValue(getDefaultRestaurant());
         restaurantDetailsLiveData.setValue(new RestaurantDetailsResult(restaurantDetails()));
-        usersWhoMadeRestaurantChoiceLiveData.setValue(workmatesWhoMadeChoice());
-        workMatesLiveData.setValue(getDefaultWorkmates());
+        usersWhoMadeRestaurantChoiceLiveData.setValue(getDefaultWorkmatesWhoMadeChoice());
+        usersLiveData.setValue(getDefaultWorkmates());
         favoriteRestaurantsLiveData.setValue(getDefaultFavoriteRestaurants());
 
 
@@ -137,7 +137,7 @@ public class RestaurantDetailsViewModelTest {
     }
 
     @Test
-    public void retrieveRestaurantDetails() {
+    public void nominal_Case() {
         // WHEN
         restaurantDetailsViewModel.init(firstRestaurantId);
         LiveDataTestUtils.observeForTesting(restaurantDetailsViewModel.getRestaurantDetailsViewStateLiveData(), restaurantDetails -> {
@@ -160,9 +160,10 @@ public class RestaurantDetailsViewModelTest {
     }
 
     @Test
-    public void retrieveWorkmate() {
+    public void detail_View_Should_Display_Workmate_Recycler_View() {
         // WHEN
         restaurantDetailsViewModel.init(firstRestaurantId);
+        usersWhoMadeRestaurantChoiceLiveData.setValue(getUserMadeThisRestaurantChoice());
         LiveDataTestUtils.observeForTesting(restaurantDetailsViewModel.getWorkmatesWhoChoseThisRestaurant(), workmates -> {
             // THEN
             assertEquals(RestaurantDetailsViewModelTest.this.getDefaultWorkmatesViewState(), workmates);
@@ -183,6 +184,15 @@ public class RestaurantDetailsViewModelTest {
     }
 
 
+    @Test
+    public void user_Has_Chosen_Restaurant_Should_Display_Check_Icon() {
+        // WHEN
+        restaurantDetailsViewModel.init(firstRestaurantId);
+        usersWhoMadeRestaurantChoiceLiveData.setValue(getUserMadeThisRestaurantChoice());
+        LiveDataTestUtils.observeForTesting(restaurantDetailsViewModel.getRestaurantDetailsViewStateLiveData(), details -> assertEquals(RestaurantDetailsViewModelTest.this.getUserChoseThisRestaurantDetailsViewState(), details));
+    }
+
+
     // region IN
 
     // VAL FOR TESTING
@@ -193,6 +203,7 @@ public class RestaurantDetailsViewModelTest {
 
     String secondRestaurantName = "Second_Restaurant_Name";
     String secondRestaurantId = "Second_Restaurant_Id";
+    String secondAddress = "Second_Restaurant_Address";
 
     String firstUserId = "First_User_Id";
     String firstUserName = "First_Name";
@@ -279,13 +290,14 @@ public class RestaurantDetailsViewModelTest {
         );
     }
 
-    private List<UserWhoMadeRestaurantChoice> workmatesWhoMadeChoice() {
+    private List<UserWhoMadeRestaurantChoice> getDefaultWorkmatesWhoMadeChoice() {
         List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoices = new ArrayList<>();
         userWhoMadeRestaurantChoices.add(
                 new UserWhoMadeRestaurantChoice(
                         firstRestaurantId,
                         firstRestaurantName,
-                        thirdUserId
+                        thirdUserId,
+                        firstAddress
 
                 )
         );
@@ -293,7 +305,9 @@ public class RestaurantDetailsViewModelTest {
                 new UserWhoMadeRestaurantChoice(
                         secondRestaurantId,
                         secondRestaurantName,
-                        fourthUserId
+                        fourthUserId,
+                        secondAddress
+
 
                 )
         );
@@ -355,6 +369,32 @@ public class RestaurantDetailsViewModelTest {
         return favoriteRestaurants;
     }
 
+    private List<UserWhoMadeRestaurantChoice> getUserMadeThisRestaurantChoice() {
+        List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoices = new ArrayList<>();
+        userWhoMadeRestaurantChoices.add(
+                new UserWhoMadeRestaurantChoice(
+                        firstRestaurantId,
+                        firstRestaurantName,
+                        CURRENT_USER_ID,
+                        firstAddress
+
+                )
+        );
+        userWhoMadeRestaurantChoices.add(
+                new UserWhoMadeRestaurantChoice(
+                        firstRestaurantId,
+                        firstRestaurantName,
+                        fourthUserId,
+                        firstAddress
+
+
+                )
+        );
+        return userWhoMadeRestaurantChoices;
+
+
+    }
+
     // endregion
 
     /////////////////////////////////////////////////////////
@@ -371,18 +411,34 @@ public class RestaurantDetailsViewModelTest {
                 firstRestaurantId,
                 1,
                 2131165351,
-                2131165335
+                2131165335,
+                0
         );
     }
 
     private List<RestaurantDetailsWorkmatesViewState> getDefaultWorkmatesViewState() {
         List<RestaurantDetailsWorkmatesViewState> workMates = new ArrayList<>();
         workMates.add(new RestaurantDetailsWorkmatesViewState(
-                thirdUserName + " is joining !",
-                thirdAvatar
+                fourthUserName + " is joining !",
+                fourthAvatar
         ));
 
         return workMates;
 
+    }
+
+    private RestaurantDetailsViewState getUserChoseThisRestaurantDetailsViewState() {
+        return new RestaurantDetailsViewState(
+                firstRestaurantName,
+                firstAddress,
+                photoApiUrl,
+                firstNumber,
+                firstSite,
+                firstRestaurantId,
+                1,
+                2131165350,
+                2131165335,
+                0
+        );
     }
 }

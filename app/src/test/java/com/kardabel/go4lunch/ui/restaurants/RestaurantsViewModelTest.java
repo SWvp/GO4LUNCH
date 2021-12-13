@@ -942,7 +942,8 @@ public class RestaurantsViewModelTest {
                 new UserWhoMadeRestaurantChoice(
                         firstRestaurantId,
                         firstRestaurantName,
-                        firstUserId
+                        firstUserId,
+                        firstAddress
 
                 )
         );
@@ -950,7 +951,8 @@ public class RestaurantsViewModelTest {
                 new UserWhoMadeRestaurantChoice(
                         firstRestaurantId,
                         firstRestaurantName,
-                        secondUserId
+                        secondUserId,
+                        firstAddress
 
                 )
         );
