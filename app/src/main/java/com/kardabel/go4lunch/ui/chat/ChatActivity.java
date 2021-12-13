@@ -3,6 +3,7 @@ package com.kardabel.go4lunch.ui.chat;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -10,7 +11,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,10 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.kardabel.go4lunch.databinding.ChatActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
-import com.kardabel.go4lunch.usecase.AddChatMessageToFirestoreUseCase;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class ChatActivity extends AppCompatActivity {
@@ -51,7 +48,6 @@ public class ChatActivity extends AppCompatActivity {
         binding = ChatActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        List<ChatViewState> chatMessageList = new ArrayList<>();
         ChatAdapter adapter = new ChatAdapter(this);
 
         binding.activityChatRecyclerView.setAdapter(adapter);
@@ -77,35 +73,32 @@ public class ChatActivity extends AppCompatActivity {
                 .load(intent.getStringExtra(WORKMATE_PHOTO))
                 .circleCrop()
                 .into(binding.workmatePhoto);
+        binding.backButton.setBackgroundColor(Color.parseColor("#FFFF8800"));
 
-        chatViewModel.getChatMessages().observe(this, new Observer<List<ChatViewState>>() {
-            @Override
-            public void onChanged(List<ChatViewState> chatViewStatesList) {
-                adapter.setChatMessagesListData(chatViewStatesList);
+        chatViewModel.getChatMessages().observe(this, chatViewStatesList -> {
+            adapter.setChatMessagesListData(chatViewStatesList);
 
-                // MOVE TO THE LATEST MESSAGE
-                binding.activityChatRecyclerView.scrollToPosition(chatViewStatesList.size() - 1);
+            // MOVE TO THE LATEST MESSAGE
+            binding.activityChatRecyclerView.scrollToPosition(chatViewStatesList.size() - 1);
 
+        });
+
+        binding.activityChatSendButton.setOnClickListener(v -> {
+            if (!Objects.requireNonNull(binding.chatMessageEditText.getText()).toString().isEmpty()) {
+                String message = binding.chatMessageEditText.getText().toString();
+                chatViewModel.createChatMessage(message, intent.getStringExtra(WORKMATE_ID));
+                binding.chatMessageEditText.getText().clear();
+                hideSoftKeyboard(ChatActivity.this);
+
+            } else {
+                Toast.makeText(
+                        ChatActivity.this,
+                        "Type your text first !",
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
-                binding.activityChatSendButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (!Objects.requireNonNull(binding.chatMessageEditText.getText()).toString().isEmpty()) {
-                            String message = binding.chatMessageEditText.getText().toString();
-                            chatViewModel.createChatMessage(message, intent.getStringExtra(WORKMATE_ID));
-                            binding.chatMessageEditText.getText().clear();
-                            hideSoftKeyboard(ChatActivity.this);
-
-                        } else {
-                            Toast.makeText(
-                                    ChatActivity.this,
-                                    "Type your text first !",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+        binding.backButton.setOnClickListener(view -> onBackPressed());
     }
 
     public static void hideSoftKeyboard(Activity activity) {
@@ -117,4 +110,5 @@ public class ChatActivity extends AppCompatActivity {
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
 
     }
+
 }
