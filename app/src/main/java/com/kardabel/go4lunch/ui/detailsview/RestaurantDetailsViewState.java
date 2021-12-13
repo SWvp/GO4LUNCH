@@ -1,6 +1,8 @@
 package com.kardabel.go4lunch.ui.detailsview;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
@@ -17,6 +19,8 @@ public class RestaurantDetailsViewState {
     private final int choseRestaurantButton;
     @DrawableRes
     private final int detailLikeButton;
+    @ColorRes
+    private final int backgroundColor;
 
     public RestaurantDetailsViewState(String detailsRestaurantName,
                                       String detailsRestaurantAddress,
@@ -26,7 +30,8 @@ public class RestaurantDetailsViewState {
                                       String detailsRestaurantId,
                                       double rating,
                                       int choseRestaurantButton,
-                                      int detailLikeButton) {
+                                      int detailLikeButton,
+                                      int backgroundColor) {
         this.detailsRestaurantName = detailsRestaurantName;
         this.detailsRestaurantAddress = detailsRestaurantAddress;
         this.detailsPhoto = detailsPhoto;
@@ -36,6 +41,7 @@ public class RestaurantDetailsViewState {
         this.rating = rating;
         this.choseRestaurantButton = choseRestaurantButton;
         this.detailLikeButton = detailLikeButton;
+        this.backgroundColor = backgroundColor;
 
     }
 
@@ -57,38 +63,22 @@ public class RestaurantDetailsViewState {
 
     public int getDetailLikeButton() { return detailLikeButton; }
 
+    public int getBackgroundColor() { return backgroundColor; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RestaurantDetailsViewState that = (RestaurantDetailsViewState) o;
-        return Double.compare(that.rating, rating) == 0 &&
-                choseRestaurantButton == that.choseRestaurantButton &&
-                detailLikeButton == that.detailLikeButton &&
-                Objects.equals(detailsRestaurantName, that.detailsRestaurantName) &&
-                Objects.equals(detailsRestaurantAddress, that.detailsRestaurantAddress) &&
-                Objects.equals(detailsPhoto, that.detailsPhoto) &&
-                Objects.equals(detailsRestaurantNumber, that.detailsRestaurantNumber) &&
-                Objects.equals(detailsWebsite, that.detailsWebsite) &&
-                Objects.equals(detailsRestaurantId, that.detailsRestaurantId);
-
+        return Double.compare(that.rating, rating) == 0 && choseRestaurantButton == that.choseRestaurantButton && detailLikeButton == that.detailLikeButton && backgroundColor == that.backgroundColor && Objects.equals(detailsRestaurantName, that.detailsRestaurantName) && Objects.equals(detailsRestaurantAddress, that.detailsRestaurantAddress) && Objects.equals(detailsPhoto, that.detailsPhoto) && Objects.equals(detailsRestaurantNumber, that.detailsRestaurantNumber) && Objects.equals(detailsWebsite, that.detailsWebsite) && Objects.equals(detailsRestaurantId, that.detailsRestaurantId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                detailsRestaurantName,
-                detailsRestaurantAddress,
-                detailsPhoto,
-                detailsRestaurantNumber,
-                detailsWebsite,
-                detailsRestaurantId,
-                rating,
-                choseRestaurantButton,
-                detailLikeButton);
-
+        return Objects.hash(detailsRestaurantName, detailsRestaurantAddress, detailsPhoto, detailsRestaurantNumber, detailsWebsite, detailsRestaurantId, rating, choseRestaurantButton, detailLikeButton, backgroundColor);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "RestaurantDetailsViewState{" +
@@ -101,7 +91,7 @@ public class RestaurantDetailsViewState {
                 ", rating=" + rating +
                 ", choseRestaurantButton=" + choseRestaurantButton +
                 ", detailLikeButton=" + detailLikeButton +
+                ", backgroundColor=" + backgroundColor +
                 '}';
-
     }
 }
