@@ -15,11 +15,11 @@
             android:id="@+id/item_listview_restaurant_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="restaurant name"
+            android:text="@string/item_restaurant_name"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/rating_bar"
@@ -33,7 +33,7 @@
             android:layout_marginTop="4dp"
             android:ellipsize="none"
             android:maxLines="2"
-            android:text="food_type_address"
+            android:text="@string/item_restaurant_address"
             app:layout_constraintEnd_toStartOf="@+id/rating_bar"
             app:layout_constraintStart_toStartOf="@+id/item_listview_restaurant_name"
             app:layout_constraintTop_toBottomOf="@id/item_listview_restaurant_name" />
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="8dp"
-            android:text="Opening hours"
+            android:text="@string/item_restaurant_opening_hours"
             android:textStyle="italic"
             app:layout_constraintTop_toBottomOf="@id/item_listview_address"
             app:layout_constraintStart_toStartOf="@+id/item_listview_restaurant_name"/>
@@ -53,10 +53,9 @@
             android:id="@+id/item_listview_distance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="4dp"
-            android:text="100m"
+            android:text="@string/item_restaurant_distance"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/item_listview_restaurant_picture"/>
 
@@ -76,9 +75,9 @@
             android:layout_height="wrap_content"
             android:isIndicator="true"
             android:numStars="3"
-            android:progressBackgroundTint="@color/fui_transparent"
-            android:progressTint="@color/rating_star_gold"
             android:stepSize="1"
+            android:rotationY="180"
+            android:theme="@style/AppThemeRatingBar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/item_listview_distance"
             app:layout_constraintTop_toBottomOf="@id/item_listview_interested_workmates" />
@@ -91,7 +90,8 @@
             android:src="@drawable/item_listview_picture"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/item_restaurant_picture" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
