@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,13 +16,12 @@ import com.bumptech.glide.Glide;
 import com.kardabel.go4lunch.databinding.RestaurantDetailsBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 
-import java.util.List;
-
 public class RestaurantDetailsActivity extends AppCompatActivity {
 
     private static final String RESTAURANT_ID = "RESTAURANT_ID";
     private String restaurantId;
     private String restaurantName;
+    private String restaurantAddress;
     private String restaurantPhoneNumber;
     private String restaurantWebsite;
 
@@ -63,87 +60,65 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
         // FEED THE DETAILS VIEW
         restaurantDetailsViewModel.getRestaurantDetailsViewStateLiveData()
-                .observe(this, new Observer<RestaurantDetailsViewState>() {
-            @Override
-            public void onChanged(RestaurantDetailsViewState details) {
+                .observe(this, details -> {
 
-                restaurantName = details.getDetailsRestaurantName();
-                restaurantId = details.getDetailsRestaurantId();
+                    restaurantId = details.getDetailsRestaurantId();
+                    restaurantName = details.getDetailsRestaurantName();
+                    restaurantAddress = details.getDetailsRestaurantAddress();
+                    restaurantPhoneNumber = details.getDetailsRestaurantNumber();
+                    restaurantWebsite = details.getDetailsWebsite();
 
-                binding.detailRestaurantName.setText(details.getDetailsRestaurantName());
-                binding.detailRestaurantAddress.setText(details.getDetailsRestaurantAddress());
-                Glide.with(binding.detailPicture.getContext())
-                        .load(details.getDetailsPhoto())
-                        .into(binding.detailPicture);
-                //number
-                //website
-                binding.detailsRating.setRating((float) details.getRating());
-                binding.choseRestaurantButton.setImageResource(details.getChoseRestaurantButton());
-                binding.detailLikeButton.setImageResource(details.getDetailLikeButton());
+                    binding.detailRestaurantName.setText(details.getDetailsRestaurantName());
+                    binding.detailRestaurantAddress.setText(details.getDetailsRestaurantAddress());
+                    Glide.with(binding.detailPicture.getContext())
+                            .load(details.getDetailsPhoto())
+                            .into(binding.detailPicture);
+                    binding.detailsRating.setRating((float) details.getRating());
+                    binding.choseRestaurantButton.setImageResource(details.getChoseRestaurantButton());
+                    binding.choseRestaurantButton.setColorFilter(details.getBackgroundColor());
+                    binding.detailLikeButton.setImageResource(details.getDetailLikeButton());
 
-                restaurantPhoneNumber = details.getDetailsRestaurantNumber();
-                restaurantWebsite = details.getDetailsWebsite();
-            }
-        });
+                });
 
         // FEED THE ADAPTER IF NEEDED
         restaurantDetailsViewModel.getWorkmatesWhoChoseThisRestaurant()
-                .observe(this, new Observer<List<RestaurantDetailsWorkmatesViewState>>() {
-            @Override
-            public void onChanged(List<RestaurantDetailsWorkmatesViewState> workMates) {
-                adapter.setWorkmatesListData(workMates);
-            }
-        });
+                .observe(this, adapter::setWorkmatesListData);
 
-        binding.choseRestaurantButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                restaurantDetailsViewModel.onChoseRestaurantButtonClick(restaurantId, restaurantName);
-            }
-        });
+        binding.choseRestaurantButton.setOnClickListener(v -> restaurantDetailsViewModel.onChoseRestaurantButtonClick(
+                restaurantId,
+                restaurantName,
+                restaurantAddress));
 
-        binding.detailLikeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                restaurantDetailsViewModel.onFavoriteIconClick(restaurantId, restaurantName);
-            }
-        });
+        binding.detailLikeButton.setOnClickListener(v -> restaurantDetailsViewModel.onFavoriteIconClick(
+                restaurantId,
+                restaurantName));
 
          // CALL THE RESTAURANT
-        binding.callIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (restaurantPhoneNumber) {
-                    case "no phone number":
-                        Toast.makeText(
-                                RestaurantDetailsActivity.this,
-                                "This restaurant doesn't have phone number",
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + restaurantPhoneNumber));
-                        startActivity(intent);
-
-                }
+        binding.callIcon.setOnClickListener(v -> {
+            if ("no phone number".equals(restaurantPhoneNumber)) {
+                Toast.makeText(
+                        RestaurantDetailsActivity.this,
+                        "This restaurant doesn't have phone number",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent1 = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + restaurantPhoneNumber));
+                startActivity(intent1);
             }
         });
 
         // GO TO THE RESTAURANT WEBSITE
-        binding.webIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (restaurantWebsite) {
-                    case "https://www.google.com/":
-                        Toast.makeText(
-                                RestaurantDetailsActivity.this,
-                                "It seems your restaurant isn't on the web, but you can try on google !",
-                                Toast.LENGTH_LONG).show();
-                        break;
-                    default:
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(restaurantWebsite));
-                        startActivity(intent);
+        binding.webIcon.setOnClickListener(v -> {
+            switch (restaurantWebsite) {
+                case "https://www.google.com/":
+                    Toast.makeText(
+                            RestaurantDetailsActivity.this,
+                            "It seems your restaurant isn't on the web, but you can try on google !",
+                            Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    Intent intent12 = new Intent(Intent.ACTION_VIEW, Uri.parse(restaurantWebsite));
+                    startActivity(intent12);
 
-                }
             }
         });
 
