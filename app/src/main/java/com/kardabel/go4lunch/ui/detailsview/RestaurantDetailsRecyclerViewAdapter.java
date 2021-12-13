@@ -1,5 +1,6 @@
 package com.kardabel.go4lunch.ui.detailsview;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -49,13 +50,14 @@ public class RestaurantDetailsRecyclerViewAdapter extends RecyclerView.Adapter<R
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setWorkmatesListData(List<RestaurantDetailsWorkmatesViewState> workMates){
         this.workmatesList = workMates;
         notifyDataSetChanged();
 
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         ItemWorkmateBinding viewHolderBinding;
         public ViewHolder(@NonNull ItemWorkmateBinding itemView) {
             super(itemView.getRoot());
