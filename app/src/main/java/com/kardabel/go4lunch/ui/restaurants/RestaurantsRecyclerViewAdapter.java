@@ -1,7 +1,7 @@
 package com.kardabel.go4lunch.ui.restaurants;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -45,13 +45,7 @@ public class RestaurantsRecyclerViewAdapter extends RecyclerView.Adapter<Restaur
                 .load(restaurant.getPhoto())
                 .into(holder.viewHolderBinding.itemListviewRestaurantPicture);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onRestaurantItemClickListener.onRestaurantItemClick(restaurant);
-
-            }
-        });
+        holder.itemView.setOnClickListener(v -> onRestaurantItemClickListener.onRestaurantItemClick(restaurant));
     }
 
     @Override
@@ -64,13 +58,14 @@ public class RestaurantsRecyclerViewAdapter extends RecyclerView.Adapter<Restaur
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setRestaurantListData(List<RestaurantsViewState> restaurantList) {
         this.restaurantList = restaurantList;
         notifyDataSetChanged();
 
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         ItemRestaurantBinding viewHolderBinding;
 
         public ViewHolder(@NonNull ItemRestaurantBinding itemView) {
