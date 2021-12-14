@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">GO4LUNCH</string>
 
-    <!-- GOOGLE MAP API KEY -->
-    <string name="google_map_key">AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8</string>
+
 
     <!-- MAIN ACTIVITY -->
     <string name="need_your_position">Nécessaire pour avoir accés à votre position, merci.</string>

@@ -1,11 +1,15 @@
 <resources>
     <string name="app_name">GO4LUNCH</string>
 
-        <!-- MAIN ACTIVITY -->
+
+
+    <!-- MAIN ACTIVITY -->
     <string name="need_your_position">Needed for retrieve your position, thank you</string>
     <string name="title_alert">WARING</string>
     <string name="rational">if you want to take full advantage of GO4LUNCH, please closed your app, select appInfo and go to permissions, then allow GO4LUNCH to access to your location. Reload GO4LUNCH, enjoy your lunch, thank you !</string>
     <string name="no_restaurant_selected">No restaurant has been selected</string>
+    <string name="channel">coco</string>
+    <string name="channel_description">Notification push</string>
 
     <!-- USED IN BOTTOM NAV VIEW -->
     <string name="title_mapview">Map View</string>
@@ -129,6 +133,8 @@
     <!-- SETTINGS LAYOUT-->
     <string name="settings_notification_text">Notification text</string>
     <string name="settings_notification_description">Enable if you want to be notified for your lunch</string>
+    <string name="settings_notification_activated">Notification enable</string>
+    <string name="settings_notification_disabled">Notification disabled</string>
 
 
 
