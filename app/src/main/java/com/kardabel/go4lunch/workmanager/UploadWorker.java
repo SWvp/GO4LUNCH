@@ -1,30 +1,24 @@
 package com.kardabel.go4lunch.workmanager;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.kardabel.go4lunch.MainActivity;
+import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.model.UserModel;
 import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
@@ -38,14 +32,16 @@ public class UploadWorker extends Worker {
 
     public static final String USERS = "users";
     private static final String RESTAURANT_ID = "restaurantId";
-    private static final int RC_PENDING_INTENT = 44;
+    private static final int notificationId = 1;
+    private static final String CHANNEL_ID = "notif";
 
-    private List<UserWhoMadeRestaurantChoice> usersWithRestaurant = new ArrayList<>();
+
+    private final List<UserWhoMadeRestaurantChoice> usersWithRestaurant = new ArrayList<>();
     private String restaurantName = null;
     private String restaurantAddress = null;
     private String restaurantId = null;
 
-    private Context context;
+    private final Context context;
 
     public UploadWorker(
             @NonNull Context context,
@@ -78,13 +74,11 @@ public class UploadWorker extends Worker {
             List<String> allWorkmate = new ArrayList<>();
 
             for (String workmateId : workmates) {
-                getUserDocument(workmateId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        UserModel user = documentSnapshot.toObject(UserModel.class);
-                        allWorkmate.add(user.getUserName());
+                getUserDocument(workmateId).get().addOnSuccessListener(documentSnapshot -> {
+                    UserModel user = documentSnapshot.toObject(UserModel.class);
+                    assert user != null;
+                    allWorkmate.add(user.getUserName());
 
-                    }
                 });
             }
 
@@ -98,39 +92,36 @@ public class UploadWorker extends Worker {
     private void getUsersWithRestaurantChoice() {
 
         usersWithRestaurant.clear();
-        getDayCollection().addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e("restaurant choice error", error.getMessage());
-                    return;
-                }
-                //  List<WorkmateWhoMadeRestaurantChoice> userWithRestaurant = new ArrayList<>();
+        getDayCollection().addSnapshotListener((value, error) -> {
+            if (error != null) {
+                Log.e("restaurant choice error", error.getMessage());
+                return;
+            }
+            //  List<WorkmateWhoMadeRestaurantChoice> userWithRestaurant = new ArrayList<>();
 
-                assert value != null;
-                for (DocumentChange document : value.getDocumentChanges()) {
-                    Log.d("pipo", "onEvent() called with: value = [" + document.getDocument().toObject(UserWhoMadeRestaurantChoice.class) + "], error = [" + error + "]");
-                    if (document.getType() == DocumentChange.Type.ADDED) {
+            assert value != null;
+            for (DocumentChange document : value.getDocumentChanges()) {
+                Log.d("pipo", "onEvent() called with: value = [" + document.getDocument().toObject(UserWhoMadeRestaurantChoice.class) + "], error = [" + error + "]");
+                if (document.getType() == DocumentChange.Type.ADDED) {
 
-                        usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
+                    usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
 
-                    } else if (document.getType() == DocumentChange.Type.MODIFIED) {
+                } else if (document.getType() == DocumentChange.Type.MODIFIED) {
 
-                        for (int i = 0; i < usersWithRestaurant.size(); i++) {
-                            if (usersWithRestaurant.get(i).getUserId().equals(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class).getUserId())) {
-                                usersWithRestaurant.remove(usersWithRestaurant.get(i));
-                            }
-
+                    for (int i = 0; i < usersWithRestaurant.size(); i++) {
+                        if (usersWithRestaurant.get(i).getUserId().equals(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class).getUserId())) {
+                            usersWithRestaurant.remove(usersWithRestaurant.get(i));
                         }
 
-                        usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
-
-                    } else if (document.getType() == DocumentChange.Type.REMOVED) {
-
-
-                        usersWithRestaurant.remove(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
-
                     }
+
+                    usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
+
+                } else if (document.getType() == DocumentChange.Type.REMOVED) {
+
+
+                    usersWithRestaurant.remove(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
+
                 }
             }
         });
@@ -146,6 +137,7 @@ public class UploadWorker extends Worker {
             if (userWhoMadeRestaurantChoice.getUserId().equals(user.getUid())) {
                 restaurantName = userWhoMadeRestaurantChoice.getRestaurantName();
                 restaurantAddress = userWhoMadeRestaurantChoice.getRestaurantAddress();
+                restaurantId = userWhoMadeRestaurantChoice.getRestaurantId();
                 gotRestaurant = true;
             }
         }
@@ -170,7 +162,7 @@ public class UploadWorker extends Worker {
                     + restaurantAddress
                     + " " + stringBuilderWorkmates;
 
-        }else {
+        } else {
             notification = restaurantName
                     + " "
                     + restaurantAddress;
@@ -179,15 +171,6 @@ public class UploadWorker extends Worker {
         displayNotification(notification);
 
     }
-
-    private void displayNotification(String notification) {
-        Intent intent = new Intent(context, RestaurantDetailsActivity.class);
-        intent.putExtra(RESTAURANT_ID, restaurantId);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, RC_PENDING_INTENT, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-    }
-
 
     public CollectionReference getDayCollection() {
         return FirebaseFirestore.getInstance().collection(LocalDate.now().toString());
@@ -201,5 +184,29 @@ public class UploadWorker extends Worker {
         return getUserCollection().document(workmateId);
     }
 
+    private void displayNotification(String notification) {
+        // SET THE VIEW WHERE USER MUST GO WHEN TYPE ON NOTIFICATION
+        Intent intent = new Intent(context, RestaurantDetailsActivity.class);
+        intent.putExtra(RESTAURANT_ID, restaurantId);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        @SuppressLint("UnspecifiedImmutableFlag")
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
+        // CREATE NOTIFICATION
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.lunch_icon)
+                .setContentTitle("Time to lunch!")
+                // .setContentText(notification)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(notification))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        // SHOW THE NOTIFICATION
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(notificationId, builder.build());
+
+
+    }
 }
