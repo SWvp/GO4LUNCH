@@ -1,0 +1,145 @@
+<resources>
+    <string name="app_name">GO4LUNCH</string>
+
+    <!-- GOOGLE MAP API KEY -->
+    <string name="google_map_key">AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8</string>
+
+    <!-- MAIN ACTIVITY -->
+    <string name="need_your_position">Nécessaire pour avoir accés à votre position, merci.</string>
+    <string name="title_alert">ATTENTION</string>
+    <string name="rational">Pour profiter pleinement de GO4LUNCH, fermer votre application, selectionnez appInfo en restant appuyé sur GO4LUNCH, ensuite autorisez GO4LUNCH à accéder à votre localisation. Bon appétit !</string>
+    <string name="no_restaurant_selected">Aucun restaurant sélectionné</string>
+    <string name="channel">coco</string>
+    <string name="channel_description">Notification push</string>
+
+    <!-- USED IN BOTTOM NAV VIEW -->
+    <string name="title_mapview">Carte</string>
+    <string name="title_listview">Restaurants</string>
+    <string name="title_workmates">Collègues</string>
+
+    <!-- USED IN DRAWER MENU-->
+    <string name="title_1">YOUR LUNCH</string>
+    <string name="title_2">PARAMETRE</string>
+    <string name="title_3">SE DECONNECTER</string>
+
+    <!-- USED IN NAVIGATION HEADER-->
+    <string name="header_name">Nom</string>
+    <string name="header_picture">Avatar</string>
+    <string name="header_email">Email</string>
+
+    <!-- USED IN AUTHENTICATION -->
+    <string name="button_login_text_logged">Go!</string>
+    <string name="button_login_text_not_logged">Connexion</string>
+    <string name="connection_succeed">Authentification réussie !</string>
+    <string name="error_authentication_canceled">Authentification annulée</string>
+    <string name="error_no_internet">Internet indisponible</string>
+    <string name="error_unknown_error">Erreur inconnue</string>
+    <string name="auth_login_button">Login</string>
+    <string name="auth_logo">Logo</string>
+    <string name="auth_description">trouvez un restaurant et invitez vos collègues !</string>
+
+    <!-- USED BY FACEBOOK AUTH -->
+    <string name="facebook_application_id">303261874567043</string>
+    <string name="fb_login_protocol_scheme">fb303261874567043</string>
+
+    <!-- USED IN NAVIGATION DRAWER -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="header_tittle">GO4LUNCH</string>
+    <string name="info_no_email_found">Email indisponible</string>
+    <string name="info_no_username_found">Username indisponible</string>
+
+    <!-- USED IN PERMISSION POP UP -->
+    <string name="popup_title_permission_files_access">Cette application a besoin de permission pour fonctionner.</string>
+
+    <!-- USED IN SEARCH MENU -->
+    <string name="search_hint">Rechercher un restaurant</string>
+    <string name="search_field">Recherche</string>
+
+    <!-- MESSAGE FOR OPENING HOURS -->
+    <string name="open">Ouvert</string>
+    <string name="closing_soon">Ferme bientôt</string>
+    <string name="closed">Fermé</string>
+    <string name="closed_until">Fermé jusqu\'à</string>
+    <string name="closed_today">Fermé aujourd\'hui</string>
+    <string name="open_h24">Ouvert 24/7</string>
+    <string name="open_until">Ouvert jsuqu\'à</string>
+    <string name="tomorrow">Demain</string>
+    <string name="permanently_closed">Fermé définitivement</string>
+    <string name="opening_hours_unavailable">Heures d\'ouvertures indisponible</string>
+    <string name="am">am</string>
+    <string name="pm">pm</string>
+    <string name="two_dots">:</string>
+    <string name="two_dots_for_minutes">:0</string>
+    <string name="dot">.</string>
+
+    <!-- MESSAGE FOR PHOTO -->
+    <string name="photo_unavailable">Photo indisponible</string>
+
+    <!-- MESSAGE FOR DISTANCE -->
+    <string name="distance_unavailable">Distance indisponible</string>
+    <string name="m">m</string>
+
+    <!-- DETAILS LAYOUT -->
+    <string name="favorite_button">FAVORIS</string>
+    <string name="call_button">APPEL</string>
+    <string name="restaurant_name">Nom du restaurant</string>
+    <string name="restaurant_address">Adresse du restaurant</string>
+    <string name="web_icon">Web</string>
+    <string name="details_picture">Photo du restaurant</string>
+    <string name="details_chose_button">Bouton pour choisir votre retaurant</string>
+    <string name="details_favorite_button">Bouton pour mettre en favoris</string>
+
+    <!-- CHAT LAYOUT -->
+    <string name="chat_back_button">Bouton retour</string>
+    <string name="chat_photo">Avatar du collègue</string>
+    <string name="chat_mate_name">Melanie</string>
+    <string name="chat_text_input">Tapez votre message</string>
+    <string name="chat_send_button">Bouton d\'envoie</string>
+
+    <!-- AUTOCOMPLETE REPOSITORY -->
+    <string name="autocomplete_type">establishment</string>
+
+    <!-- RESTAURANT DETAILS RESULT REPOSITORY -->
+    <string name="restaurant_details_fields">formatted_phone_number,opening_hours,website,place_id</string>
+
+    <!-- RADIUS -->
+    <string name="radius">1000</string>
+
+    <!-- PHOTO URL -->
+    <string name="api_url">https://maps.googleapis.com/maps/api/place/</string>
+    <string name="photo_reference">photo?maxwidth=300&amp;photo_reference=</string>
+    <string name="and_key">&amp;key=</string>
+
+    <!-- WORKMATES VIEW MODEL -->
+    <string name="not_decided">n\'a pas encore décidé</string>
+    <string name="left_bracket">(</string>
+    <string name="right_bracket">)</string>
+
+    <!-- RESTAURANT DETAILS VIEW MODEL -->
+    <string name="phone_number_unavailable">Telephone indisponible</string>
+    <string name="website_unavailable">https://www.google.com/</string>
+    <string name="is_joining">Sera là!</string>
+
+    <!-- MAIN ACTIVITY VIEW MODEL -->
+    <string name="no_current_user_restaurant_choice">L\'utilisateur n\'a toujours pas choisi de restaurant</string>
+
+    <!-- ITEM RESTAURANT -->
+    <string name="item_restaurant_name">Nom du restaurant</string>
+    <string name="item_restaurant_address">Adresse du restaurant</string>
+    <string name="item_restaurant_opening_hours">Heures d\'ouvertures</string>
+    <string name="item_restaurant_distance">100m</string>
+    <string name="item_restaurant_picture">Image</string>
+
+    <!-- SETTINGS LAYOUT-->
+    <string name="settings_notification_text">Texte de la notification</string>
+    <string name="settings_notification_description">Activez la notification pour être tenu au courant du prochain déjeuner</string>
+    <string name="settings_notification_activated">Notification activée</string>
+    <string name="settings_notification_disabled">Notification désactivée</string>
+
+
+
+
+
+
+</resources>
