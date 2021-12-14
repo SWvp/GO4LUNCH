@@ -3,9 +3,12 @@ package com.kardabel.go4lunch;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -43,11 +46,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
-import com.kardabel.go4lunch.ui.autocomplete.PredictionsAdapter;
 import com.kardabel.go4lunch.ui.autocomplete.PredictionViewState;
+import com.kardabel.go4lunch.ui.autocomplete.PredictionsAdapter;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 import com.kardabel.go4lunch.ui.setting.SettingActivity;
-import com.kardabel.go4lunch.usecase.GetCurrentUserUseCase;
 import com.kardabel.go4lunch.util.PermissionsViewAction;
 
 import java.util.ArrayList;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         PredictionsAdapter.OnPredictionItemClickedListener {
 
+    public static final String CHANNEL_ID = "notif";
     private MainActivityViewModel mainActivityViewModel;
 
     private AppBarConfiguration appBarConfiguration;
@@ -106,31 +109,29 @@ public class MainActivity extends AppCompatActivity implements
         NavigationUI.setupWithNavController(navView, navController);
 
         // RECEIVE SINGLE LIVEDATA EVENT FROM VM TO KNOW WHICH ACTION IS REQUIRED FOR PERMISSION
-        mainActivityViewModel.getActionSingleLiveEvent().observe(this, new Observer<PermissionsViewAction>() {
-            @Override
-            public void onChanged(PermissionsViewAction action) {
-                switch (action) {
-                    case PERMISSION_ASKED:
-                        ActivityCompat.requestPermissions(MainActivity.this,
-                                new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
-                        Toast.makeText(
-                                MainActivity.this,
-                                MainActivity.this.getString(R.string.need_your_position),
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    case PERMISSION_DENIED:
-                        MaterialAlertDialogBuilder alertDialogBuilder =
-                                new MaterialAlertDialogBuilder(MainActivity.this);
-                        alertDialogBuilder.setTitle(MainActivity.this.getString(R.string.title_alert));
-                        alertDialogBuilder.setMessage(MainActivity.this.getString(R.string.rational));
-                        alertDialogBuilder.show();
-                        break;
-                }
+        mainActivityViewModel.getActionSingleLiveEvent().observe(this, action -> {
+            switch (action) {
+                case PERMISSION_ASKED:
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+                    Toast.makeText(
+                            MainActivity.this,
+                            MainActivity.this.getString(R.string.need_your_position),
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                case PERMISSION_DENIED:
+                    MaterialAlertDialogBuilder alertDialogBuilder =
+                            new MaterialAlertDialogBuilder(MainActivity.this);
+                    alertDialogBuilder.setTitle(MainActivity.this.getString(R.string.title_alert));
+                    alertDialogBuilder.setMessage(MainActivity.this.getString(R.string.rational));
+                    alertDialogBuilder.show();
+                    break;
             }
         });
         updateUIWhenCreating();
         configureYourLunch();
         configureRecyclerView();
+        createNotificationChannel();
     }
 
 
@@ -333,6 +334,24 @@ public class MainActivity extends AppCompatActivity implements
         List<PredictionViewState> emptyList = new ArrayList<>();
         adapter.submitList(emptyList);
     }
+
+    // FOR ANDROID 8.0 AND HIGHER, REGISTER APP'S NOTIFICATION CHANNEL
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
     // WHEN VIEW IS ON RESUME CHECK THE PERMISSION STATE IN VIEWMODEL (AND PASSED THE ACTIVITY
     // FOR THE ALERTDIALOG EVEN IF ITS NOT THE GOOD WAY TO USE A VIEWMODEL,
