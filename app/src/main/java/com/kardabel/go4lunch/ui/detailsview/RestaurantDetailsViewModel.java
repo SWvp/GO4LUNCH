@@ -3,7 +3,6 @@ package com.kardabel.go4lunch.ui.detailsview;
 import android.app.Application;
 import android.graphics.Color;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
