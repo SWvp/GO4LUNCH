@@ -5,13 +5,11 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.Before;
@@ -28,7 +26,6 @@ import java.time.ZoneOffset;
 public class AddChatMessageToFireStoreUseCaseTest {
 
     public static final String USER_ID = "2345";
-    public static final String COLLECTION_CHAT = "chat";
     public static final String MESSAGE = "message";
     public static final String WORKMATE_ID = "1234";
     @Rule
@@ -37,7 +34,6 @@ public class AddChatMessageToFireStoreUseCaseTest {
     public final FirebaseFirestore mockFirestore = Mockito.mock(FirebaseFirestore.class);
     public final FirebaseAuth mockFirebaseAuth = Mockito.mock(FirebaseAuth.class);
     public final FirebaseUser mockFirebaseUser = Mockito.mock(FirebaseUser.class);
-    public final CollectionReference mockCollection = Mockito.mock(CollectionReference.class);
 
     private final Clock clock = Clock.fixed(
             LocalDateTime
@@ -76,14 +72,15 @@ public class AddChatMessageToFireStoreUseCaseTest {
 
         addChatMessageToFirestoreUseCase = mock(AddChatMessageToFirestoreUseCase.class);
 
-        doNothing().when(addChatMessageToFirestoreUseCase).createChatMessage(isA(String.class), isA(String.class));
-        addChatMessageToFirestoreUseCase.createChatMessage(MESSAGE, WORKMATE_ID);
-        verify(addChatMessageToFirestoreUseCase, times(1)).createChatMessage(MESSAGE, WORKMATE_ID);
-
-
-
+        doNothing().when(addChatMessageToFirestoreUseCase).createChatMessage(
+                isA(String.class),
+                isA(String.class));
+        addChatMessageToFirestoreUseCase.createChatMessage(
+                MESSAGE,
+                WORKMATE_ID);
+        verify(addChatMessageToFirestoreUseCase, times(1)).createChatMessage(
+                MESSAGE,
+                WORKMATE_ID);
 
     }
-
-
 }
