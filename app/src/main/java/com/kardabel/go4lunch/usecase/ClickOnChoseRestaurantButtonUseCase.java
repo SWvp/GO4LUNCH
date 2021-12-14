@@ -13,15 +13,21 @@ import java.util.Objects;
 
 public class ClickOnChoseRestaurantButtonUseCase {
 
+    private final FirebaseFirestore firebaseFirestore;
+    private final FirebaseAuth firebaseAuth;
     private final Clock clock;
 
-    public ClickOnChoseRestaurantButtonUseCase(Clock clock) {
+    public ClickOnChoseRestaurantButtonUseCase(FirebaseFirestore firebaseFirestore,
+                                               FirebaseAuth firebaseAuth,
+                                               Clock clock) {
+        this.firebaseFirestore = firebaseFirestore;
+        this.firebaseAuth = firebaseAuth;
         this.clock = clock;
 
     }
 
     public CollectionReference getDayCollection() {
-        return FirebaseFirestore.getInstance().collection(LocalDate.now(clock).toString());
+        return firebaseFirestore.collection(LocalDate.now(clock).toString());
     }
 
     // CHECK IF USER HAVE ALREADY SET THE CHOSEN RESTAURANT,
@@ -32,25 +38,28 @@ public class ClickOnChoseRestaurantButtonUseCase {
             String restaurantName,
             String restaurantAddress) {
 
-        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        if (firebaseAuth.getCurrentUser() != null) {
 
-        Map<String, Object> userGotRestaurant = new HashMap<>();
-        userGotRestaurant.put("restaurantId", restaurantId);
-        userGotRestaurant.put("restaurantName", restaurantName);
-        userGotRestaurant.put("userId", userId);
-        userGotRestaurant.put("restaurantAddress", restaurantAddress);
+            String userId = firebaseAuth.getCurrentUser().getUid();
 
-        getDayCollection()
-                .document(userId)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        if (Objects.equals(task.getResult().get("restaurantId"), restaurantId)) {
-                            task.getResult().getReference().delete();
-                        } else {
-                            task.getResult().getReference().set(userGotRestaurant);
+            Map<String, Object> userGotRestaurant = new HashMap<>();
+            userGotRestaurant.put("restaurantId", restaurantId);
+            userGotRestaurant.put("restaurantName", restaurantName);
+            userGotRestaurant.put("userId", userId);
+            userGotRestaurant.put("restaurantAddress", restaurantAddress);
+
+            getDayCollection()
+                    .document(userId)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            if (Objects.equals(task.getResult().get("restaurantId"), restaurantId)) {
+                                task.getResult().getReference().delete();
+                            } else {
+                                task.getResult().getReference().set(userGotRestaurant);
+                            }
                         }
-                    }
-                });
+                    });
+        }
     }
 }

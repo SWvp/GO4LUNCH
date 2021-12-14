@@ -143,6 +143,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                         Clock.systemDefaultZone());
         this.clickOnChoseRestaurantButtonUseCase =
                 new ClickOnChoseRestaurantButtonUseCase(
+                        firebaseFirestore,
+                        firebaseAuth,
                         Clock.systemDefaultZone());
         this.clickOnFavoriteRestaurantUseCase =
                 new ClickOnFavoriteRestaurantUseCase(firebaseFirestore);
