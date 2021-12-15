@@ -46,13 +46,13 @@ public class RestaurantsFragment extends Fragment {
         binding.restaurantListRecyclerView.setLayoutManager(
                 new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
 
-        // INJECTION OF RESTAURANT VIEWMODEL
+        // INIT RESTAURANT VIEWMODEL
         ViewModelFactory restaurantsViewModelFactory = ViewModelFactory.getInstance();
         RestaurantsViewModel restaurantsViewModel =
                 new ViewModelProvider(this, restaurantsViewModelFactory)
                         .get(RestaurantsViewModel.class);
 
-        // CONFIGURE RECYCLERVIEW
+        // CONFIGURE RECYCLERVIEW WHEN OBSERVER IS TRIGGER
         restaurantsViewModel.getRestaurantsViewStateLiveData()
                 .observe(getViewLifecycleOwner(), new Observer<RestaurantsWrapperViewState>() {
                     @Override

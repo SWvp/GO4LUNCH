@@ -37,7 +37,8 @@ import java.util.Locale;
 
 public class RestaurantsViewModel extends ViewModel {
 
-    private final MediatorLiveData<RestaurantsWrapperViewState> restaurantsWrapperViewStateMediatorLiveData = new MediatorLiveData<>();
+    private final MediatorLiveData<RestaurantsWrapperViewState> restaurantsWrapperViewStateMediatorLiveData =
+            new MediatorLiveData<>();
 
     private final Application application;
     private final Clock clock;
@@ -189,7 +190,7 @@ public class RestaurantsViewModel extends ViewModel {
                                 .getResults()
                                 .get(i)
                                 .getRestaurantPhotos());
-                String distance = distanceInt + "m";
+                String distance = distanceInt + application.getString(R.string.m);
                 String openingHours = getOpeningText(
                         restaurantDetailsResults
                                 .get(i).getDetailsResult()
@@ -270,7 +271,7 @@ public class RestaurantsViewModel extends ViewModel {
                             .getResults()
                             .get(i)
                             .getRestaurantPhotos());
-            String distance = distanceInt + "m";
+            String distance = distanceInt + application.getString(R.string.m);
             String openingHours = OpeningHoursWithoutDetails(
                     nearbySearchResults
                             .getResults()
@@ -342,7 +343,7 @@ public class RestaurantsViewModel extends ViewModel {
                     String photo = photoReference(
                             restaurant
                                     .getRestaurantPhotos());
-                    String distance = distanceInt + "m";
+                    String distance = distanceInt + application.getString(R.string.m);
                     String openingHours = getOpeningText(
                             restaurantDetailsResults
                                     .get(i)
