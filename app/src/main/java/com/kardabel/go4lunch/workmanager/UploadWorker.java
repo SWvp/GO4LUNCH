@@ -28,7 +28,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UploadWorker extends Worker {
+public class UploadWorker extends androidx.work.Worker {
 
 
     public static final String USERS = "users";
@@ -92,39 +92,39 @@ public class UploadWorker extends Worker {
     private List<UserWhoMadeRestaurantChoice> getUsersWithRestaurantChoice() {
         List<UserWhoMadeRestaurantChoice> usersWithRestaurant = new ArrayList<>();
 
-        Tasks.await(getDayCollection().get().addOnCompleteListener((value, error) -> {
-            if (error != null) {
-                Log.e("restaurant choice error", error.getMessage());
-                return;
-            }
-            //  List<WorkmateWhoMadeRestaurantChoice> userWithRestaurant = new ArrayList<>();
+     // Tasks.await(getDayCollection().get().addOnCompleteListener((value, error) -> {
+     //     if (error != null) {
+     //         Log.e("restaurant choice error", error.getMessage());
+     //         return;
+     //     }
+     //     //  List<WorkmateWhoMadeRestaurantChoice> userWithRestaurant = new ArrayList<>();
 
-            assert value != null;
-            for (DocumentChange document : value.getDocumentChanges()) {
-                Log.d("pipo", "onEvent() called with: value = [" + document.getDocument().toObject(UserWhoMadeRestaurantChoice.class) + "], error = [" + error + "]");
-                if (document.getType() == DocumentChange.Type.ADDED) {
+     //     assert value != null;
+     //     for (DocumentChange document : value.getDocumentChanges()) {
+     //         Log.d("pipo", "onEvent() called with: value = [" + document.getDocument().toObject(UserWhoMadeRestaurantChoice.class) + "], error = [" + error + "]");
+     //         if (document.getType() == DocumentChange.Type.ADDED) {
 
-                    usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
+     //             usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
 
-                } else if (document.getType() == DocumentChange.Type.MODIFIED) {
+     //         } else if (document.getType() == DocumentChange.Type.MODIFIED) {
 
-                    for (int i = 0; i < usersWithRestaurant.size(); i++) {
-                        if (usersWithRestaurant.get(i).getUserId().equals(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class).getUserId())) {
-                            usersWithRestaurant.remove(usersWithRestaurant.get(i));
-                        }
+     //             for (int i = 0; i < usersWithRestaurant.size(); i++) {
+     //                 if (usersWithRestaurant.get(i).getUserId().equals(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class).getUserId())) {
+     //                     usersWithRestaurant.remove(usersWithRestaurant.get(i));
+     //                 }
 
-                    }
+     //             }
 
-                    usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
+     //             usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
 
-                } else if (document.getType() == DocumentChange.Type.REMOVED) {
+     //         } else if (document.getType() == DocumentChange.Type.REMOVED) {
 
 
-                    usersWithRestaurant.remove(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
+     //             usersWithRestaurant.remove(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
 
-                }
-            }
-        }));
+     //         }
+     //     }
+     // }));
 
         return usersWithRestaurant;
     }

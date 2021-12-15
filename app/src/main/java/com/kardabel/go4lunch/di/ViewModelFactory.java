@@ -1,6 +1,7 @@
 package com.kardabel.go4lunch.di;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -15,6 +16,7 @@ import com.kardabel.go4lunch.repository.ChatMessageRepository;
 import com.kardabel.go4lunch.repository.FavoriteRestaurantsRepository;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
+import com.kardabel.go4lunch.repository.NotificationsRepository;
 import com.kardabel.go4lunch.repository.RestaurantDetailsResponseRepository;
 import com.kardabel.go4lunch.repository.UserSearchRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
@@ -24,6 +26,7 @@ import com.kardabel.go4lunch.ui.chat.ChatViewModel;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsViewModel;
 import com.kardabel.go4lunch.ui.mapview.MapViewModel;
 import com.kardabel.go4lunch.ui.restaurants.RestaurantsViewModel;
+import com.kardabel.go4lunch.ui.setting.SettingViewModel;
 import com.kardabel.go4lunch.ui.workmates.WorkMatesViewModel;
 import com.kardabel.go4lunch.usecase.AddChatMessageToFirestoreUseCase;
 import com.kardabel.go4lunch.usecase.ClickOnChoseRestaurantButtonUseCase;
@@ -44,6 +47,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 
     private static ViewModelFactory factory;
     private final Application application;
+    private final Context context;
 
     private final LocationRepository locationRepository;
     private final WorkmatesRepository workmatesRepository;
@@ -51,6 +55,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final FavoriteRestaurantsRepository favoriteRestaurantsRepository;
     private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final NotificationsRepository notificationsRepository;
 
     private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase;
     private final GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase;
@@ -87,6 +92,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
         this.application = MainApplication.getApplication();
+        this.context = application.getApplicationContext();
 
         NearbySearchResponseRepository nearbySearchResponseRepository =
                 new NearbySearchResponseRepository(
@@ -112,6 +118,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                 new UsersWhoMadeRestaurantChoiceRepository(Clock.systemDefaultZone());
         this.chatMessageRepository =
                 new ChatMessageRepository();
+        this.notificationsRepository =
+                new NotificationsRepository(context);
 
         this.getNearbySearchResultsUseCase =
                 new GetNearbySearchResultsUseCase(
@@ -201,6 +209,12 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     chatMessageRepository,
                     getCurrentUserIdUseCase,
                     addChatMessageToFirestoreUseCase
+            );
+        } else if (modelClass.isAssignableFrom(SettingViewModel.class)) {
+            return (T) new SettingViewModel(
+                    notificationsRepository,
+                    context,
+                    Clock.systemDefaultZone()
             );
         }
         throw new IllegalArgumentException("Unknown ViewModel class");

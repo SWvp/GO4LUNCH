@@ -5,25 +5,15 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.kardabel.go4lunch.databinding.SettingsActivityBinding;
-import com.kardabel.go4lunch.workmanager.UploadWorker;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
+import com.kardabel.go4lunch.di.ViewModelFactory;
 
 public class SettingActivity extends AppCompatActivity {
 
-    public static final String REMINDER_REQUEST = "my reminder";
-    public static final String SHARED_PREFS = "shared reminder";
-    private SettingsActivityBinding binding;
-    public final WorkManager workManager = WorkManager.getInstance(this);
+        private SettingsActivityBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,45 +21,38 @@ public class SettingActivity extends AppCompatActivity {
         binding = SettingsActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // INIT SETTING VIEW MODEL
+        ViewModelFactory settingViewModelFactory = ViewModelFactory.getInstance();
+        SettingViewModel settingViewModel =
+                new ViewModelProvider(this, settingViewModelFactory)
+                        .get(SettingViewModel.class);
+
+        // OBSERVER
+        settingViewModel.getSwitchPosition().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer switchPosition) {
+                switch (switchPosition) {
+                    case 1:
+                        binding.switchNotification.setChecked(false);
+                        Toast
+                                .makeText(SettingActivity.this, "coucou", Toast.LENGTH_LONG)
+                                .show();
+                        break;
+                    case 2:
+                        binding.switchNotification.setChecked(true);
+                        Toast
+                                .makeText(SettingActivity.this, "notification enable", Toast.LENGTH_LONG)
+                                .show();
+                        break;
+                }
+            }
+        });
+
+
         binding.switchNotification.setOnClickListener(view -> {
-            viewModel.notificationChange();
+            settingViewModel.notificationChange();
         });
 
         binding.settingsToolbar.setOnClickListener(view -> onBackPressed());
-    }
-
-    // TODO Stephane ViewModel !
-    private void activateNotification() {
-        LocalDateTime currentDate = LocalDateTime.now();
-        LocalDateTime thisNoon = currentDate.with(LocalTime.of(12, 0));
-
-        if (currentDate.isAfter(thisNoon)) {
-            thisNoon = thisNoon.plusDays(1);
-        }
-
-        long timeLeft = ChronoUnit.MILLIS.between(currentDate, thisNoon);
-
-//        timeLeft = thisNoon
-//            .atZone(ZoneId.systemDefault())
-//            .toInstant()
-//            .toEpochMilli()
-//            - currentDate
-//            .atZone(ZoneId.systemDefault()).toInstant()
-//            .toEpochMilli();
-
-        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(UploadWorker.class, 1, TimeUnit.DAYS)
-            // .setInputData(userId)
-            .setInitialDelay(timeLeft, TimeUnit.MILLISECONDS)
-            .build();
-
-        workManager.enqueueUniquePeriodicWork(REMINDER_REQUEST, ExistingPeriodicWorkPolicy.REPLACE, workRequest);
-        Toast.makeText(this, "notification enable", Toast.LENGTH_LONG).show();
-
-    }
-
-    private void deactivateNotification() {
-        workManager.cancelAllWork();
-        Toast.makeText(this, "notification disabled", Toast.LENGTH_LONG).show();
-
     }
 }
