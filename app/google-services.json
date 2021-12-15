@@ -1,4 +1,5 @@
-{ "project_info": {
+{
+  "project_info": {
     "project_number": "66904785880",
     "project_id": "go4lunch-324108",
     "storage_bucket": "go4lunch-324108.appspot.com"
@@ -13,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "66904785880-r16la8hodd0v4rf0v1ueqlu9v74uldbn.apps.googleusercontent.com",
+          "client_id": "66904785880-884sfv3k1h998t209umt9s3m1pt38g8d.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.kardabel.go4lunch",
-            "certificate_hash": "1b5c19048d1f626b5a0958879f229a5e3ab562f2"
+            "certificate_hash": "632238401b8c1a624968a17a2e748bff2ebd1771"
           }
         },
         {
@@ -44,6 +45,3 @@
   ],
   "configuration_version": "1"
 }
-
-
-
