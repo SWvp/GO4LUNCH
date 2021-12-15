@@ -1,6 +1,5 @@
 package com.kardabel.go4lunch.ui.setting;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -16,6 +15,7 @@ import com.kardabel.go4lunch.workmanager.UploadWorker;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 public class SettingActivity extends AppCompatActivity {
@@ -31,50 +31,36 @@ public class SettingActivity extends AppCompatActivity {
         binding = SettingsActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // SHARED PREFERENCE STORE VALUE OF THE SWITCH BUTTON FOR CURRENT USER
-        SharedPreferences sharedPref = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        final SharedPreferences.Editor editor = sharedPref.edit();
-        binding.switchNotification.setChecked(sharedPref.getBoolean("switch", true));
-
-
         binding.switchNotification.setOnClickListener(view -> {
-            notificationChange();
-            editor.putBoolean("switch", binding.switchNotification.isChecked());
-            editor.apply();
+            viewModel.notificationChange();
         });
 
         binding.settingsToolbar.setOnClickListener(view -> onBackPressed());
-
     }
 
-    private void notificationChange() {
-        if (binding.switchNotification.isChecked()) {
-            activateNotification();
-        } else {
-            deactivateNotification();
-
-        }
-    }
-
+    // TODO Stephane ViewModel !
     private void activateNotification() {
-
-        long timeLeft;
-
         LocalDateTime currentDate = LocalDateTime.now();
         LocalDateTime thisNoon = currentDate.with(LocalTime.of(12, 0));
 
-        if (!currentDate.isBefore(thisNoon)) {
+        if (currentDate.isAfter(thisNoon)) {
             thisNoon = thisNoon.plusDays(1);
-
         }
-        timeLeft =
-        thisNoon.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - currentDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(UploadWorker.class, 1,
-                TimeUnit.DAYS)
-                // .setInputData(userId)
-                .setInitialDelay(timeLeft, TimeUnit.MILLISECONDS)
-                .build();
+        long timeLeft = ChronoUnit.MILLIS.between(currentDate, thisNoon);
+
+//        timeLeft = thisNoon
+//            .atZone(ZoneId.systemDefault())
+//            .toInstant()
+//            .toEpochMilli()
+//            - currentDate
+//            .atZone(ZoneId.systemDefault()).toInstant()
+//            .toEpochMilli();
+
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(UploadWorker.class, 1, TimeUnit.DAYS)
+            // .setInputData(userId)
+            .setInitialDelay(timeLeft, TimeUnit.MILLISECONDS)
+            .build();
 
         workManager.enqueueUniquePeriodicWork(REMINDER_REQUEST, ExistingPeriodicWorkPolicy.REPLACE, workRequest);
         Toast.makeText(this, "notification enable", Toast.LENGTH_LONG).show();

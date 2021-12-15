@@ -12,6 +12,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -32,11 +33,9 @@ public class UploadWorker extends Worker {
 
     public static final String USERS = "users";
     private static final String RESTAURANT_ID = "restaurantId";
-    private static final int notificationId = 1;
+    private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "notif";
 
-
-    private final List<UserWhoMadeRestaurantChoice> usersWithRestaurant = new ArrayList<>();
     private String restaurantName = null;
     private String restaurantAddress = null;
     private String restaurantId = null;
@@ -57,9 +56,9 @@ public class UploadWorker extends Worker {
     @Override
     public Result doWork() {
 
-        getUsersWithRestaurantChoice();
+        List<UserWhoMadeRestaurantChoice> usersWithRestaurant = getUsersWithRestaurantChoice();
 
-        if (isCurrentUserHasChosenRestaurant()) {
+        if (isCurrentUserHasChosenRestaurant(usersWithRestaurant)) {
 
             List<String> workmates = new ArrayList<>();
 
@@ -74,6 +73,7 @@ public class UploadWorker extends Worker {
             List<String> allWorkmate = new ArrayList<>();
 
             for (String workmateId : workmates) {
+                // TODO Stephane Tasks.await ou ?? mettre le nom dans firestore direct
                 getUserDocument(workmateId).get().addOnSuccessListener(documentSnapshot -> {
                     UserModel user = documentSnapshot.toObject(UserModel.class);
                     assert user != null;
@@ -89,10 +89,10 @@ public class UploadWorker extends Worker {
 
     }
 
-    private void getUsersWithRestaurantChoice() {
+    private List<UserWhoMadeRestaurantChoice> getUsersWithRestaurantChoice() {
+        List<UserWhoMadeRestaurantChoice> usersWithRestaurant = new ArrayList<>();
 
-        usersWithRestaurant.clear();
-        getDayCollection().addSnapshotListener((value, error) -> {
+        Tasks.await(getDayCollection().get().addOnCompleteListener((value, error) -> {
             if (error != null) {
                 Log.e("restaurant choice error", error.getMessage());
                 return;
@@ -124,10 +124,12 @@ public class UploadWorker extends Worker {
 
                 }
             }
-        });
+        }));
+
+        return usersWithRestaurant;
     }
 
-    private boolean isCurrentUserHasChosenRestaurant() {
+    private boolean isCurrentUserHasChosenRestaurant(List<UserWhoMadeRestaurantChoice> usersWithRestaurant) {
         boolean gotRestaurant = false;
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -205,7 +207,7 @@ public class UploadWorker extends Worker {
 
         // SHOW THE NOTIFICATION
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(notificationId, builder.build());
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
 
 
     }
