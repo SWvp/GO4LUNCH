@@ -13,7 +13,8 @@ import com.kardabel.go4lunch.di.ViewModelFactory;
 
 public class SettingActivity extends AppCompatActivity {
 
-        private SettingsActivityBinding binding;
+    private SettingsActivityBinding binding;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,23 +35,30 @@ public class SettingActivity extends AppCompatActivity {
                 switch (switchPosition) {
                     case 1:
                         binding.switchNotification.setChecked(false);
-                        Toast
-                                .makeText(SettingActivity.this, "coucou", Toast.LENGTH_LONG)
-                                .show();
+
                         break;
                     case 2:
                         binding.switchNotification.setChecked(true);
-                        Toast
-                                .makeText(SettingActivity.this, "notification enable", Toast.LENGTH_LONG)
-                                .show();
+
+
                         break;
                 }
             }
         });
 
-
         binding.switchNotification.setOnClickListener(view -> {
             settingViewModel.notificationChange();
+            if (binding.switchNotification.isChecked()) {
+
+                Toast
+                        .makeText(SettingActivity.this, "notification enabled", Toast.LENGTH_SHORT)
+                        .show();
+            } else {
+                Toast
+                        .makeText(SettingActivity.this, "notification disabled", Toast.LENGTH_SHORT)
+                        .show();
+
+            }
         });
 
         binding.settingsToolbar.setOnClickListener(view -> onBackPressed());

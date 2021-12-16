@@ -48,12 +48,14 @@ public class SettingViewModel extends ViewModel {
 
     // IF THE NOTIFICATION IS DISABLED, RETURN 1, ELSE 2
     private void map(Boolean switchPosition) {
-        if (switchPosition) {
+        if (!switchPosition) {
             notificationSwitchMediatorLiveData.setValue(1);
             workManager.cancelAllWork();
+
         } else {
             notificationSwitchMediatorLiveData.setValue(2);
             activateNotification();
+
 
         }
     }
@@ -89,7 +91,9 @@ public class SettingViewModel extends ViewModel {
     public void notificationChange() {
         notificationsRepository.switchNotification();
 
+
     }
+
 
     public LiveData<Integer> getSwitchPosition() {
         return notificationSwitchMediatorLiveData;

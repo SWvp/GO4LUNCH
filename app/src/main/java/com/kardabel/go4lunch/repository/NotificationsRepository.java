@@ -21,14 +21,25 @@ public class NotificationsRepository {
     }
 
     public void switchNotification() {
-        sharedPref
-            .edit()
-            .putBoolean(REMINDER_REQUEST, sharedPref.getBoolean(REMINDER_REQUEST, false))
-            .apply();
+        if(!sharedPref.getBoolean(REMINDER_REQUEST, false)){
+
+            sharedPref
+                    .edit()
+                    .putBoolean(REMINDER_REQUEST, true)
+                    .apply();
+        }else{
+            sharedPref
+                    .edit()
+                    .putBoolean(REMINDER_REQUEST, false)
+                    .apply();
+        }
+
     }
 
     public LiveData<Boolean> isNotificationEnabledLiveData() {
         MutableLiveData<Boolean> mutableLiveData = new MutableLiveData<>();
+
+        mutableLiveData.setValue(sharedPref.getBoolean(REMINDER_REQUEST, false));
 
         sharedPref.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
