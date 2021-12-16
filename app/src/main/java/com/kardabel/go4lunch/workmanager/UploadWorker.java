@@ -12,6 +12,8 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,6 +21,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.model.UserModel;
 import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
@@ -27,6 +31,7 @@ import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class UploadWorker extends androidx.work.Worker {
 
@@ -56,75 +61,66 @@ public class UploadWorker extends androidx.work.Worker {
     @Override
     public Result doWork() {
 
-        List<UserWhoMadeRestaurantChoice> usersWithRestaurant = getUsersWithRestaurantChoice();
+        List<UserWhoMadeRestaurantChoice> usersWithRestaurant = null;
+        try {
+            usersWithRestaurant = getUsersWithRestaurantChoice();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        if (isCurrentUserHasChosenRestaurant(usersWithRestaurant)) {
+        if (usersWithRestaurant != null) {
 
-            List<String> workmates = new ArrayList<>();
+            if (isCurrentUserHasChosenRestaurant(usersWithRestaurant)) {
 
-            for (UserWhoMadeRestaurantChoice userWhoMadeRestaurantChoice : usersWithRestaurant) {
+                List<String> workmates = new ArrayList<>();
 
-                if (userWhoMadeRestaurantChoice.getRestaurantName().equals(restaurantName)) {
-                    workmates.add(userWhoMadeRestaurantChoice.getUserId());
+                String userId = "null";
+                if (FirebaseAuth
+                        .getInstance()
+                        .getCurrentUser() != null) {
 
+                    userId = FirebaseAuth
+                            .getInstance()
+                            .getCurrentUser()
+                            .getUid();
                 }
+
+                for (UserWhoMadeRestaurantChoice userWhoMadeRestaurantChoice : usersWithRestaurant) {
+
+                    if (userWhoMadeRestaurantChoice
+                            .getRestaurantName()
+                            .equals(restaurantName) &&
+                            !userWhoMadeRestaurantChoice
+                                    .getUserId()
+                                    .equals(userId)) {
+                        workmates.add(userWhoMadeRestaurantChoice.getUserName());
+
+                    }
+                }
+                notificationMessage(workmates);
             }
-
-            List<String> allWorkmate = new ArrayList<>();
-
-            for (String workmateId : workmates) {
-                // TODO Stephane Tasks.await ou ?? mettre le nom dans firestore direct
-                getUserDocument(workmateId).get().addOnSuccessListener(documentSnapshot -> {
-                    UserModel user = documentSnapshot.toObject(UserModel.class);
-                    assert user != null;
-                    allWorkmate.add(user.getUserName());
-
-                });
-            }
-
-            notificationMessage(allWorkmate);
         }
 
         return Result.success();
 
     }
 
-    private List<UserWhoMadeRestaurantChoice> getUsersWithRestaurantChoice() {
+    private List<UserWhoMadeRestaurantChoice> getUsersWithRestaurantChoice() throws ExecutionException, InterruptedException {
         List<UserWhoMadeRestaurantChoice> usersWithRestaurant = new ArrayList<>();
 
-     // Tasks.await(getDayCollection().get().addOnCompleteListener((value, error) -> {
-     //     if (error != null) {
-     //         Log.e("restaurant choice error", error.getMessage());
-     //         return;
-     //     }
-     //     //  List<WorkmateWhoMadeRestaurantChoice> userWithRestaurant = new ArrayList<>();
 
-     //     assert value != null;
-     //     for (DocumentChange document : value.getDocumentChanges()) {
-     //         Log.d("pipo", "onEvent() called with: value = [" + document.getDocument().toObject(UserWhoMadeRestaurantChoice.class) + "], error = [" + error + "]");
-     //         if (document.getType() == DocumentChange.Type.ADDED) {
+        Tasks.await(getDayCollection().get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-     //             usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    usersWithRestaurant.add(document.toObject(UserWhoMadeRestaurantChoice.class));
+                }
 
-     //         } else if (document.getType() == DocumentChange.Type.MODIFIED) {
-
-     //             for (int i = 0; i < usersWithRestaurant.size(); i++) {
-     //                 if (usersWithRestaurant.get(i).getUserId().equals(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class).getUserId())) {
-     //                     usersWithRestaurant.remove(usersWithRestaurant.get(i));
-     //                 }
-
-     //             }
-
-     //             usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
-
-     //         } else if (document.getType() == DocumentChange.Type.REMOVED) {
-
-
-     //             usersWithRestaurant.remove(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));
-
-     //         }
-     //     }
-     // }));
+            }
+        }));
 
         return usersWithRestaurant;
     }
