@@ -5,9 +5,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.databinding.SettingsActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 
@@ -29,37 +29,36 @@ public class SettingActivity extends AppCompatActivity {
                         .get(SettingViewModel.class);
 
         // OBSERVER
-        settingViewModel.getSwitchPosition().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer switchPosition) {
-                switch (switchPosition) {
-                    case 1:
-                        binding.switchNotification.setChecked(false);
-
-                        break;
-                    case 2:
-                        binding.switchNotification.setChecked(true);
-
-
-                        break;
-                }
+        settingViewModel.getSwitchPosition().observe(this, switchPosition -> {
+            switch (switchPosition) {
+                case 1:
+                    binding.switchNotification.setChecked(false);
+                    break;
+                case 2:
+                    binding.switchNotification.setChecked(true);
+                    break;
             }
         });
 
-        binding.switchNotification.setOnClickListener(view -> {
-            settingViewModel.notificationChange();
-            if (binding.switchNotification.isChecked()) {
-
-                Toast
-                        .makeText(SettingActivity.this, "notification enabled", Toast.LENGTH_SHORT)
-                        .show();
-            } else {
-                Toast
-                        .makeText(SettingActivity.this, "notification disabled", Toast.LENGTH_SHORT)
-                        .show();
-
+        // SINGLE LIVE EVENT TO DISPLAY WHICH NOTIFICATION STATUS IS ON
+        settingViewModel.getActionSingleLiveEvent().observe(this, permissionsViewAction -> {
+            switch (permissionsViewAction) {
+                case NOTIFICATION_DISABLED:
+                    Toast.makeText(SettingActivity.this, getString(
+                            R.string.settings_notification_disabled),
+                            Toast.LENGTH_SHORT)
+                            .show();
+                    break;
+                case NOTIFICATION_ENABLED:
+                    Toast.makeText(SettingActivity.this, getString(
+                            R.string.settings_notification_activated),
+                            Toast.LENGTH_SHORT)
+                            .show();
+                    break;
             }
         });
+
+        binding.switchNotification.setOnClickListener(view -> settingViewModel.notificationChange());
 
         binding.settingsToolbar.setOnClickListener(view -> onBackPressed());
     }
