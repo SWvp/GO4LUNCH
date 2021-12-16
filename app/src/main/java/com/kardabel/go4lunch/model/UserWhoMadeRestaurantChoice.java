@@ -9,6 +9,7 @@ public class UserWhoMadeRestaurantChoice {
     private String restaurantId;
     private String restaurantName;
     private String userId;
+    private String userName;
     private String restaurantAddress;
 
     public UserWhoMadeRestaurantChoice() {
@@ -18,11 +19,13 @@ public class UserWhoMadeRestaurantChoice {
             String restaurantId,
             String restaurantName,
             String userId,
+            String userName,
             String restaurantAddress) {
 
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.userId = userId;
+        this.userName = userName;
         this.restaurantAddress = restaurantAddress;
     }
 
@@ -42,6 +45,8 @@ public class UserWhoMadeRestaurantChoice {
         return userId;
     }
 
+    public String getUserName() { return userName; }
+
     public String getRestaurantAddress() { return restaurantAddress; }
 
 
@@ -53,6 +58,7 @@ public class UserWhoMadeRestaurantChoice {
         return Objects.equals(restaurantId, that.restaurantId) &&
                 Objects.equals(restaurantName, that.restaurantName) &&
                 Objects.equals(userId, that.userId) &&
+                Objects.equals(userName, that.userName) &&
                 Objects.equals(restaurantAddress, that.restaurantAddress);
     }
 
@@ -62,6 +68,7 @@ public class UserWhoMadeRestaurantChoice {
                 restaurantId,
                 restaurantName,
                 userId,
+                userName,
                 restaurantAddress);
     }
 
@@ -72,6 +79,7 @@ public class UserWhoMadeRestaurantChoice {
                 "restaurantId='" + restaurantId + '\'' +
                 ", restaurantName='" + restaurantName + '\'' +
                 ", userId='" + userId + '\'' +
+                ", userName='" + userName + '\'' +
                 ", restaurantAddress='" + restaurantAddress + '\'' +
                 '}';
     }
