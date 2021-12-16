@@ -41,11 +41,13 @@ public class ClickOnChoseRestaurantButtonUseCase {
         if (firebaseAuth.getCurrentUser() != null) {
 
             String userId = firebaseAuth.getCurrentUser().getUid();
+            String userName = firebaseAuth.getCurrentUser().getDisplayName();
 
             Map<String, Object> userGotRestaurant = new HashMap<>();
             userGotRestaurant.put("restaurantId", restaurantId);
             userGotRestaurant.put("restaurantName", restaurantName);
             userGotRestaurant.put("userId", userId);
+            userGotRestaurant.put("userName", userName);
             userGotRestaurant.put("restaurantAddress", restaurantAddress);
 
             getDayCollection()
