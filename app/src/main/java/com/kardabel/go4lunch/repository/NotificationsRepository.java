@@ -30,6 +30,8 @@ public class NotificationsRepository {
     public LiveData<Boolean> isNotificationEnabledLiveData() {
         MutableLiveData<Boolean> mutableLiveData = new MutableLiveData<>();
 
+        mutableLiveData.setValue(sharedPref.getBoolean(key, false));
+        
         sharedPref.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
