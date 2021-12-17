@@ -71,7 +71,7 @@ public class SettingViewModel extends ViewModel {
     private void activateNotification() {
 
         LocalDateTime currentDate = LocalDateTime.now(clock);
-        LocalDateTime thisNoon = currentDate.with(LocalTime.of(12, 0));
+        LocalDateTime thisNoon = currentDate.with(LocalTime.of(19, 36));
 
         if (currentDate.isAfter(thisNoon)) {
             thisNoon = thisNoon.plusDays(1);
@@ -108,6 +108,7 @@ public class SettingViewModel extends ViewModel {
 
 
     public LiveData<Integer> getSwitchPosition() {
+
         return notificationSwitchMediatorLiveData;
     }
 }

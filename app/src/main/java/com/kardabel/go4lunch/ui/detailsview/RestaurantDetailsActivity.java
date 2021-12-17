@@ -18,7 +18,7 @@ import com.kardabel.go4lunch.di.ViewModelFactory;
 
 public class RestaurantDetailsActivity extends AppCompatActivity {
 
-    private static final String RESTAURANT_ID = "RESTAURANT_ID";
+    public static final String RESTAURANT_ID = "RESTAURANT_ID";
     private String restaurantId;
     private String restaurantName;
     private String restaurantAddress;
@@ -93,7 +93,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 restaurantId,
                 restaurantName));
 
-         // CALL THE RESTAURANT
+        // CALL THE RESTAURANT
         binding.callIcon.setOnClickListener(v -> {
             if ("no phone number".equals(restaurantPhoneNumber)) {
                 Toast.makeText(

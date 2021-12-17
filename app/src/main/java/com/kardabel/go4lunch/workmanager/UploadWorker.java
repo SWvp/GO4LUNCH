@@ -1,30 +1,24 @@
 package com.kardabel.go4lunch.workmanager;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.work.Worker;
+import androidx.core.app.TaskStackBuilder;
 import androidx.work.WorkerParameters;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.kardabel.go4lunch.R;
-import com.kardabel.go4lunch.model.UserModel;
 import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 
@@ -35,9 +29,6 @@ import java.util.concurrent.ExecutionException;
 
 public class UploadWorker extends androidx.work.Worker {
 
-
-    public static final String USERS = "users";
-    private static final String RESTAURANT_ID = "restaurantId";
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "notif";
 
@@ -45,7 +36,8 @@ public class UploadWorker extends androidx.work.Worker {
     private String restaurantAddress = null;
     private String restaurantId = null;
 
-    private final Context context;
+
+    private  Context context;
 
     public UploadWorker(
             @NonNull Context context,
@@ -64,9 +56,7 @@ public class UploadWorker extends androidx.work.Worker {
         List<UserWhoMadeRestaurantChoice> usersWithRestaurant = null;
         try {
             usersWithRestaurant = getUsersWithRestaurantChoice();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -111,15 +101,12 @@ public class UploadWorker extends androidx.work.Worker {
         List<UserWhoMadeRestaurantChoice> usersWithRestaurant = new ArrayList<>();
 
 
-        Tasks.await(getDayCollection().get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        Tasks.await(getDayCollection().get().addOnCompleteListener(task -> {
 
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    usersWithRestaurant.add(document.toObject(UserWhoMadeRestaurantChoice.class));
-                }
-
+            for (QueryDocumentSnapshot document : task.getResult()) {
+                usersWithRestaurant.add(document.toObject(UserWhoMadeRestaurantChoice.class));
             }
+
         }));
 
         return usersWithRestaurant;
@@ -152,7 +139,7 @@ public class UploadWorker extends androidx.work.Worker {
                 if (i < allWorkmate.size() - 2)
                     stringBuilderWorkmates.append(", ");
                 else if (i == allWorkmate.size() - 2)
-                    stringBuilderWorkmates.append("&");
+                    stringBuilderWorkmates.append(" & ");
             }
 
             notification = restaurantName
@@ -174,21 +161,19 @@ public class UploadWorker extends androidx.work.Worker {
         return FirebaseFirestore.getInstance().collection(LocalDate.now().toString());
     }
 
-    public CollectionReference getUserCollection() {
-        return FirebaseFirestore.getInstance().collection(USERS);
-    }
-
-    public DocumentReference getUserDocument(String workmateId) {
-        return getUserCollection().document(workmateId);
-    }
 
     private void displayNotification(String notification) {
         // SET THE VIEW WHERE USER MUST GO WHEN TYPE ON NOTIFICATION
         Intent intent = new Intent(context, RestaurantDetailsActivity.class);
-        intent.putExtra(RESTAURANT_ID, restaurantId);
+        intent.putExtra(RestaurantDetailsActivity.RESTAURANT_ID, restaurantId);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addNextIntentWithParentStack(intent);
+
         @SuppressLint("UnspecifiedImmutableFlag")
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        //PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        PendingIntent pendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // CREATE NOTIFICATION
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
