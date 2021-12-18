@@ -4,13 +4,15 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.repository.NotificationsRepository;
+import com.kardabel.go4lunch.util.SingleLiveEvent;
 import com.kardabel.go4lunch.workmanager.UploadWorker;
 
 import java.time.Clock;
@@ -23,13 +25,14 @@ public class SettingViewModel extends ViewModel {
 
     public static final String REMINDER_REQUEST = "my reminder";
 
-    private final MediatorLiveData<Integer> notificationSwitchMediatorLiveData =
-            new MediatorLiveData<>();
+    private final LiveData<Boolean> isNotificationEnabledLiveData;
+    private final SingleLiveEvent<String> toastMessageSingleLiveEvent = new SingleLiveEvent<>();
 
     private final NotificationsRepository notificationsRepository;
     public final WorkManager workManager;
     public final Clock clock;
 
+    private boolean initialized = false;
 
     public SettingViewModel(@NonNull NotificationsRepository notificationsRepository,
                             @NonNull Context context,
@@ -39,25 +42,26 @@ public class SettingViewModel extends ViewModel {
         this.workManager = WorkManager.getInstance(context);
         this.clock = clock;
 
-        LiveData<Boolean> notificationLiveData = notificationsRepository.isNotificationEnabledLiveData();
-
         // OBSERVERS
 
-        notificationSwitchMediatorLiveData.addSource(notificationLiveData, this::map);
-    }
+        isNotificationEnabledLiveData = Transformations.map(notificationsRepository.isNotificationEnabledLiveData(), isNotificationEnabled -> {
+                if (isNotificationEnabled) {
+                    activateNotification();
+                } else {
+                    workManager.cancelAllWork();
+                }
 
-    // IF THE NOTIFICATION IS DISABLED, RETURN 1, ELSE 2
-    private void map(Boolean switchPosition) {
-        if (!switchPosition) {
-            notificationSwitchMediatorLiveData.setValue(1);
-            workManager.cancelAllWork();
+                if (!initialized) {
+                    initialized = true;
+                } else if (isNotificationEnabled) {
+                    toastMessageSingleLiveEvent.setValue(context.getString(R.string.notification_enabled));
+                } else {
+                    toastMessageSingleLiveEvent.setValue(context.getString(R.string.notification_disabled));
+                }
 
-        } else {
-            notificationSwitchMediatorLiveData.setValue(2);
-            activateNotification();
-
-
-        }
+                return isNotificationEnabled;
+            }
+        );
     }
 
     // CHECK NOTIFICATION TIME WITH CURRENT TIME AND SET THE WORKER CLASS
@@ -71,31 +75,32 @@ public class SettingViewModel extends ViewModel {
         }
 
         long timeLeft = ChronoUnit
-                .MILLIS
-                .between(currentDate, thisNoon);
+            .MILLIS
+            .between(currentDate, thisNoon);
 
         PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
-                UploadWorker.class,
-                1,
-                TimeUnit.DAYS)
-                .setInitialDelay(timeLeft, TimeUnit.MILLISECONDS)
-                .build();
+            UploadWorker.class,
+            1,
+            TimeUnit.DAYS)
+            .setInitialDelay(timeLeft, TimeUnit.MILLISECONDS)
+            .build();
 
         workManager.enqueueUniquePeriodicWork(
-                REMINDER_REQUEST,
-                ExistingPeriodicWorkPolicy.REPLACE,
-                workRequest);
+            REMINDER_REQUEST,
+            ExistingPeriodicWorkPolicy.REPLACE,
+            workRequest);
 
     }
 
-    public void notificationChange() {
+    public void onSwitchNotificationClicked() {
         notificationsRepository.switchNotification();
-
-
     }
 
+    public LiveData<Boolean> isNotificationEnabledLiveData() {
+        return isNotificationEnabledLiveData;
+    }
 
-    public LiveData<Integer> getSwitchPosition() {
-        return notificationSwitchMediatorLiveData;
+    public SingleLiveEvent<String> getToastMessageSingleLiveEvent() {
+        return toastMessageSingleLiveEvent;
     }
 }

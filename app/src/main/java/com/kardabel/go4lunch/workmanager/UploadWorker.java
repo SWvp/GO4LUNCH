@@ -110,7 +110,6 @@ public class UploadWorker extends androidx.work.Worker {
     private List<UserWhoMadeRestaurantChoice> getUsersWithRestaurantChoice() throws ExecutionException, InterruptedException {
         List<UserWhoMadeRestaurantChoice> usersWithRestaurant = new ArrayList<>();
 
-
         Tasks.await(getDayCollection().get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

@@ -17,39 +17,31 @@ public class NotificationsRepository {
     private final SharedPreferences sharedPref;
 
     public NotificationsRepository(Context context) {
-        sharedPref =  context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        sharedPref = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
     }
 
     public void switchNotification() {
-        if(!sharedPref.getBoolean(REMINDER_REQUEST, false)){
-
-            sharedPref
-                    .edit()
-                    .putBoolean(REMINDER_REQUEST, true)
-                    .apply();
-        }else{
-            sharedPref
-                    .edit()
-                    .putBoolean(REMINDER_REQUEST, false)
-                    .apply();
-        }
-
+        sharedPref
+            .edit()
+            .putBoolean(REMINDER_REQUEST, !isNotificationEnabled())
+            .apply();
     }
 
     public LiveData<Boolean> isNotificationEnabledLiveData() {
         MutableLiveData<Boolean> mutableLiveData = new MutableLiveData<>();
 
-        mutableLiveData.setValue(sharedPref.getBoolean(REMINDER_REQUEST, false));
+        mutableLiveData.setValue(isNotificationEnabled());
 
-        sharedPref.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (key.equals(REMINDER_REQUEST)) {
-                    mutableLiveData.setValue(sharedPreferences.getBoolean(key, false));
-                }
+        sharedPref.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
+            if (key.equals(REMINDER_REQUEST)) {
+                mutableLiveData.setValue(sharedPreferences.getBoolean(key, false));
             }
         });
 
         return mutableLiveData;
+    }
+
+    private boolean isNotificationEnabled() {
+        return sharedPref.getBoolean(REMINDER_REQUEST, false);
     }
 }

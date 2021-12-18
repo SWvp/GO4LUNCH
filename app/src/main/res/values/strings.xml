@@ -136,9 +136,9 @@
     <string name="settings_notification_activated">Notification enable</string>
     <string name="settings_notification_disabled">Notification disabled</string>
 
-
-
-
+    <!-- NOTIFICATIONS -->
+    <string name="notification_enabled">Notifications enabled</string>
+    <string name="notification_disabled">Notifications disabled</string>
 
 
 </resources>

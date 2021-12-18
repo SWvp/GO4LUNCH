@@ -16,8 +16,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField 'String', 'GOOGLE_PLACES_KEY', OC_P7_Google_Places_key
-        resValue 'string', 'google_map_key', OC_P7_Google_Places_key
+        buildConfigField 'String', 'GOOGLE_PLACES_KEY', OC_P6_Google_Places_key
+        resValue 'string', 'google_map_key', OC_P6_Google_Maps_Sdk_key
     }
 
 
