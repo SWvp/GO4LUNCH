@@ -151,6 +151,10 @@
     <string name="and">&amp;</string>
     <string name="notification_title">Bon appétit!</string>
 
+    <!-- CHAT ACTIVITY -->
+    <string name="back_button_color">#FFFF8800</string>
+    <string name="type_your_text">Vous n\'avez encore rien écrit !</string>
+
 
 
 

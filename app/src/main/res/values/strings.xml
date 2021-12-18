@@ -150,6 +150,10 @@
     <string name="and">&amp;</string>
     <string name="notification_title">Time to lunch!</string>
 
+    <!-- CHAT ACTIVITY -->
+    <string name="back_button_color">#FFFF8800</string>
+    <string name="type_your_text">Type your text first !</string>
+
 
 
 

@@ -9,6 +9,8 @@ import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
 
 public class GetNearbySearchResultsUseCase {
 
+    public static final String RESTAURANT = "restaurant";
+    public static final String RADIUS = "1000";
     public LiveData<NearbySearchResults> NearbySearchResultsLiveData;
 
     // RETRIEVE NEARBY RESULTS FROM LOCATION
@@ -18,9 +20,9 @@ public class GetNearbySearchResultsUseCase {
         NearbySearchResultsLiveData = Transformations.switchMap(locationRepository.getLocationLiveData(), input -> {
              String locationAsText = input.getLatitude() + "," + input.getLongitude();
              return nearbySearchResponseRepository.getRestaurantListLiveData(
-                    "restaurant",
+                     RESTAURANT,
                     locationAsText,
-                    "1000");
+                     RADIUS);
 
         });
     }

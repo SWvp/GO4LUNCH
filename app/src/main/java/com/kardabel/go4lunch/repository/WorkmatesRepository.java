@@ -17,6 +17,9 @@ import java.util.Set;
 
 public class WorkmatesRepository {
 
+    public static final String USERS = "users";
+    public static final String USER_NAME = "userName";
+
     // GET WORKMATES FROM FIRESTORE DATABASE
     public LiveData<List<UserModel>> getWorkmates() {
 
@@ -28,8 +31,8 @@ public class WorkmatesRepository {
         // WITH SET, WE ENSURE THERE IS NO DUPLICATE, FOR EXAMPLE WHEN ANOTHER USER CHANGE NAME FIELD
         Set<UserModel> workmates = new HashSet<>();
 
-        db.collection("users")
-                .orderBy("userName")
+        db.collection(USERS)
+                .orderBy(USER_NAME)
                 .addSnapshotListener((value, error) -> {
 
                     if (error != null) {

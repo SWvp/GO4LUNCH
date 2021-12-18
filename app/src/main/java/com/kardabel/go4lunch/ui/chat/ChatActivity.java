@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.databinding.ChatActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 
@@ -72,7 +73,7 @@ public class ChatActivity extends AppCompatActivity {
                 .load(intent.getStringExtra(WORKMATE_PHOTO))
                 .circleCrop()
                 .into(binding.workmatePhoto);
-        binding.backButton.setBackgroundColor(Color.parseColor("#FFFF8800"));
+        binding.backButton.setBackgroundColor(Color.parseColor(getString(R.string.back_button_color)));
 
         chatViewModel.getChatMessages().observe(this, chatViewStatesList -> {
             adapter.setChatMessagesListData(chatViewStatesList);
@@ -92,7 +93,7 @@ public class ChatActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(
                         ChatActivity.this,
-                        "Type your text first !",
+                        getString(R.string.type_your_text),
                         Toast.LENGTH_SHORT).show();
             }
         });
