@@ -2,6 +2,7 @@ package com.kardabel.go4lunch.ui.workmates;
 
 
 import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
@@ -82,6 +83,7 @@ public class WorkMateViewState {
 
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "WorkMateViewState{" +

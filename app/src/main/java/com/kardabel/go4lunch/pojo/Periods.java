@@ -7,11 +7,11 @@ public class Periods {
 
     @SerializedName("close")
     @Expose
-    private Close close;
+    private final Close close;
 
     @SerializedName("open")
     @Expose
-    private Open open;
+    private final Open open;
 
     public Periods(Close close, Open open) {
         this.close = close;

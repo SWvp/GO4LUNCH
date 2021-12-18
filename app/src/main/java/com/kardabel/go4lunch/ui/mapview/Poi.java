@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.ui.mapview;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Objects;
@@ -61,6 +63,7 @@ public class Poi {
                 isFavorite);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Poi{" +

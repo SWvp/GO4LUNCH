@@ -130,7 +130,6 @@ public class RestaurantsViewModelTest {
         Mockito.doReturn("https://maps.googleapis.com/maps/api/place/").when(application).getString(R.string.api_url);
         Mockito.doReturn("photo?maxwidth=300&photo_reference=").when(application).getString(R.string.photo_reference);
         Mockito.doReturn("&key=").when(application).getString(R.string.and_key);
-        Mockito.doReturn("AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8").when(application).getString(R.string.google_map_key);
         Mockito.doReturn("(").when(application).getString(R.string.left_bracket);
         Mockito.doReturn(")").when(application).getString(R.string.right_bracket);
         Mockito.doReturn("Distance unavailable").when(application).getString(R.string.distance_unavailable);
@@ -751,7 +750,10 @@ public class RestaurantsViewModelTest {
     int textColorBlack = -65536;
 
     String firstUserId = "First_user_Id";
+    String firstUserName = "First_user_name";
+
     String secondUserId = "Second_user_Id";
+    String secondUserName = "Second_user_name";
 
     // region IN
 
@@ -943,6 +945,7 @@ public class RestaurantsViewModelTest {
                         firstRestaurantId,
                         firstRestaurantName,
                         firstUserId,
+                        firstUserName,
                         firstAddress
 
                 )
@@ -952,6 +955,7 @@ public class RestaurantsViewModelTest {
                         firstRestaurantId,
                         firstRestaurantName,
                         secondUserId,
+                        secondUserName,
                         firstAddress
 
                 )

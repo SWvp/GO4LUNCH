@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 public class MainActivityYourLunchViewState {
@@ -40,6 +42,7 @@ public class MainActivityYourLunchViewState {
                 currentUserRestaurantChoiceStatus);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "MainActivityYourLunchViewState{" +

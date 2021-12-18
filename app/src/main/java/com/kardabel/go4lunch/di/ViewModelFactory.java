@@ -96,8 +96,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 
         NearbySearchResponseRepository nearbySearchResponseRepository =
                 new NearbySearchResponseRepository(
-                        googleMapsApi,
-                        application);
+                        googleMapsApi
+                );
         RestaurantDetailsResponseRepository restaurantDetailsResponseRepository =
                 new RestaurantDetailsResponseRepository(
                         googleMapsApi,

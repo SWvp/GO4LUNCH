@@ -1,7 +1,6 @@
 package com.kardabel.go4lunch.workmanager;
 
 import android.annotation.SuppressLint;
-import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -37,7 +36,7 @@ public class UploadWorker extends androidx.work.Worker {
     private String restaurantId = null;
 
 
-    private  Context context;
+    private final Context context;
 
     public UploadWorker(
             @NonNull Context context,
@@ -66,7 +65,7 @@ public class UploadWorker extends androidx.work.Worker {
 
                 List<String> workmates = new ArrayList<>();
 
-                String userId = "null";
+                String userId = context.getString(R.string.user_init_value);
                 if (FirebaseAuth
                         .getInstance()
                         .getCurrentUser() != null) {
@@ -137,9 +136,9 @@ public class UploadWorker extends androidx.work.Worker {
             for (int i = 0; i < allWorkmate.size(); i++) {
                 stringBuilderWorkmates.append(allWorkmate.get(i));
                 if (i < allWorkmate.size() - 2)
-                    stringBuilderWorkmates.append(", ");
+                    stringBuilderWorkmates.append(context.getString(R.string.separate)).append(" ");
                 else if (i == allWorkmate.size() - 2)
-                    stringBuilderWorkmates.append(" & ");
+                    stringBuilderWorkmates.append(" ").append(context.getString(R.string.and)).append(" ");
             }
 
             notification = restaurantName
@@ -178,7 +177,7 @@ public class UploadWorker extends androidx.work.Worker {
         // CREATE NOTIFICATION
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.lunch_icon)
-                .setContentTitle("Time to lunch!")
+                .setContentTitle(context.getString(R.string.notification_title))
                 // .setContentText(notification)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(notification))

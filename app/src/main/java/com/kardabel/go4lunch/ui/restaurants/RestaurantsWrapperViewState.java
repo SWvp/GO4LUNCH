@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.ui.restaurants;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -27,6 +29,7 @@ public class RestaurantsWrapperViewState {
         return Objects.hash(itemRestaurant);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "RestaurantsWrapperViewState{" +

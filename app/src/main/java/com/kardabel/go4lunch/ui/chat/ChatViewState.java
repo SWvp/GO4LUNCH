@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.ui.chat;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 public class ChatViewState {
@@ -54,6 +56,7 @@ public class ChatViewState {
 
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "ChatViewState{" +

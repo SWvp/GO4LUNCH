@@ -119,6 +119,15 @@
     <string name="phone_number_unavailable">Telephone indisponible</string>
     <string name="website_unavailable">https://www.google.com/</string>
     <string name="is_joining">Sera là!</string>
+    <string name="background_black">#000000</string>
+    <string name="background_green">#69F0AE</string>
+
+    <!-- RESTAURANT DETAILS ACTIVITY -->
+    <string name="no_phone_number">Pas de téléphone</string>
+    <string name="no_phone_number_message">Ce restaurant n\'a pas communiqué de numéro</string>
+    <string name="tel">tel:</string>
+    <string name="no_website">Il semblerait que le restaurant n\'est pas sur la toile, tentez votre chance avec Google !</string>
+
 
     <!-- MAIN ACTIVITY VIEW MODEL -->
     <string name="no_current_user_restaurant_choice">L\'utilisateur n\'a toujours pas choisi de restaurant</string>
@@ -130,11 +139,17 @@
     <string name="item_restaurant_distance">100m</string>
     <string name="item_restaurant_picture">Image</string>
 
-    <!-- SETTINGS LAYOUT-->
+    <!-- SETTINGS LAYOUT -->
     <string name="settings_notification_text">Texte de la notification</string>
     <string name="settings_notification_description">Activez la notification pour être tenu au courant du prochain déjeuner</string>
     <string name="settings_notification_activated">Notification activée</string>
     <string name="settings_notification_disabled">Notification désactivée</string>
+
+    <!-- UPLOADWORKER CLASS -->
+    <string name="user_init_value">null</string>
+    <string name="separate">,</string>
+    <string name="and">&amp;</string>
+    <string name="notification_title">Bon appétit!</string>
 
 
 

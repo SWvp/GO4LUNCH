@@ -159,7 +159,10 @@ public class MapViewModelTest {
     String photoReference = "photo";
 
     String firstUserId = "First_user_Id";
+    String firstUserName = "First_user_name";
+
     String secondUserId = "Second_user_Id";
+    String secondUserName = "Second_user_name";
 
     // region IN
     private List<Restaurant> getDefaultRestaurants() {
@@ -220,6 +223,7 @@ public class MapViewModelTest {
                         firstRestaurantId,
                         firstRestaurantName,
                         firstUserId,
+                        firstUserName,
                         firstAddress
 
                 )
@@ -229,6 +233,7 @@ public class MapViewModelTest {
                         secondRestaurantId,
                         secondRestaurantName,
                         secondUserId,
+                        secondUserName,
                         secondAddress
 
                 )

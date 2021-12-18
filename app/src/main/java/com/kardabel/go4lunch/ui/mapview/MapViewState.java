@@ -1,7 +1,5 @@
 package com.kardabel.go4lunch.ui.mapview;
 
-import android.location.Location;
-
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -53,6 +51,7 @@ public class MapViewState {
 
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "MapViewState{" +

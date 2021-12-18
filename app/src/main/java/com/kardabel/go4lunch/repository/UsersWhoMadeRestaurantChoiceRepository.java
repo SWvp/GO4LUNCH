@@ -41,7 +41,7 @@ public class UsersWhoMadeRestaurantChoiceRepository {
 
                     assert value != null;
                     for (DocumentChange document : value.getDocumentChanges()) {
-                        Log.d("pipo", "onEvent() called with: value = [" + document.getDocument().toObject(UserWhoMadeRestaurantChoice.class) + "], error = [" + error + "]");
+                        Log.d("pipo", "onEvent() called with: value = [" + document.getDocument().toObject(UserWhoMadeRestaurantChoice.class) + "], error = [" + null + "]");
                         if (document.getType() == DocumentChange.Type.ADDED) {
 
                             usersWithRestaurant.add(document.getDocument().toObject(UserWhoMadeRestaurantChoice.class));

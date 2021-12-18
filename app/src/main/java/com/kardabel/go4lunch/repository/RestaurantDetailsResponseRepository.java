@@ -62,7 +62,7 @@ public class RestaurantDetailsResponseRepository {
                     }
                 }
                 @Override
-                public void onFailure(Call<RestaurantDetailsResult> call, Throwable t) {
+                public void onFailure(@NonNull Call<RestaurantDetailsResult> call, @NonNull Throwable t) {
                     Log.d("pipo", "Detail called issues");
 
                 }

@@ -7,11 +7,11 @@ public class Open {
 
     @SerializedName("day")
     @Expose
-    private Integer day;
+    private final Integer day;
 
     @SerializedName("time")
     @Expose
-    private String time;
+    private final String time;
 
     public Open(Integer day, String time) {
         this.day = day;

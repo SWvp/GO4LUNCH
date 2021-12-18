@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.pojo;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -148,6 +150,7 @@ public class Restaurant {
                 website);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "RestaurantSearch{" +

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.databinding.RestaurantDetailsBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 
@@ -95,13 +96,16 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
         // CALL THE RESTAURANT
         binding.callIcon.setOnClickListener(v -> {
-            if ("no phone number".equals(restaurantPhoneNumber)) {
+            if (getString(R.string.no_phone_number).equals(restaurantPhoneNumber)) {
                 Toast.makeText(
                         RestaurantDetailsActivity.this,
-                        "This restaurant doesn't have phone number",
+                        getString(R.string.no_phone_number_message),
                         Toast.LENGTH_SHORT).show();
             } else {
-                Intent intent1 = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + restaurantPhoneNumber));
+                Intent intent1 =
+                        new Intent(
+                                Intent.ACTION_DIAL,
+                                Uri.parse(getString(R.string.tel) + restaurantPhoneNumber));
                 startActivity(intent1);
             }
         });
@@ -112,7 +116,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 case "https://www.google.com/":
                     Toast.makeText(
                             RestaurantDetailsActivity.this,
-                            "It seems your restaurant isn't on the web, but you can try on google !",
+                            getString(R.string.no_website),
                             Toast.LENGTH_LONG).show();
                     break;
                 default:

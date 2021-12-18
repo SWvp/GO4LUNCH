@@ -119,6 +119,14 @@
     <string name="phone_number_unavailable">Phone number unavailable</string>
     <string name="website_unavailable">https://www.google.com/</string>
     <string name="is_joining">is joining !</string>
+    <string name="background_black">#000000</string>
+    <string name="background_green">#69F0AE</string>
+
+    <!-- RESTAURANT DETAILS ACTIVITY -->
+    <string name="no_phone_number">no phone number</string>
+    <string name="no_phone_number_message">This restaurant doesn\'t have phone number</string>
+    <string name="tel">tel:</string>
+    <string name="no_website">It seems your restaurant isn\'t on the web, but you can try on google !</string>
 
     <!-- MAIN ACTIVITY VIEW MODEL -->
     <string name="no_current_user_restaurant_choice">No current user restaurant choice</string>
@@ -130,11 +138,17 @@
     <string name="item_restaurant_distance">100m</string>
     <string name="item_restaurant_picture">Picture</string>
 
-    <!-- SETTINGS LAYOUT-->
+    <!-- SETTINGS LAYOUT -->
     <string name="settings_notification_text">Notification text</string>
     <string name="settings_notification_description">Enable if you want to be notified for your lunch</string>
     <string name="settings_notification_activated">Notification enable</string>
     <string name="settings_notification_disabled">Notification disabled</string>
+
+    <!-- UPLOADWORKER CLASS -->
+    <string name="user_init_value">null</string>
+    <string name="separate">,</string>
+    <string name="and">&amp;</string>
+    <string name="notification_title">Time to lunch!</string>
 
 
 

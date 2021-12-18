@@ -140,7 +140,10 @@ public class MainActivityViewModelTest {
     String secondRestaurantAddress = "Second_Restaurant_Address";
     String nameTwo = "name_two";
 
+    String currentUserName = "Current_user_name";
+
     String secondUserId = "Second_user_Id";
+    String secondUserName = "Second_user_name";
 
 
     // region In
@@ -175,6 +178,7 @@ public class MainActivityViewModelTest {
                         firstRestaurantId,
                         firstRestaurantName,
                         currentUserId,
+                        currentUserName,
                         firstRestaurantAddress
 
 
@@ -185,6 +189,7 @@ public class MainActivityViewModelTest {
                         secondRestaurantId,
                         secondRestaurantName,
                         secondUserId,
+                        secondUserName,
                         secondRestaurantAddress
 
                 )

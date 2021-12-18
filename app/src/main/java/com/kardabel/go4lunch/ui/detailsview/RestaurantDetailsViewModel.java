@@ -181,10 +181,10 @@ public class RestaurantDetailsViewModel extends ViewModel {
             }
         }
         int restaurantChoiceState = R.drawable.has_not_decided;
-        int backgroundVectorColor = Color.parseColor("#000000");
+        int backgroundVectorColor = Color.parseColor(application.getString(R.string.background_black));
         if (isMyRestaurant) {
             restaurantChoiceState = R.drawable.has_decided;
-            backgroundVectorColor = Color.parseColor("#69F0AE");
+            backgroundVectorColor = Color.parseColor(application.getString(R.string.background_green));
         }
 
         // CHECK IF THIS RESTAURANT IS IN USERS FAVORITE
@@ -243,10 +243,10 @@ public class RestaurantDetailsViewModel extends ViewModel {
         }
 
         int restaurantChoiceState = R.drawable.has_not_decided;
-        int backgroundVectorColor = Color.parseColor("#000000");
+        int backgroundVectorColor = Color.parseColor(application.getString(R.string.background_black));
         if (isMyRestaurant) {
             restaurantChoiceState = R.drawable.has_decided;
-            backgroundVectorColor = Color.parseColor("#69F0AE");
+            backgroundVectorColor = Color.parseColor(application.getString(R.string.background_green));
         }
 
         // CHECK IF PHONE NUMBER IS AVAILABLE

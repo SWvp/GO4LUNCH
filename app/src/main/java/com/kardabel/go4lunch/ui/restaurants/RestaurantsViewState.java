@@ -1,6 +1,7 @@
 package com.kardabel.go4lunch.ui.restaurants;
 
 import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
@@ -96,6 +97,7 @@ public class RestaurantsViewState {
 
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "RestaurantsViewState{" +

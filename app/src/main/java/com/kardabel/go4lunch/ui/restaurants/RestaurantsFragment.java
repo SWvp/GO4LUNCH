@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,7 +41,7 @@ public class RestaurantsFragment extends Fragment {
 
         binding.restaurantListRecyclerView.setAdapter(adapter);
         binding.restaurantListRecyclerView.addItemDecoration(
-                new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+                new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         binding.restaurantListRecyclerView.setLayoutManager(
                 new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
 
@@ -54,13 +53,7 @@ public class RestaurantsFragment extends Fragment {
 
         // CONFIGURE RECYCLERVIEW WHEN OBSERVER IS TRIGGER
         restaurantsViewModel.getRestaurantsViewStateLiveData()
-                .observe(getViewLifecycleOwner(), new Observer<RestaurantsWrapperViewState>() {
-                    @Override
-                    public void onChanged(RestaurantsWrapperViewState restaurantsWrapperViewState) {
-                        adapter.setRestaurantListData(restaurantsWrapperViewState.getItemRestaurant());
-
-                    }
-                });
+                .observe(getViewLifecycleOwner(), restaurantsWrapperViewState -> adapter.setRestaurantListData(restaurantsWrapperViewState.getItemRestaurant()));
 
         // ON ITEM CLICK, GO TO DETAILS
         adapter.setOnItemClickListener(restaurantsViewState ->

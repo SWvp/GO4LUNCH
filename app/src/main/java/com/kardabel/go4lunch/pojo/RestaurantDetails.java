@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.pojo;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -17,11 +19,11 @@ public class RestaurantDetails {
 
     @SerializedName("formatted_phone_number")
     @Expose
-    private String formattedPhoneNumber;
+    private final String formattedPhoneNumber;
 
     @SerializedName("website")
     @Expose
-    private String website;
+    private final String website;
 
     public RestaurantDetails(String placeId,
                              OpeningHours openingHours,
@@ -63,6 +65,7 @@ public class RestaurantDetails {
 
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "RestaurantDetails{" +

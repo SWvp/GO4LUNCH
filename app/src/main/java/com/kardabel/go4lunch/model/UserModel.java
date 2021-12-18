@@ -1,5 +1,6 @@
 package com.kardabel.go4lunch.model;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Objects;
@@ -46,6 +47,7 @@ public class UserModel {
         return Objects.hash(uid, userName, avatarURL, email);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "UserModel{" +

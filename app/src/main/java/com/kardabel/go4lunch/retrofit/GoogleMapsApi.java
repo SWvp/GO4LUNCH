@@ -1,9 +1,8 @@
 package com.kardabel.go4lunch.retrofit;
 
+import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.Predictions;
 import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
-import com.kardabel.go4lunch.pojo.NearbySearchResults;
-import com.kardabel.go4lunch.pojo.SearchViewResult;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

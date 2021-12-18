@@ -1,6 +1,8 @@
 package com.kardabel.go4lunch.pojo;
 
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -40,6 +42,7 @@ public class FavoriteRestaurant {
         return Objects.hash(restaurantId, restaurantName);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "FavoriteRestaurant{" +

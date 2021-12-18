@@ -7,7 +7,7 @@ public class PlaceAutocompleteStructuredFormat {
 
     @SerializedName("main_text")
     @Expose
-    private String name;
+    private final String name;
 
 
     public PlaceAutocompleteStructuredFormat(String name) {

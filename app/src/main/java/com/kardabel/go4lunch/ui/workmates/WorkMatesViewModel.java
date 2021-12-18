@@ -98,13 +98,7 @@ public class WorkMatesViewModel extends ViewModel {
         }
 
         // SORT THE LIST BY BOOLEAN, IF TRUE, APPEARS AT THE TOP OF THE LIST
-        Collections.sort(workMateViewStateList, new Comparator<WorkMateViewState>() {
-            @Override
-            public int compare(WorkMateViewState o1, WorkMateViewState o2) {
-                return Boolean.compare(!o1.isUserHasDecided(), !o2.isUserHasDecided());
-
-            }
-        });
+        Collections.sort(workMateViewStateList, (o1, o2) -> Boolean.compare(!o1.isUserHasDecided(), !o2.isUserHasDecided()));
         return workMateViewStateList;
 
     }

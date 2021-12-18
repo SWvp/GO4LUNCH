@@ -1,5 +1,7 @@
 package com.kardabel.go4lunch.ui.detailsview;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 public class RestaurantDetailsWorkmatesViewState {
@@ -37,6 +39,7 @@ public class RestaurantDetailsWorkmatesViewState {
                 workmateDetailPhoto);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "DetailsWorkmatesViewState{" +

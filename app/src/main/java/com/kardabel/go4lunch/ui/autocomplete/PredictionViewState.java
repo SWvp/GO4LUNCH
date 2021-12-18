@@ -1,6 +1,8 @@
 package com.kardabel.go4lunch.ui.autocomplete;
 
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 public class PredictionViewState {
@@ -46,6 +48,7 @@ public class PredictionViewState {
 
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "PredictionViewState{" +

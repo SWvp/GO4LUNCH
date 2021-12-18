@@ -2,7 +2,6 @@ package com.kardabel.go4lunch.ui.mapview;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -93,8 +92,6 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
                     assert marker != null;
                     marker.setTag(poi.getPoiPlaceId());
                 }
-                Log.d("pipo", "onChanged() called with: mapViewViewState = [" + mapViewState + "]");
-
             });
             // SET A LISTENER FOR MARKER CLICK
             googleMap.setOnMarkerClickListener(this);

@@ -3,12 +3,9 @@ package com.kardabel.go4lunch;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 import android.annotation.SuppressLint;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -28,7 +25,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -50,7 +46,6 @@ import com.kardabel.go4lunch.ui.autocomplete.PredictionViewState;
 import com.kardabel.go4lunch.ui.autocomplete.PredictionsAdapter;
 import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
 import com.kardabel.go4lunch.ui.setting.SettingActivity;
-import com.kardabel.go4lunch.util.PermissionsViewAction;
 
 import java.util.ArrayList;
 import java.util.List;

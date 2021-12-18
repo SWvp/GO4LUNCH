@@ -1,13 +1,10 @@
 package com.kardabel.go4lunch.repository;
 
-import android.app.Application;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.kardabel.go4lunch.BuildConfig;
-import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.retrofit.GoogleMapsApi;
 
@@ -21,13 +18,11 @@ import retrofit2.Response;
 public class NearbySearchResponseRepository {
 
     private final GoogleMapsApi googleMapsApi;
-    private final  Application application;
 
     private final Map<String, NearbySearchResults> cache = new HashMap<>(2000);
 
-    public NearbySearchResponseRepository(GoogleMapsApi googleMapsApi, Application application){
+    public NearbySearchResponseRepository(GoogleMapsApi googleMapsApi){
         this.googleMapsApi = googleMapsApi;
-        this.application = application;
     }
 
     public LiveData<NearbySearchResults> getRestaurantListLiveData(String type,

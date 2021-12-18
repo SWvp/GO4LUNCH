@@ -19,9 +19,6 @@ public abstract class BaseActivity<T extends ViewBinding> extends AppCompatActiv
         initBinding();
     }
 
-    /**
-     * Initialise the binding object and the layout of the activity
-     */
     private void initBinding() {
         binding = getViewBinding();
         View view = binding.getRoot();

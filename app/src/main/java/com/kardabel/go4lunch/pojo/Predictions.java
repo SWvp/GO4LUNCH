@@ -9,7 +9,7 @@ public class Predictions {
 
     @SerializedName("predictions")
     @Expose
-    private List<Prediction> predictions = null;
+    private List<Prediction> predictions;
     @SerializedName("status")
     @Expose
     private String status;

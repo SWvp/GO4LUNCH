@@ -41,12 +41,9 @@ public class NotificationsRepository {
 
         mutableLiveData.setValue(sharedPref.getBoolean(REMINDER_REQUEST, false));
 
-        sharedPref.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (key.equals(REMINDER_REQUEST)) {
-                    mutableLiveData.setValue(sharedPreferences.getBoolean(key, false));
-                }
+        sharedPref.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
+            if (key.equals(REMINDER_REQUEST)) {
+                mutableLiveData.setValue(sharedPreferences.getBoolean(key, false));
             }
         });
 

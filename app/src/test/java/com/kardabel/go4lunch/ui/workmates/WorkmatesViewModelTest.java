@@ -174,6 +174,7 @@ public class WorkmatesViewModelTest {
                         firstRestaurantId,
                         firstRestaurantName,
                         thirdUserId,
+                        thirdUserName,
                         firstAddress
 
                 )
@@ -183,6 +184,7 @@ public class WorkmatesViewModelTest {
                         secondRestaurantId,
                         secondRestaurantName,
                         fourthUserId,
+                        fourthUserName,
                         secondAddress
 
                 )

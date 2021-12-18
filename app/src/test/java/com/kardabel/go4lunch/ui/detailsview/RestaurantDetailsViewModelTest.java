@@ -92,7 +92,6 @@ public class RestaurantDetailsViewModelTest {
         Mockito.doReturn("https://maps.googleapis.com/maps/api/place/").when(application).getString(R.string.api_url);
         Mockito.doReturn("photo?maxwidth=300&photo_reference=").when(application).getString(R.string.photo_reference);
         Mockito.doReturn("&key=").when(application).getString(R.string.and_key);
-        Mockito.doReturn("AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8").when(application).getString(R.string.google_map_key);
         Mockito.doReturn("Photo unavailable").when(application).getString(R.string.photo_unavailable);
 
         // RETURNS OF MOCKED CLASS
@@ -205,6 +204,8 @@ public class RestaurantDetailsViewModelTest {
     String secondRestaurantId = "Second_Restaurant_Id";
     String secondAddress = "Second_Restaurant_Address";
 
+    String currentUserName = "Current_User_Name";
+
     String firstUserId = "First_User_Id";
     String firstUserName = "First_Name";
     String firstAvatar = "First_Avatar";
@@ -297,6 +298,7 @@ public class RestaurantDetailsViewModelTest {
                         firstRestaurantId,
                         firstRestaurantName,
                         thirdUserId,
+                        thirdUserName,
                         firstAddress
 
                 )
@@ -306,6 +308,7 @@ public class RestaurantDetailsViewModelTest {
                         secondRestaurantId,
                         secondRestaurantName,
                         fourthUserId,
+                        fourthUserName,
                         secondAddress
 
 
@@ -376,6 +379,7 @@ public class RestaurantDetailsViewModelTest {
                         firstRestaurantId,
                         firstRestaurantName,
                         CURRENT_USER_ID,
+                        currentUserName,
                         firstAddress
 
                 )
@@ -385,6 +389,7 @@ public class RestaurantDetailsViewModelTest {
                         firstRestaurantId,
                         firstRestaurantName,
                         fourthUserId,
+                        fourthUserName,
                         firstAddress
 
 
