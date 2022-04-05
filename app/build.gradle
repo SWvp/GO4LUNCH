@@ -1,12 +1,17 @@
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+
+    id 'com.google.gms.google-services'
+}
 
 android {
     compileSdk 31
 
     defaultConfig {
         applicationId "com.kardabel.go4lunch"
-        minSdk 19
+        minSdk 21
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -16,8 +21,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField 'String', 'GOOGLE_PLACES_KEY', "'AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8'"
-        resValue 'string', 'google_map_key', "'AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8'"
+        buildConfigField 'String', 'GOOGLE_PLACES_KEY', OC_P7_Google_Places_key
+        resValue 'string', 'google_map_key', OC_P7_Google_Places_key
     }
 
 
@@ -53,6 +58,8 @@ android {
         viewBinding true
     }
 
+
+
     testOptions {
         unitTests.returnDefaultValues = true
     }
@@ -66,11 +73,11 @@ dependencies {
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
-    implementation 'androidx.navigation:navigation-fragment:2.4.1'
-    implementation 'androidx.navigation:navigation-ui:2.4.1'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.3.5'
 
     // GRAPHICS
     implementation 'com.google.android.material:material:1.5.0'
