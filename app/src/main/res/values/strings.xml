@@ -103,7 +103,7 @@
     <string name="restaurant_details_fields">formatted_phone_number,opening_hours,website,place_id</string>
 
     <!-- RADIUS -->
-    <string name="radius">1000</string>
+    <string name="radius">40000</string>
 
     <!-- PHOTO URL -->
     <string name="api_url">https://maps.googleapis.com/maps/api/place/</string>

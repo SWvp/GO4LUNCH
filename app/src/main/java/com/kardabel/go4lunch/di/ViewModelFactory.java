@@ -126,16 +126,19 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.getNearbySearchResultsUseCase =
                 new GetNearbySearchResultsUseCase(
                         locationRepository,
-                        nearbySearchResponseRepository);
+                        nearbySearchResponseRepository,
+                        application);
         this.getNearbySearchResultsByIdUseCase =
                 new GetNearbySearchResultsByIdUseCase(
                         locationRepository,
-                        nearbySearchResponseRepository);
+                        nearbySearchResponseRepository,
+                        application);
         this.getRestaurantDetailsResultsUseCase =
                 new GetRestaurantDetailsResultsUseCase(
                         locationRepository,
                         nearbySearchResponseRepository,
-                        restaurantDetailsResponseRepository);
+                        restaurantDetailsResponseRepository,
+                        application);
         this.getRestaurantDetailsResultsByIdUseCase =
                 new GetRestaurantDetailsResultsByIdUseCase(
                         restaurantDetailsResponseRepository
