@@ -3,13 +3,14 @@ package com.kardabel.go4lunch.usecase;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 
-import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.pojo.NearbySearchResults;
+import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.repository.RestaurantDetailsResponseRepository;
 import com.kardabel.go4lunch.repository.NearbySearchResponseRepository;
+import com.kardabel.go4lunch.repository.RestaurantDetailsResponseRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,16 +66,18 @@ public class GetRestaurantDetailsResultsUseCase {
 
             for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
 
-                String placeId = nearbySearchResults.getResults().get(i).getRestaurantId();
 
                 if (!restaurantDetailsList.contains(restaurantDetailsResult) || restaurantDetailsResult == null) {
+                    String placeId = nearbySearchResults.getResults().get(i).getRestaurantId();
 
                     restaurantDetailsMediatorLiveData.addSource(
-                            restaurantDetailsResponseRepository.getRestaurantDetailsLiveData(placeId),
-                            restaurantDetailsResult1 -> {
-                                restaurantDetailsList.add(restaurantDetailsResult1);
-                                restaurantDetailsMediatorLiveData.setValue(restaurantDetailsResult1);
+                            restaurantDetailsResponseRepository.getRestaurantDetailsLiveData(placeId), new Observer<RestaurantDetailsResult>() {
+                                @Override
+                                public void onChanged(RestaurantDetailsResult restaurantDetailsResult1) {
+                                    restaurantDetailsList.add(restaurantDetailsResult1);
+                                    restaurantDetailsMediatorLiveData.setValue(restaurantDetailsResult1);
 
+                                }
                             });
                 }
             }
