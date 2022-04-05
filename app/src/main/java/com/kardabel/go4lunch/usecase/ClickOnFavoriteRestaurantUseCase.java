@@ -1,12 +1,7 @@
 package com.kardabel.go4lunch.usecase;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -48,15 +43,12 @@ public class ClickOnFavoriteRestaurantUseCase {
                 .collection(FAVORITE_RESTAURANTS)
                 .document(restaurantId)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            if (task.getResult().exists()) {
-                                task.getResult().getReference().delete();
-                            } else {
-                                task.getResult().getReference().set(favoriteRestaurant);
-                            }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (task.getResult().exists()) {
+                            task.getResult().getReference().delete();
+                        } else {
+                            task.getResult().getReference().set(favoriteRestaurant);
                         }
                     }
                 });
