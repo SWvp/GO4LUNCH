@@ -75,7 +75,6 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
                                                 .getBitmapFromVectorDrawable(requireContext(),
                                                         R.drawable.restaurant_poi_icon_green))));
                         // SET TAG TO RETRIEVE THE MARKER IN onMarkerClick METHOD
-
                     }else{
                         marker = googleMap.addMarker(new MarkerOptions()
                                 .position(poi.getPoiLatLng())

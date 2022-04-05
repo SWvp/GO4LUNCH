@@ -81,10 +81,12 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     }
 
     public ViewModelFactory() {
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://maps.googleapis.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
         GoogleMapsApi googleMapsApi = retrofit.create(GoogleMapsApi.class);
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();

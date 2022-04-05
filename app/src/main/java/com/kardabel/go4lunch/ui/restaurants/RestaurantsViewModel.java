@@ -17,8 +17,8 @@ import com.kardabel.go4lunch.pojo.NearbySearchResults;
 import com.kardabel.go4lunch.pojo.OpeningHours;
 import com.kardabel.go4lunch.pojo.Periods;
 import com.kardabel.go4lunch.pojo.Photo;
-import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.pojo.Restaurant;
+import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.repository.LocationRepository;
 import com.kardabel.go4lunch.repository.UserSearchRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
@@ -120,12 +120,13 @@ public class RestaurantsViewModel extends ViewModel {
             if (nearbySearchResults != null && restaurantDetailsResults != null &&
                     usersSearch != null && usersSearch.length() > 0) {
 
-                restaurantsWrapperViewStateMediatorLiveData.setValue(mapUsersSearch(
-                        nearbySearchResults,
-                        restaurantDetailsResults,
-                        location,
-                        userWhoMadeRestaurantChoice,
-                        usersSearch));
+                restaurantsWrapperViewStateMediatorLiveData.setValue(
+                        mapUsersSearch(
+                                nearbySearchResults,
+                                restaurantDetailsResults,
+                                location,
+                                userWhoMadeRestaurantChoice,
+                                usersSearch));
 
             } else if (restaurantDetailsResults == null && nearbySearchResults != null) {
                 restaurantsWrapperViewStateMediatorLiveData.setValue(mapWithoutDetails(

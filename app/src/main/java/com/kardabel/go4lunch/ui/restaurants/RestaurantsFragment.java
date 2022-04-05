@@ -56,10 +56,9 @@ public class RestaurantsFragment extends Fragment {
                 .observe(getViewLifecycleOwner(), restaurantsWrapperViewState -> adapter.setRestaurantListData(restaurantsWrapperViewState.getItemRestaurant()));
 
         // ON ITEM CLICK, GO TO DETAILS
-        adapter.setOnItemClickListener(restaurantsViewState ->
-                startActivity(RestaurantDetailsActivity.navigate(
-                        requireContext(),
-                        restaurantsViewState.getPlaceId())));
+        adapter.setOnItemClickListener(restaurantsViewState -> RestaurantsFragment.this.startActivity(RestaurantDetailsActivity.navigate(
+                RestaurantsFragment.this.requireContext(),
+                restaurantsViewState.getPlaceId())));
 
     }
 
