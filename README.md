@@ -1,5 +1,13 @@
-<img src="screenshot/go4lunch.png" alt="accueil" align="center"/>
+<p align="center">
+ 	<img 
+   		width="300"
+   		height="300"
+   		src="screenshot/go4lunch.png"
+		alt="accueil" 
+  	>
+</p>
 
+## GO4LUNCH, Java version
 Android application to find restaurants near you. Allow you to choose one for the next lunch and share your selection with your coworkers.
 You'll also be able to check out where your coworkers are headed for lunch and decide if you want to go with them.
 Be notified by a push notification before the lunch break: this will inform you of the address and the employees who will be at the same place.
