@@ -36,17 +36,7 @@ Be notified by a push notification before the lunch break: this will inform you 
 </p>
 
 * A restaurant details activity that allows you to call the restaurant, visit website, add to favorite, select this place for today and see coworkers with the same choice
-
-<p align="center">
- 	<img alt="details" src="screenshot/details.png" width="30%">
-</p>
-
 * A chat activity that can be launched from the workmatesView
-
-<p align="center">
- 	<img alt="chatView" src="screenshot/chat.png" width="30%">
-</p>
-
 * Every day, the database will create a collection with the actual date to store the user's choice
 * The notification push is managed with a WorkManager, and will display the notification just before lunch break
 
