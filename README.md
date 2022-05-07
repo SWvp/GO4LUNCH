@@ -1,4 +1,4 @@
-<img src="screenshot/go4lunch.png" alt="accueil" width="350"/>
+<img src="screenshot/go4lunch.png" alt="accueil" align="center"/>
 
 Android application to find restaurants near you. Allow you to choose one for the next lunch and share your selection with your coworkers.
 You'll also be able to check out where your coworkers are headed for lunch and decide if you want to go with them.
