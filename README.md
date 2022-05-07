@@ -58,7 +58,7 @@ Be notified by a push notification before the lunch break: this will inform you 
 * MVVM with an approach of clean Architecture (viewModel, ViewState, Usecase, Repository)
 * LiveData
 
-## dependency injection
+## Dependency injection
 * ViewModel factory, handmade
 
 ## Unit tests
