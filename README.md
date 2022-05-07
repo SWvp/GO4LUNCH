@@ -73,3 +73,13 @@ Be notified by a push notification before the lunch break: this will inform you 
 	* place nearby search
 	* place details
 	* place autocomplete
+
+## How to use this app
+* Go to [build.gradle](https://github.com/SWvp/GO4LUNCH/blob/main/app/build.gradle) line 19 & 20
+* replace GOOGLE_MAP_API_KEY by '"your-google-map-key-here"'
+* or edit/create gradle.properties in user\.gradle folder with GOOGLE_MAP_API_KEY="your-google-map-key-here"
+
+Feel free to send feedback about your experience !
+Happy coding !
+
+Stéphane
