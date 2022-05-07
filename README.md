@@ -17,21 +17,36 @@ Be notified by a push notification before the lunch break: this will inform you 
 * Main activity:
 	* Navigation Drawer (access to your lunch of the day, settings for the notification and logout)
 	* SearchView with autocomplete from GoogleMap API
+
+<p align="center">
+ 	<img alt="navDrawer" src="screenshot/navDrawer.png" width="30%">
+</p>
+
 * 3 fragments:
 	* the listView, which displays a list of 20 restaurants with full opening hours
 	* the mapView, which displays a GoogleMap with your position and the restaurant list
 	* the workmatesView, which displays the coworkers list and if they have chosen a restaurant
 
 <p align="center">
- 	<img alt="listView" src="screenshot/listView.png" width="30%">
-&nbsp; &nbsp; &nbsp; &nbsp;
  	<img alt="mapView" src="screenshot/mapView.png" width="30%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+ 	<img alt="listView" src="screenshot/listView.png" width="30%">
 &nbsp; &nbsp; &nbsp; &nbsp;
  	<img alt="workmatesView" src="screenshot/workmate.png" width="30%">
 </p>
 
 * A restaurant details activity that allows you to call the restaurant, visit website, add to favorite, select this place for today and see coworkers with the same choice
+
+<p align="center">
+ 	<img alt="details" src="screenshot/details.png" width="30%">
+</p>
+
 * A chat activity that can be launched from the workmatesView
+
+<p align="center">
+ 	<img alt="chatView" src="screenshot/chat.png" width="30%">
+</p>
+
 * Every day, the database will create a collection with the actual date to store the user's choice
 * The notification push is managed with a WorkManager, and will display the notification just before lunch break
 
@@ -51,8 +66,6 @@ Be notified by a push notification before the lunch break: this will inform you 
 
 ## Architecture
 * MVVM with an approach of clean Architecture (viewModel, ViewState, Usecase, Repository)
-
-## Reactive
 * LiveData
 
 ## dependency injection
