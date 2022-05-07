@@ -12,6 +12,10 @@ Android application to find restaurants near you. Allow you to choose one for th
 You'll also be able to check out where your coworkers are headed for lunch and decide if you want to go with them.
 Be notified by a push notification before the lunch break: this will inform you of the address and the employees who will be at the same place.
 
+<p align="center">
+ 	<img alt="demo" src="screenshot/demo.gif" width="30%">
+</p>
+
 ## Features
 * Authentification with Gmail and Facebook via Firebase Authentification
 * Main activity:
