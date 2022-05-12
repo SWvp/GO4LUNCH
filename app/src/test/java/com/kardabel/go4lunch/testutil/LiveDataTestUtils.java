@@ -1,11 +1,6 @@
 package com.kardabel.go4lunch.testutil;
 
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 public class LiveDataTestUtils {
 
