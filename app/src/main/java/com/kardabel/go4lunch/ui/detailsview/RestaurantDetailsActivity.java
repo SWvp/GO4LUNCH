@@ -122,9 +122,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 default:
                     Intent intent12 = new Intent(Intent.ACTION_VIEW, Uri.parse(restaurantWebsite));
                     startActivity(intent12);
-
             }
         });
-
     }
 }
